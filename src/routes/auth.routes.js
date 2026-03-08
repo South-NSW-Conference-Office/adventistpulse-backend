@@ -16,6 +16,7 @@ import {
   forgotPasswordSchema,
   resetPasswordSchema,
   changeEmailSchema,
+  resendVerificationByEmailSchema,
 } from '../validators/auth.validator.js'
 
 const router = Router()
@@ -32,7 +33,8 @@ router.post('/reset-password',  resetPasswordRateLimit,  validate(resetPasswordS
 
 // Authenticated routes (no emailVerified requirement — users need these regardless of verification status)
 router.get ('/me',                  authMiddleware, authController.me)
-router.post('/resend-verification', authMiddleware, authController.resendVerification)
+router.post('/resend-verification',          authMiddleware, authController.resendVerification)
+router.post('/resend-verification-by-email', validate(resendVerificationByEmailSchema), authController.resendVerificationByEmail)
 
 // Authenticated + verified routes
 router.post('/change-email', authMiddleware, validate(changeEmailSchema), authController.changeEmail)

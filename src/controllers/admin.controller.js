@@ -23,4 +23,20 @@ export const adminController = {
     const result = await adminService.updateUserRole(req.user.sub, req.params.id, req.body)
     response.success(res, result)
   }),
+
+  listPendingApprovals: asyncHandler(async (req, res) => {
+    const result = await adminService.listPendingApprovals(req.query)
+    response.success(res, result)
+  }),
+
+  approveUser: asyncHandler(async (req, res) => {
+    const result = await adminService.approveUser(req.user.sub, req.params.id)
+    response.success(res, result)
+  }),
+
+  rejectUser: asyncHandler(async (req, res) => {
+    const { reason } = req.body
+    const result = await adminService.rejectUser(req.user.sub, req.params.id, reason)
+    response.success(res, result)
+  }),
 }

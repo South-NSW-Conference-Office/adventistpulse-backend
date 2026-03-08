@@ -65,8 +65,8 @@ export const jwt = {
     return encodeToken(payload, this.SALTS.access, env.JWT_ACCESS_EXPIRY_SECONDS)
   },
 
-  async issueRefreshToken(payload) {
-    return encodeToken(payload, this.SALTS.refresh, env.JWT_REFRESH_EXPIRY_SECONDS)
+  async issueRefreshToken(payload, expirySeconds = env.JWT_REFRESH_EXPIRY_SECONDS) {
+    return encodeToken(payload, this.SALTS.refresh, expirySeconds)
   },
 
   async verifyAccessToken(token) {

@@ -22,8 +22,9 @@ export const registerSchema = z.object({
 })
 
 export const loginSchema = z.object({
-  email:    z.string().email('Invalid email address').toLowerCase(),
-  password: z.string().min(1, 'Password is required'),
+  email:      z.string().email('Invalid email address').toLowerCase(),
+  password:   z.string().min(1, 'Password is required'),
+  rememberMe: z.boolean().optional().default(false),
 })
 
 export const forgotPasswordSchema = z.object({
@@ -46,4 +47,9 @@ export const changePasswordSchema = z.object({
 export const changeEmailSchema = z.object({
   newEmail: z.string().email('Invalid email address').toLowerCase(),
   password: z.string().min(1, 'Password is required to confirm email change'),
+})
+
+// Public resend — no auth, just email. Rate-limited + timing-safe.
+export const resendVerificationByEmailSchema = z.object({
+  email: z.string().email('Invalid email address').toLowerCase(),
 })
