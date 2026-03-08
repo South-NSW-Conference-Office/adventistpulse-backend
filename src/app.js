@@ -10,6 +10,7 @@ import { errorMiddleware } from './middleware/error.middleware.js'
 import { requestIdMiddleware } from './middleware/requestId.middleware.js'
 import { auditMiddleware } from './middleware/audit.middleware.js'
 import routes from './routes/index.js'
+import './models/Entity.js'   // register model at startup
 
 const app = express()
 

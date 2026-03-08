@@ -18,12 +18,16 @@ class TokenService {
     return { sub: user._id.toString() }
   }
 
-  async issueTokenPair(user) {
+  async issueTokenPair(user, { rememberMe = false } = {}) {
+    const refreshExpiry = rememberMe
+      ? env.JWT_REMEMBER_ME_EXPIRY_SECONDS
+      : env.JWT_REFRESH_EXPIRY_SECONDS
+
     const [accessToken, refreshToken] = await Promise.all([
       jwt.issueAccessToken(this.buildAccessPayload(user)),
-      jwt.issueRefreshToken(this.buildRefreshPayload(user)),
+      jwt.issueRefreshToken(this.buildRefreshPayload(user), refreshExpiry),
     ])
-    return { accessToken, refreshToken }
+    return { accessToken, refreshToken, refreshExpiry }
   }
 
   async verifyAccess(token) {
@@ -85,15 +89,18 @@ class TokenService {
     return jwt.isExpiringSoon(payload)
   }
 
-  getRefreshCookieOptions() {
+  /**
+   * Cookie maxAge is derived from the same expiry used to sign the JWT —
+   * both stay in sync so the cookie never outlives (or underlives) the token.
+   * @param {number} refreshExpirySecs - must match the JWT refresh expiry used in issueTokenPair
+   */
+  getRefreshCookieOptions(refreshExpirySecs = env.JWT_REFRESH_EXPIRY_SECONDS) {
     const isProd = env.NODE_ENV === 'production'
     return {
       httpOnly: true,
       secure:   isProd,
       sameSite: isProd ? 'none' : 'lax',
-      maxAge:   env.JWT_REFRESH_EXPIRY_SECONDS * 1000,
-      // Use /api so the cookie is sent to all versioned routes (/api/v1, /api/v2, etc.)
-      // but not to non-API routes (/, /health, etc.)
+      maxAge:   refreshExpirySecs * 1000, // cookie and JWT expiry always identical
       path:     '/api',
     }
   }

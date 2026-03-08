@@ -37,6 +37,7 @@ export async function authMiddleware(req, res, next) {
       entityAccess:       user.entityAccess,
       emailVerified:      user.emailVerified,
       mustChangePassword: !!user.mustChangePassword,
+      accountStatus:      user.accountStatus ?? 'approved', // null-safe for existing users
     }
 
     // Silent token rotation — re-issue if expiring soon

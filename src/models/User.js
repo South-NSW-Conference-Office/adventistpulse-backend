@@ -37,6 +37,20 @@ const userSchema = new mongoose.Schema({
     linkedAt:          { type: Date, default: Date.now },
   }],
 
+  // Onboarding & approval lifecycle
+  // Default 'approved' protects all existing users — new users transition through the lifecycle
+  accountStatus: {
+    type:    String,
+    enum:    ['pending_onboarding', 'pending_approval', 'approved', 'rejected'],
+    default: 'approved',
+    index:   true,
+  },
+  rejectionReason: { type: String, default: null, select: false },
+  approvedAt:      { type: Date,   default: null },
+  approvedBy:      { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+  rejectedAt:      { type: Date,   default: null },
+  rejectedBy:      { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+
   isActive: { type: Boolean, default: true },
 
   // Admin-initiated force-change: user must change password on next login

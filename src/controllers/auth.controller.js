@@ -14,7 +14,7 @@ export const authController = {
 
   login: asyncHandler(async (req, res) => {
     const { tokens, user, isNewUser, mustChangePassword } = await authService.login(req.body)
-    res.cookie(REFRESH_COOKIE, tokens.refreshToken, tokenService.getRefreshCookieOptions())
+    res.cookie(REFRESH_COOKIE, tokens.refreshToken, tokenService.getRefreshCookieOptions(tokens.refreshExpiry))
     response.success(res, { accessToken: tokens.accessToken, user, isNewUser, mustChangePassword })
   }),
 
@@ -46,6 +46,12 @@ export const authController = {
   resendVerification: asyncHandler(async (req, res) => {
     await authService.resendVerification(req.user.sub)
     response.success(res, { message: 'Verification email sent' })
+  }),
+
+  resendVerificationByEmail: asyncHandler(async (req, res) => {
+    await authService.resendVerificationByEmail(req.body.email)
+    // Always 200 — never reveal whether the email exists or is already verified
+    response.success(res, { message: 'If that email is registered and unverified, a new link has been sent' })
   }),
 
   forgotPassword: asyncHandler(async (req, res) => {
