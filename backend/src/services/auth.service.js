@@ -50,7 +50,7 @@ class AuthService {
     return { tokens, user: this.#safeUser(user), isNewUser: true }
   }
 
-  async login({ email: emailAddr, password }) {
+  async login({ email: emailAddr, password, rememberMe = false }) {
     const user = await userRepository.findByEmailWithSensitiveFields(emailAddr)
 
     // Dummy compare prevents timing attack when user not found
@@ -81,11 +81,11 @@ class AuthService {
 
     if (user.loginAttempts > 0) await userRepository.resetLoginAttempts(user._id)
 
-    const tokens = await tokenService.issueTokenPair(user)
+    const tokens = await tokenService.issueTokenPair(user, { rememberMe })
     return {
       tokens,
-      user:              this.#safeUser(user),
-      isNewUser:         false,
+      user:               this.#safeUser(user),
+      isNewUser:          false,
       mustChangePassword: !!user.mustChangePassword,
     }
   }
@@ -121,6 +121,7 @@ class AuthService {
       emailVerificationToken:   null,
       emailVerificationExpires: null,
       verificationEmailSentAt:  null,
+      accountStatus:            'pending_onboarding', // explicit — triggers onboarding flow
     })
   }
 
@@ -151,6 +152,43 @@ class AuthService {
 
     const fullUser = await userRepository.findByIdOrFail(userId, 'User')
     email.sendVerification(fullUser.email, rawToken).catch(() => {})
+  }
+
+  /**
+   * Public resend — no auth required. Accepts email address only.
+   * Timing-safe: always takes the same code path regardless of whether the
+   * email exists or is already verified, so we never reveal account existence.
+   */
+  async resendVerificationByEmail(emailAddr) {
+    const start = Date.now()
+
+    try {
+      const user = await userRepository.findEmailRateLimitFields(emailAddr)
+
+      // Silently skip if no account or already verified — don't reveal status
+      if (!user || user.emailVerified) return
+
+      if (user.verificationEmailSentAt) {
+        const elapsed = Date.now() - new Date(user.verificationEmailSentAt).getTime()
+        const remaining = Math.ceil((RESEND_VERIFY_COOLDOWN_MS - elapsed) / 1000)
+        if (elapsed < RESEND_VERIFY_COOLDOWN_MS) throw new ResendCooldownError(remaining)
+      }
+
+      const rawToken    = await this.#generateToken()
+      const hashedToken = crypto.hashToken(rawToken)
+
+      await userRepository.updateById(user._id, {
+        emailVerificationToken:   hashedToken,
+        emailVerificationExpires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+        verificationEmailSentAt:  new Date(),
+      })
+
+      email.sendVerification(emailAddr, rawToken).catch(() => {})
+    } finally {
+      // Constant-time padding — minimum 200ms so timing doesn't reveal account existence
+      const elapsed = Date.now() - start
+      if (elapsed < 200) await new Promise(r => setTimeout(r, 200 - elapsed))
+    }
   }
 
   async forgotPassword(emailAddr) {
@@ -301,6 +339,8 @@ class AuthService {
       oauthProviders, __v,
       ...safe
     } = user
+    // Normalise accountStatus for users created before this field existed
+    safe.accountStatus = safe.accountStatus ?? 'approved'
     return safe
   }
 }

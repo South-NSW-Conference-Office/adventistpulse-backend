@@ -8,8 +8,9 @@ const envSchema = z.object({
 
   // Comma-separated for secret rotation: "newSecret,oldSecret"
   JWT_SECRET:                  z.string().min(32, 'JWT_SECRET must be at least 32 characters'),
-  JWT_ACCESS_EXPIRY_SECONDS:   z.string().default('900').transform(Number),
-  JWT_REFRESH_EXPIRY_SECONDS:  z.string().default('604800').transform(Number),
+  JWT_ACCESS_EXPIRY_SECONDS:          z.string().default('900').transform(Number),
+  JWT_REFRESH_EXPIRY_SECONDS:         z.string().default('604800').transform(Number),   // 7 days
+  JWT_REMEMBER_ME_EXPIRY_SECONDS:     z.string().default('2592000').transform(Number),  // 30 days
 
   FRONTEND_URL: z.string().url('FRONTEND_URL must be a valid URL').default('http://localhost:3000'),
 

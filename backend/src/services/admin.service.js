@@ -79,6 +79,77 @@ class AdminService {
     return { message: `User ${isActive ? 'activated' : 'deactivated'}` }
   }
 
+  // ── Onboarding approval queue ─────────────────────────────────────────────
+
+  async listPendingApprovals({ page = 1, limit = 20 } = {}) {
+    const skip = (page - 1) * limit
+    const [users, total] = await Promise.all([
+      userRepository.model
+        .find({ accountStatus: 'pending_approval' })
+        .select('name email accountStatus createdAt')
+        .sort({ createdAt: 1 }) // oldest first
+        .skip(skip).limit(limit).lean(),
+      userRepository.model.countDocuments({ accountStatus: 'pending_approval' }),
+    ])
+
+    // Attach onboarding profile summary to each user
+    const { onboardingRepository } = await import('../repositories/onboarding.repository.js')
+    const profiles = await onboardingRepository.model
+      .find({ userId: { $in: users.map(u => u._id) } }).lean()
+    const profileMap = Object.fromEntries(profiles.map(p => [p.userId.toString(), p]))
+
+    return {
+      users: users.map(u => ({ ...u, profile: profileMap[u._id.toString()] ?? null })),
+      pagination: { page, limit, total, pages: Math.ceil(total / limit) },
+    }
+  }
+
+  async approveUser(adminId, targetUserId) {
+    const user = await userRepository.findByIdOrFail(targetUserId, 'User')
+
+    if (user.accountStatus !== 'pending_approval') {
+      throw new AppError(
+        `Cannot approve a user with status "${user.accountStatus}".`,
+        { code: 'INVALID_STATUS_TRANSITION', statusCode: 400 }
+      )
+    }
+
+    await userRepository.updateById(targetUserId, {
+      accountStatus: 'approved',
+      approvedAt:    new Date(),
+      approvedBy:    adminId,
+      rejectionReason: null,
+    })
+
+    email.sendUserApproved(user.email, user.name).catch(() => {})
+    logger.debug('Admin approved user', { targetUserId, adminId })
+    return { message: `${user.name} has been approved.` }
+  }
+
+  async rejectUser(adminId, targetUserId, reason = '') {
+    const user = await userRepository.findByIdOrFail(targetUserId, 'User')
+
+    if (user.accountStatus !== 'pending_approval') {
+      throw new AppError(
+        `Cannot reject a user with status "${user.accountStatus}".`,
+        { code: 'INVALID_STATUS_TRANSITION', statusCode: 400 }
+      )
+    }
+
+    await userRepository.updateById(targetUserId, {
+      accountStatus:   'rejected',
+      rejectionReason: reason || null,
+      rejectedAt:      new Date(),
+      rejectedBy:      adminId,
+      approvedAt:      null,
+      approvedBy:      null,
+    })
+
+    email.sendUserRejected(user.email, user.name, reason).catch(() => {})
+    logger.debug('Admin rejected user', { targetUserId, adminId, reason })
+    return { message: `${user.name}'s application has been rejected.` }
+  }
+
   /**
    * Update a user's role and/or entityAccess
    */
