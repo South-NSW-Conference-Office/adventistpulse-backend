@@ -21,6 +21,16 @@ class StatsService {
     return { data, total, page, limit }
   }
 
+  async getCountryRankings(query) {
+    const { year, metric, level, limit } = query
+    return statsRepository.getCountryRankings({
+      year:   Number(year),
+      metric,
+      level,
+      limit:  limit ? Number(limit) : 5,
+    })
+  }
+
   async importStats({ entityCode, stats }) {
     await entityRepository.findByCodeOrFail(entityCode)
 
@@ -32,6 +42,20 @@ class StatsService {
     )
 
     return { imported: results.length, entityCode }
+  }
+
+  async getMapData(query) {
+    return statsRepository.getMapData(Number(query.year))
+  }
+
+  async getCountryTrend(query) {
+    const { country, metric, lookback } = query
+    return statsRepository.getCountryTrend(country, metric, Number(lookback))
+  }
+
+  async getCountrySummary(query) {
+    const { country, year } = query
+    return statsRepository.getCountrySummary(country, Number(year))
   }
 
   // Compute derived membership fields before saving
