@@ -13,6 +13,26 @@ export const statsController = {
     response.paginated(res, data, { total, page, limit })
   }),
 
+  getCountryRankings: asyncHandler(async (req, res) => {
+    const data = await statsService.getCountryRankings(req.query)
+    response.success(res, data)
+  }),
+
+  getMapData: asyncHandler(async (req, res) => {
+    const data = await statsService.getMapData(req.query)
+    response.success(res, data)
+  }),
+
+  getCountryTrend: asyncHandler(async (req, res) => {
+    const data = await statsService.getCountryTrend(req.query)
+    response.success(res, data)
+  }),
+
+  getCountrySummary: asyncHandler(async (req, res) => {
+    const data = await statsService.getCountrySummary(req.query)
+    response.success(res, data)
+  }),
+
   importStats: asyncHandler(async (req, res) => {
     const result = await statsService.importStats(req.body)
     response.created(res, result)
