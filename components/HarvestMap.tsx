@@ -47,7 +47,7 @@ function formatRatio(ratio: number): string {
   return '1:' + Math.round(1 / ratio).toLocaleString();
 }
 
-export default function HarvestMap() {
+export default function HarvestMap({ fill = false }: { fill?: boolean }) {
   const mapRef = useRef<HTMLDivElement>(null);
   const [viewMode, setViewMode] = useState<ViewMode>('where-we-are');
   const [missionData, setMissionData] = useState<MissionData | null>(null);
@@ -212,7 +212,7 @@ export default function HarvestMap() {
   }, [leafletReady, fixedGeoData, missionData, viewMode, dataMap]);
 
   return (
-    <div className="relative w-full" style={{ height: '70vh', minHeight: '400px' }}>
+    <div className="relative w-full" style={fill ? { height: '100%', minHeight: 0 } : { height: '70vh', minHeight: '400px' }}>
       {/* Leaflet CSS */}
       <link
         rel="stylesheet"

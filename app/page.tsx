@@ -25,49 +25,53 @@ export default function Home() {
 
   return (
     <main id="main-content" className={cn("min-h-screen", tokens.bg.page, tokens.text.heading)}>
-      {/* Hero */}
-      <div className={cn("border-b", tokens.border.default)}>
-        <div className="max-w-6xl mx-auto px-4 py-16 md:py-24 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
-            Adventist <span className={tokens.text.accent}>Pulse</span>
+      {/* Hero — full-bleed map with overlay content */}
+      <div className="relative w-full overflow-hidden" style={{ height: '100vh', minHeight: 600 }}>
+        {/* Map fills entire hero */}
+        <div className="absolute inset-0">
+          <HarvestMapLoader fill />
+        </div>
+
+        {/* Dark gradient overlay — top to bottom */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: 'linear-gradient(to bottom, rgba(10,14,23,0.72) 0%, rgba(10,14,23,0.45) 50%, rgba(10,14,23,0.75) 100%)',
+            zIndex: 500,
+          }}
+        />
+
+        {/* Content on top */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center" style={{ zIndex: 600 }}>
+          <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white drop-shadow-lg">
+            Adventist <span className="text-[#6366f1]">Pulse</span>
           </h1>
-          <p className={cn("text-lg mt-4 max-w-2xl mx-auto", tokens.text.body)}>
+          <p className="text-lg md:text-xl mt-4 max-w-2xl mx-auto text-white/80 leading-relaxed">
             Data-driven mission intelligence for the Adventist Church.
-            Unlock member-only tools, insights and strategies that will help you finish the work.
+            Unlock tools, insights and strategies to help finish the work.
           </p>
 
           {/* Global headline stats */}
           {gcStats && (
-            <div className="flex flex-wrap justify-center gap-6 mt-10">
-              <StatCard 
-                label="Members Worldwide" 
-                value={fmt(gcStats.membership)} 
-                className="border-0 bg-transparent shadow-none"
-              />
-              <StatCard 
-                label="Churches" 
-                value={fmt(gcStats.churches)}
-                className="border-0 bg-transparent shadow-none"
-              />
-              <StatCard 
-                label={`Baptisms (${gcStats.year})`} 
-                value={fmt(gcStats.baptisms)}
-                className="border-0 bg-transparent shadow-none"
-              />
+            <div className="flex flex-wrap justify-center gap-8 mt-8">
+              {[
+                { label: 'Members Worldwide', value: fmt(gcStats.membership) },
+                { label: 'Churches', value: fmt(gcStats.churches) },
+                { label: `Baptisms (${gcStats.year})`, value: fmt(gcStats.baptisms) },
+              ].map(({ label, value }) => (
+                <div key={label} className="text-center">
+                  <div className="text-2xl md:text-3xl font-bold text-white tabular-nums">{value}</div>
+                  <div className="text-xs text-white/60 mt-1 uppercase tracking-wider">{label}</div>
+                </div>
+              ))}
             </div>
           )}
 
           {/* Search */}
-          <div className="mt-10 max-w-lg mx-auto">
+          <div className="mt-8 w-full max-w-lg">
             <GlobalSearch entities={allEntities} placeholder="Search your church, conference, or division..." />
           </div>
         </div>
-      </div>
-
-      {/* Harvest Map */}
-      <div className="max-w-6xl mx-auto px-4 pt-12">
-        <h2 className={cn("text-xl font-semibold mb-4", tokens.text.heading)}>The Harvest Map</h2>
-        <HarvestMapLoader />
       </div>
 
       {/* Unreached Nations */}
