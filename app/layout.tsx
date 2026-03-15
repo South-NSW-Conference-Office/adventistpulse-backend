@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { ToastProvider } from "@/contexts/ToastContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { NavBar } from "@/components/NavBar";
+import { FloatingThemeToggle } from "@/components/FloatingThemeToggle";
 import { Footer } from "@/components/Footer";
 import "./globals.css";
 
@@ -35,7 +36,8 @@ export default function RootLayout({
           <ToastProvider>
             <AuthProvider>
               <NavBar />
-              <main>{children}</main>
+              <FloatingThemeToggle />
+              <main className="pt-14">{children}</main>
               <Footer />
             </AuthProvider>
           </ToastProvider>

@@ -54,7 +54,7 @@ function SortHeader({ label, sortKey, currentKey, currentDir, onSort, className 
       <span className="inline-flex items-center gap-1">
         {label}
         {isActive && (
-          <span className="text-[#6366F1]">{currentDir === 'desc' ? '↓' : '↑'}</span>
+          <span className="text-[#14b8a6]">{currentDir === 'desc' ? '↓' : '↑'}</span>
         )}
       </span>
     </th>
@@ -106,7 +106,7 @@ export function CompareTable({ entities }: { entities: CompareEntity[] }) {
             {sorted.map(e => (
               <tr key={e.code} className="border-b border-gray-200 dark:border-[#2a3a50]/50 hover:bg-gray-100/50 dark:hover:bg-slate-800/30">
                 <td className="py-3 px-3">
-                  <Link href={`/entity/${e.code}`} className="text-white hover:text-[#6366F1] font-medium">
+                  <Link href={`/entity/${e.code}`} className="text-white hover:text-[#14b8a6] font-medium">
                     {e.name}
                   </Link>
                   <span className="text-xs text-slate-600 ml-2">{e.code}</span>

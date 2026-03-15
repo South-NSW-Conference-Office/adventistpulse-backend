@@ -66,8 +66,8 @@ interface ViewState {
 }
 
 const CONF_COLORS: Record<string, string> = {
-  SNSW: '#6366F1', NNSW: '#3b82f6', GSYD: '#8b5cf6', VIC: '#10b981',
-  SQ: '#f59e0b', NAC: '#ef4444', SA: '#6366f1', WAC: '#14b8a6', TAS: '#ec4899',
+  SNSW: '#14b8a6', NNSW: '#3b82f6', GSYD: '#8b5cf6', VIC: '#10b981',
+  SQ: '#f59e0b', NAC: '#ef4444', SA: '#14b8a6', WAC: '#14b8a6', TAS: '#ec4899',
 };
 
 const DIVISION_TERRITORY_MAP: Record<string, string[]> = {
@@ -781,7 +781,7 @@ export default function MapExplorer() {
         const count = c.getChildCount();
         const size = count > 50 ? 40 : count > 10 ? 30 : 20;
         return L.divIcon({
-          html: `<div style="background:#6366F1;color:#fff;border-radius:50%;width:${size}px;height:${size}px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;border:2px solid #1a2332">${count}</div>`,
+          html: `<div style="background:#14b8a6;color:#fff;border-radius:50%;width:${size}px;height:${size}px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;border:2px solid #1a2332">${count}</div>`,
           className: '', iconSize: [size, size],
         });
       },
@@ -790,7 +790,7 @@ export default function MapExplorer() {
     conferenceChurches.forEach(church => {
       if (!church.lat || !church.lng) return;
       
-      const color = CONF_COLORS[church.conference] || '#6366F1';
+      const color = CONF_COLORS[church.conference] || '#14b8a6';
       const marker = L.circleMarker([church.lat, church.lng], {
         radius: 6, fillColor: color, fillOpacity: 0.9, color: '#1a2332', weight: 2,
       });
@@ -898,7 +898,7 @@ export default function MapExplorer() {
                 }}
                 className={`transition-colors ${
                   i === breadcrumbs.length - 1 
-                    ? 'text-[#6366F1] font-semibold cursor-default' 
+                    ? 'text-[#14b8a6] font-semibold cursor-default' 
                     : 'text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white cursor-pointer'
                 }`}
                 disabled={i === breadcrumbs.length - 1}
@@ -941,7 +941,7 @@ export default function MapExplorer() {
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 placeholder="Find a church..."
-                className="w-full bg-white dark:bg-[#1f2b3d] border border-gray-200 dark:border-[#2a3a50] rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:border-[#6366F1]/50"
+                className="w-full bg-white dark:bg-[#1f2b3d] border border-gray-200 dark:border-[#2a3a50] rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:border-[#14b8a6]/50"
               />
               {searchResults.length > 0 && (
                 <div className="absolute top-full mt-1 w-full bg-white dark:bg-[#1f2b3d] border border-gray-200 dark:border-[#2a3a50] rounded-lg shadow-xl max-h-64 overflow-y-auto z-50">

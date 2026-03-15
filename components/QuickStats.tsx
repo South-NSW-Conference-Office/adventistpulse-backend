@@ -31,7 +31,7 @@ function StatItem({ label, value, accent }: StatItemProps) {
   return (
     <div className="flex flex-col items-center px-4 py-2 min-w-[100px]">
       <span className={`text-xl md:text-2xl font-bold tabular-nums ${
-        accent ? 'text-[#6366F1]' : 'text-gray-900 dark:text-white'
+        accent ? 'text-[#14b8a6]' : 'text-gray-900 dark:text-white'
       }`}>
         {value}
       </span>

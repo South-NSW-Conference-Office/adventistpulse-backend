@@ -5,13 +5,13 @@ import { Logo } from './Logo';
 
 export function Footer() {
   return (
-    <footer className="border-t border-gray-200 dark:border-[#2a3a50] mt-20">
+    <footer className="mt-20">
       <div className="max-w-6xl mx-auto px-4 py-10">
         <div className="grid gap-8 sm:grid-cols-3">
           {/* Brand */}
           <div>
             <div className="flex items-center gap-2 mb-3">
-              <Logo size="sm" className="text-white" />
+              <Logo size="sm" className="text-gray-900 dark:text-white" />
             </div>
             <p className="text-xs text-gray-500 dark:text-slate-500 leading-relaxed">
               Growing comes from knowing. The global church health intelligence platform for the Seventh-day Adventist Church.

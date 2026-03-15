@@ -219,7 +219,7 @@ export function CommandSearch({ isOpen, onClose }: CommandSearchProps) {
                           onClick={() => navigate(entity.code)}
                           className={`w-full text-left px-4 py-3 flex items-center justify-between transition-colors ${
                             isSelected 
-                              ? 'bg-[#6366F1]/10 border-r-2 border-[#6366F1]' 
+                              ? 'bg-[#14b8a6]/10 border-r-2 border-[#14b8a6]' 
                               : 'hover:bg-gray-50 dark:hover:bg-[#1f2b3d]/50'
                           }`}
                         >
@@ -239,7 +239,7 @@ export function CommandSearch({ isOpen, onClose }: CommandSearchProps) {
                             )}
                             <span className={`px-2 py-1 text-xs font-medium rounded uppercase tracking-wide ${
                               level === 'division' 
-                                ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300'
+                                ? 'bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300'
                                 : level === 'union'
                                 ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
                                 : 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'

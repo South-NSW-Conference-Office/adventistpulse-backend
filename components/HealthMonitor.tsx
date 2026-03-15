@@ -176,7 +176,7 @@ export function HealthMonitor({ entities, level }: HealthMonitorProps) {
               onClick={() => setActiveTab('alerts')}
               className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
                 activeTab === 'alerts'
-                  ? 'bg-[#6366F1]/20 text-[#8b5cf6] border border-[#6366F1]/30'
+                  ? 'bg-[#14b8a6]/20 text-[#8b5cf6] border border-[#14b8a6]/30'
                   : 'text-slate-400 hover:text-gray-900 dark:hover:text-white'
               }`}
             >
@@ -186,7 +186,7 @@ export function HealthMonitor({ entities, level }: HealthMonitorProps) {
               onClick={() => setActiveTab('insights')}
               className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
                 activeTab === 'insights'
-                  ? 'bg-[#6366F1]/20 text-[#8b5cf6] border border-[#6366F1]/30'
+                  ? 'bg-[#14b8a6]/20 text-[#8b5cf6] border border-[#14b8a6]/30'
                   : 'text-slate-400 hover:text-gray-900 dark:hover:text-white'
               }`}
             >
@@ -202,7 +202,7 @@ export function HealthMonitor({ entities, level }: HealthMonitorProps) {
           <div className="space-y-4">
             {alerts.length === 0 ? (
               <div className="text-center py-8 text-slate-500">
-                <Sparkles className="w-6 h-6 mb-2 mx-auto text-indigo-400" />
+                <Sparkles className="w-6 h-6 mb-2 mx-auto text-teal-400" />
                 <p>No critical alerts detected</p>
                 <p className="text-xs mt-1">All entities appear to be performing within normal ranges</p>
               </div>

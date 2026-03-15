@@ -173,7 +173,7 @@ export default async function EntityPage({ params }: Props) {
               {localChurches.length > 0 && (
                 <>
                   {' · '}
-                  <a href="#local-churches" className="text-[#6366F1] hover:underline">
+                  <a href="#local-churches" className="text-[#14b8a6] hover:underline">
                     <Building2 className="w-4 h-4 inline-block mr-1" />{localChurches.length} churches
                   </a>
                 </>

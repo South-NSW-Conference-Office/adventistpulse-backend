@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
         subject: `New beta request — ${firstName} ${lastName} (${church})`,
         htmlContent: `
           <div style="font-family:sans-serif;max-width:600px;padding:24px">
-            <h3 style="color:#6366f1">New Pulse Beta Request</h3>
+            <h3 style="color:#14b8a6">New Pulse Beta Request</h3>
             <table style="width:100%;border-collapse:collapse;margin-top:16px">
               <tr><td style="padding:8px;color:#888;width:140px">Name</td><td style="padding:8px;font-weight:600">${firstName} ${lastName}</td></tr>
               <tr style="background:#f8f9fa"><td style="padding:8px;color:#888">Email</td><td style="padding:8px">${email}</td></tr>
@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
               ${pastorEmail ? `<tr style="background:#f8f9fa"><td style="padding:8px;color:#888">Pastor email</td><td style="padding:8px">${pastorEmail}</td></tr>` : ''}
             </table>
             <p style="margin-top:24px">
-              <a href="http://192.168.233.211:3099" style="background:#6366f1;color:white;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:600">
+              <a href="http://192.168.233.211:3099" style="background:#14b8a6;color:white;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:600">
                 Open Approval Dashboard →
               </a>
             </p>

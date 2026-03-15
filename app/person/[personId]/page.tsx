@@ -214,7 +214,7 @@ const PERSONS: Record<string, PersonData> = {
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 function ScoreRing({ score }: { score: number }) {
-  const color = score >= 75 ? '#10b981' : score >= 55 ? '#6366f1' : '#f59e0b'
+  const color = score >= 75 ? '#10b981' : score >= 55 ? '#14b8a6' : '#f59e0b'
   const r = 36, circ = 2 * Math.PI * r
   const dash = (score / 100) * circ
   return (
@@ -291,7 +291,7 @@ export default async function PersonPage({ params }: { params: Promise<{ personI
         {/* Hero */}
         <div className={cn('rounded-2xl p-6 border', tokens.bg.card, tokens.border.default)}>
           <div className="flex items-start gap-5 flex-wrap">
-            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shrink-0">
+            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center shrink-0">
               <span className="text-3xl font-bold text-white">
                 {person.name.split(' ').map(n => n[0]).join('')}
               </span>
@@ -397,14 +397,14 @@ export default async function PersonPage({ params }: { params: Promise<{ personI
           <p className={cn('text-xs mb-4', tokens.text.muted)}>Baptism rate per 100 members/year (non-COVID, normalised for conference size)</p>
           <div className="space-y-2">
             {/* Current */}
-            <div className="flex items-center gap-3 rounded-xl p-3 bg-indigo-500/10 border border-indigo-500/20">
-              <div className="w-6 h-6 rounded-full bg-indigo-500 flex items-center justify-center text-[10px] font-bold text-white shrink-0">★</div>
+            <div className="flex items-center gap-3 rounded-xl p-3 bg-teal-500/10 border border-teal-500/20">
+              <div className="w-6 h-6 rounded-full bg-teal-500 flex items-center justify-center text-[10px] font-bold text-white shrink-0">★</div>
               <div className="flex-1">
                 <span className={cn('text-sm font-semibold', tokens.text.heading)}>{person.name}</span>
                 <span className={cn('text-xs ml-2', tokens.text.muted)}>{person.career[0].startYear}–present</span>
               </div>
               <div className="text-right">
-                <div className="text-sm font-bold text-indigo-400">2.14%</div>
+                <div className="text-sm font-bold text-teal-400">2.14%</div>
                 <div className={cn('text-xs', tokens.text.muted)}>+54.7/yr</div>
               </div>
             </div>
@@ -415,7 +415,7 @@ export default async function PersonPage({ params }: { params: Promise<{ personI
                   p.dataStatus === 'available' ? 'bg-white/10 text-white' : 'bg-white/5 text-gray-500'
                 )}>{i + 1}</div>
                 <div className="flex-1">
-                  <span className={cn('text-sm', p.personId ? 'font-semibold text-indigo-400 hover:text-indigo-300 cursor-pointer' : tokens.text.muted)}>
+                  <span className={cn('text-sm', p.personId ? 'font-semibold text-teal-400 hover:text-teal-300 cursor-pointer' : tokens.text.muted)}>
                     {p.dataStatus === 'available' ? p.name : p.name}
                   </span>
                   <span className={cn('text-xs ml-2', tokens.text.muted)}>{p.years}</span>
@@ -444,7 +444,7 @@ export default async function PersonPage({ params }: { params: Promise<{ personI
           <div className="space-y-2">
             {person.peers.map((p, i) => (
               <div key={i} className={cn('flex items-center gap-3 rounded-xl p-3 border',
-                p.isSelf ? 'bg-indigo-500/10 border-indigo-500/20' : cn(tokens.bg.cardAlt, tokens.border.default)
+                p.isSelf ? 'bg-teal-500/10 border-teal-500/20' : cn(tokens.bg.cardAlt, tokens.border.default)
               )}>
                 <div className={cn('w-7 text-center text-sm font-bold tabular-nums shrink-0',
                   p.rank <= 3 ? 'text-amber-400' : tokens.text.muted
@@ -452,7 +452,7 @@ export default async function PersonPage({ params }: { params: Promise<{ personI
                 <div className="flex-1 min-w-0">
                   {p.personName ? (
                     <div className={cn('text-sm font-semibold', p.isSelf ? 'text-white' : tokens.text.heading)}>
-                      {p.personName} {p.isSelf && <span className="text-indigo-400 text-xs ml-1">← this profile</span>}
+                      {p.personName} {p.isSelf && <span className="text-teal-400 text-xs ml-1">← this profile</span>}
                     </div>
                   ) : (
                     <div className={cn('text-sm italic', tokens.text.muted)}>President extracting…</div>
@@ -463,11 +463,11 @@ export default async function PersonPage({ params }: { params: Promise<{ personI
                 </div>
                 <div className="flex gap-4 text-right shrink-0">
                   <div>
-                    <div className={cn('text-sm font-bold tabular-nums', p.isSelf ? 'text-indigo-400' : tokens.text.body)}>{p.avgBaptismRate}%</div>
+                    <div className={cn('text-sm font-bold tabular-nums', p.isSelf ? 'text-teal-400' : tokens.text.body)}>{p.avgBaptismRate}%</div>
                     <div className={cn('text-[10px]', tokens.text.muted)}>bapt rate</div>
                   </div>
                   <div className="w-16">
-                    <div className={cn('text-sm font-bold tabular-nums', p.isSelf ? 'text-indigo-400' : tokens.text.body)}>
+                    <div className={cn('text-sm font-bold tabular-nums', p.isSelf ? 'text-teal-400' : tokens.text.body)}>
                       {p.avgNetGain > 0 ? '+' : ''}{p.avgNetGain}
                     </div>
                     <div className={cn('text-[10px]', tokens.text.muted)}>net/yr</div>
@@ -485,7 +485,7 @@ export default async function PersonPage({ params }: { params: Promise<{ personI
           <div className="space-y-2">
             {person.spdRanking.map((p, i) => (
               <div key={i} className={cn('flex items-center gap-3 rounded-xl p-3 border',
-                p.isSelf ? 'bg-indigo-500/10 border-indigo-500/20' : cn(tokens.bg.cardAlt, tokens.border.default)
+                p.isSelf ? 'bg-teal-500/10 border-teal-500/20' : cn(tokens.bg.cardAlt, tokens.border.default)
               )}>
                 <div className={cn('w-7 text-center text-sm font-bold tabular-nums shrink-0',
                   p.rank === 1 ? 'text-amber-400' : p.rank <= 3 ? 'text-amber-400/70' : tokens.text.muted
@@ -493,7 +493,7 @@ export default async function PersonPage({ params }: { params: Promise<{ personI
                 <div className="flex-1 min-w-0">
                   {p.personName ? (
                     <div className={cn('text-sm font-semibold', p.isSelf ? 'text-white' : tokens.text.heading)}>
-                      {p.personName} {p.isSelf && <span className="text-indigo-400 text-xs ml-1">← this profile</span>}
+                      {p.personName} {p.isSelf && <span className="text-teal-400 text-xs ml-1">← this profile</span>}
                     </div>
                   ) : (
                     <div className={cn('text-sm italic', tokens.text.muted)}>President extracting…</div>
@@ -502,7 +502,7 @@ export default async function PersonPage({ params }: { params: Promise<{ personI
                     {p.entityName}{p.tenureStart ? ` · since ${p.tenureStart}` : ''}
                   </div>
                 </div>
-                <div className={cn('text-sm font-bold tabular-nums shrink-0', p.isSelf ? 'text-indigo-400' : tokens.text.body)}>
+                <div className={cn('text-sm font-bold tabular-nums shrink-0', p.isSelf ? 'text-teal-400' : tokens.text.body)}>
                   {p.avgBaptismRate}%
                 </div>
               </div>
@@ -516,8 +516,8 @@ export default async function PersonPage({ params }: { params: Promise<{ personI
         {/* Global comparison — Layer 4 */}
         <div className={cn('rounded-2xl p-6 border border-dashed', tokens.bg.cardAlt, tokens.border.default)}>
           <div className="flex items-start gap-3">
-            <div className="p-2 rounded-lg bg-indigo-500/10 shrink-0">
-              <Users className="w-4 h-4 text-indigo-400" />
+            <div className="p-2 rounded-lg bg-teal-500/10 shrink-0">
+              <Users className="w-4 h-4 text-teal-400" />
             </div>
             <div>
               <h2 className={cn('text-sm font-semibold mb-1', tokens.text.heading)}>vs Global — all conferences worldwide</h2>
@@ -538,7 +538,7 @@ export default async function PersonPage({ params }: { params: Promise<{ personI
               <div key={i} className="flex gap-4">
                 <div className="flex flex-col items-center">
                   <div className={cn('w-3 h-3 rounded-full mt-1 shrink-0',
-                    role.isCurrent ? 'bg-emerald-400' : 'bg-indigo-500')} />
+                    role.isCurrent ? 'bg-emerald-400' : 'bg-teal-500')} />
                   {i < person.career.length - 1 && <div className="w-px flex-1 bg-white/10 mt-1" />}
                 </div>
                 <div className={cn('flex-1 pb-4 rounded-xl p-4 border -mt-1',
@@ -548,7 +548,7 @@ export default async function PersonPage({ params }: { params: Promise<{ personI
                     <div>
                       <p className={cn('font-semibold', tokens.text.heading)}>{role.title}</p>
                       <Link href={`/entity/${role.entityCode.toLowerCase()}`}
-                        className="text-sm text-indigo-400 hover:text-indigo-300 transition-colors">
+                        className="text-sm text-teal-400 hover:text-teal-300 transition-colors">
                         {role.entityName}
                       </Link>
                     </div>
@@ -573,7 +573,7 @@ export default async function PersonPage({ params }: { params: Promise<{ personI
             <div className={cn('mt-4 pt-4 border-t flex items-center justify-between text-sm', tokens.border.default)}>
               <span className={tokens.text.muted}>Preceded by</span>
               <Link href={`/person/${person.predecessor.personId}`}
-                className="flex items-center gap-2 text-indigo-400 hover:text-indigo-300 transition-colors">
+                className="flex items-center gap-2 text-teal-400 hover:text-teal-300 transition-colors">
                 {person.predecessor.name}
                 <span className={cn('text-xs', tokens.text.muted)}>
                   ({person.predecessor.title}, {person.predecessor.yearsServed} yrs)

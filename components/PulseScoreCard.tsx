@@ -9,7 +9,7 @@ interface PulseScoreCardProps {
 
 const GRADE_COLORS = {
   'A': 'text-emerald-400',
-  'B': 'text-[#6366F1]',
+  'B': 'text-[#14b8a6]',
   'C': 'text-amber-400',
   'D': 'text-orange-400',
   'F': 'text-red-400',
@@ -18,7 +18,7 @@ const GRADE_COLORS = {
 
 const GRADE_BG = {
   'A': 'bg-emerald-500/10 border-emerald-500/30',
-  'B': 'bg-[#6366F1]/10 border-[#6366F1]/30',
+  'B': 'bg-[#14b8a6]/10 border-[#14b8a6]/30',
   'C': 'bg-amber-500/10 border-amber-500/30',
   'D': 'bg-orange-500/10 border-orange-500/30',
   'F': 'bg-red-500/10 border-red-500/30',

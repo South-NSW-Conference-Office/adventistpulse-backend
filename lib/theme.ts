@@ -4,9 +4,9 @@ export const tokens = {
     card: 'bg-white dark:bg-[#1f2b3d]',
     cardHover: 'hover:bg-gray-50 dark:hover:bg-[#253347]',
     cardAlt: 'bg-gray-50 dark:bg-[#162030]',
-    accent: 'bg-[#6366f1]',
-    accentHover: 'hover:bg-[#4f46e5]',
-    accentSoft: 'bg-[#6366f1]/10',
+    accent: 'bg-[#14b8a6]',
+    accentHover: 'hover:bg-[#0d9488]',
+    accentSoft: 'bg-[#14b8a6]/10',
     success: 'bg-green-50 dark:bg-green-900/20',
     warning: 'bg-yellow-50 dark:bg-yellow-900/20',
     danger: 'bg-red-50 dark:bg-red-900/20',
@@ -15,7 +15,7 @@ export const tokens = {
     heading: 'text-gray-900 dark:text-white',
     body: 'text-gray-600 dark:text-gray-400',
     muted: 'text-gray-400 dark:text-gray-500',
-    accent: 'text-[#6366f1]',
+    accent: 'text-[#14b8a6]',
     success: 'text-green-600 dark:text-green-400',
     warning: 'text-yellow-600 dark:text-yellow-400',
     danger: 'text-red-600 dark:text-red-400',
@@ -24,8 +24,8 @@ export const tokens = {
   },
   border: {
     default: 'border-gray-200 dark:border-[#2a3a50]',
-    accent: 'border-[#6366f1]',
-    hover: 'hover:border-[#6366f1]/50',
+    accent: 'border-[#14b8a6]',
+    hover: 'hover:border-[#14b8a6]/50',
   },
   // Traffic light system — these must NEVER clash with accent
   status: {
@@ -46,7 +46,7 @@ export const tokens = {
     },
   },
   chart: {
-    primary: '#6366f1',    // indigo — main data line
+    primary: '#14b8a6',    // indigo — main data line
     secondary: '#22c55e',  // green — comparison/positive
     tertiary: '#ef4444',   // red — negative/population
     quaternary: '#eab308', // yellow — warning

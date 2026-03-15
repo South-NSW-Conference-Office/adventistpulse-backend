@@ -8,7 +8,7 @@ import { tokens, cn } from '@/lib/theme';
 import DataSourceBadge, { type DataSourceMeta } from './DataSourceBadge';
 
 const TEAL = '#00D4AA';
-const INDIGO = '#6366F1';
+const INDIGO = '#14b8a6';
 const PURPLE = '#8B5CF6';
 const AMBER = '#F59E0B';
 
@@ -151,7 +151,7 @@ const funnelData = [
   { stage: 'First Visit',        people: 42, fill: '#a5b4fc' },
   { stage: 'Return Visit',       people: 18, fill: '#818cf8' },
   { stage: 'Regular Attendance', people: 8,  fill: INDIGO },
-  { stage: 'Bible Study',        people: 4,  fill: '#4f46e5' },
+  { stage: 'Bible Study',        people: 4,  fill: '#0d9488' },
   { stage: 'Baptism',            people: 2,  fill: '#3730a3' },
 ];
 
