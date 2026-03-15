@@ -2,11 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { ThemeToggle } from './ThemeToggle';
 import { useTheme } from './ThemeProvider';
 import { CommandSearch } from './CommandSearch';
 import { Logo } from './Logo';
-import { BarChart3, FileText, Globe2, Microscope, Search, Earth, DollarSign, Wrench } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { tokens, cn } from '@/lib/theme';
+import { BarChart3, FileText, Globe2, Microscope, Search, Earth, DollarSign, Wrench, User, LogOut } from 'lucide-react';
 
 const PILLARS = [
   {
@@ -51,6 +54,13 @@ export function NavBar() {
   const [openPillar, setOpenPillar] = useState<string | null>(null);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { theme } = useTheme();
+  const { user, logout } = useAuth();
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    await logout();
+    router.push('/');
+  };
 
   // Global CMD+K / Ctrl+K handler
   useEffect(() => {
@@ -131,6 +141,33 @@ export function NavBar() {
 
 
 
+          {/* Auth */}
+          <div className="ml-2 flex items-center gap-2">
+            {user ? (
+              <>
+                <span className={cn('text-xs hidden lg:block max-w-[120px] truncate', tokens.text.muted)}>
+                  {user.name ?? user.email}
+                </span>
+                <button
+                  onClick={handleSignOut}
+                  className={cn('flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs border transition-colors', tokens.border.default, tokens.text.body, 'hover:bg-gray-100 dark:hover:bg-[#253344]')}
+                  title="Sign out"
+                >
+                  <LogOut className="w-3.5 h-3.5" /> Sign out
+                </button>
+              </>
+            ) : (
+              <>
+                <Link href="/login" className={cn('px-3 py-1.5 rounded-full text-xs border transition-colors', tokens.border.default, tokens.text.body, 'hover:bg-gray-100 dark:hover:bg-[#253344]')}>
+                  Sign in
+                </Link>
+                <Link href="/register" className="px-3 py-1.5 rounded-full text-xs font-semibold text-white bg-[#6366f1] hover:bg-[#4f46e5] transition-colors">
+                  Register
+                </Link>
+              </>
+            )}
+          </div>
+
           {/* Theme Toggle */}
           <div className="ml-2">
             <ThemeToggle />
@@ -192,6 +229,26 @@ export function NavBar() {
               </div>
             ))}
 
+            {/* Auth — mobile */}
+            <div className={cn('pt-3 mt-3 border-t', tokens.border.default)}>
+              {user ? (
+                <div className="space-y-2">
+                  <p className={cn('text-xs', tokens.text.muted)}>Signed in as {user.name ?? user.email}</p>
+                  <button onClick={handleSignOut} className={cn('flex items-center gap-2 text-sm font-medium', tokens.text.body)}>
+                    <LogOut className="w-4 h-4" /> Sign out
+                  </button>
+                </div>
+              ) : (
+                <div className="flex gap-2">
+                  <Link href="/login" onClick={() => setIsOpen(false)} className={cn('flex-1 text-center py-2 rounded-full text-sm border', tokens.border.default, tokens.text.body)}>
+                    Sign in
+                  </Link>
+                  <Link href="/register" onClick={() => setIsOpen(false)} className="flex-1 text-center py-2 rounded-full text-sm font-semibold text-white bg-[#6366f1]">
+                    Register
+                  </Link>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
