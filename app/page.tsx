@@ -28,7 +28,7 @@ export default function Home() {
       {/* Hero — full-bleed map covering full viewport incl. NavBar */}
       <div className="relative w-full overflow-hidden" style={{ height: '100vh' }}>
         {/* Map fills entire background */}
-        <div className="absolute inset-0">
+        <div className="absolute inset-0" style={{ zIndex: 0 }}>
           <HarvestMapLoader fill />
         </div>
 
