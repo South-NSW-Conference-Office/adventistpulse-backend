@@ -25,6 +25,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
+      <head>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossOrigin="" />
+      </head>
       <body
         className={`${poppins.variable} font-[family-name:var(--font-poppins)] antialiased bg-[#F8F9FA] dark:bg-[#1a2332] min-h-screen`}
       >

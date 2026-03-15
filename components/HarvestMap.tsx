@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState, useRef, useCallback, useMemo } from 'react';
-import type { FeatureCollection, Feature } from 'geojson';
+import { useEffect, useLayoutEffect, useRef, useState, useMemo } from 'react';
+import type { FeatureCollection } from 'geojson';
 
 type ViewMode = 'where-we-are' | 'where-we-are-not';
 
@@ -22,17 +22,17 @@ interface MissionData {
 }
 
 function getWhereWeAreColor(ratio: number, presence: string): string {
-  if (ratio === 0 || presence === 'none') return '#374151';     // Nothing — gray
-  if (ratio < 0.001 || presence === 'minimal' || presence === 'limited') return '#4d7c0f'; // Weak — dim green
-  if (ratio < 0.01) return '#65a30d';                           // Medium — green
-  return '#84cc16';                                              // Strong — bright green
+  if (ratio === 0 || presence === 'none') return '#374151';
+  if (ratio < 0.001 || presence === 'minimal' || presence === 'limited') return '#4d7c0f';
+  if (ratio < 0.01) return '#65a30d';
+  return '#84cc16';
 }
 
 function getWhereWeAreNotColor(ratio: number, presence: string): string {
-  if (ratio === 0 || presence === 'none') return '#991b1b';     // Nothing — dark red
-  if (ratio < 0.001 || presence === 'minimal' || presence === 'limited') return '#ef4444'; // Weak — red
-  if (ratio < 0.01) return '#fca5a5';                           // Medium — light red
-  return '#e5e7eb';                                              // Strong — gray (reached)
+  if (ratio === 0 || presence === 'none') return '#991b1b';
+  if (ratio < 0.001 || presence === 'minimal' || presence === 'limited') return '#ef4444';
+  if (ratio < 0.01) return '#fca5a5';
+  return '#e5e7eb';
 }
 
 function formatNumber(n: number): string {
@@ -43,18 +43,17 @@ function formatNumber(n: number): string {
 
 function formatRatio(ratio: number): string {
   if (ratio === 0) return 'None';
-  if (ratio < 0.0001) return '1:' + Math.round(1 / ratio).toLocaleString();
   return '1:' + Math.round(1 / ratio).toLocaleString();
 }
 
 export default function HarvestMap({ fill = false }: { fill?: boolean }) {
-  const mapRef = useRef<HTMLDivElement>(null);
+  const mapDivRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<any>(null);
+  const geoLayerRef = useRef<any>(null);
   const [viewMode, setViewMode] = useState<ViewMode>('where-we-are');
   const [missionData, setMissionData] = useState<MissionData | null>(null);
   const [geoData, setGeoData] = useState<FeatureCollection | null>(null);
   const [leafletReady, setLeafletReady] = useState(false);
-  const mapInstanceRef = useRef<any>(null);
-  const geoLayerRef = useRef<any>(null);
 
   // Load data
   useEffect(() => {
@@ -74,7 +73,6 @@ export default function HarvestMap({ fill = false }: { fill?: boolean }) {
     return m;
   }, [missionData]);
 
-  // Filter out Antarctica (no mission data)
   const fixedGeoData = useMemo(() => {
     if (!geoData) return null;
     return {
@@ -83,12 +81,13 @@ export default function HarvestMap({ fill = false }: { fill?: boolean }) {
     };
   }, [geoData]);
 
-  // Init map
-  useEffect(() => {
-    if (!mapRef.current || mapInstanceRef.current) return;
+  // Init Leaflet — useLayoutEffect so DOM is ready with real dimensions
+  useLayoutEffect(() => {
+    if (!mapDivRef.current || mapInstanceRef.current) return;
 
     import('leaflet').then(L => {
-      // Fix default icon issue
+      if (!mapDivRef.current) return;
+
       delete (L.Icon.Default.prototype as any)._getIconUrl;
       L.Icon.Default.mergeOptions({
         iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
@@ -96,11 +95,9 @@ export default function HarvestMap({ fill = false }: { fill?: boolean }) {
         shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
       });
 
-      const southWest = L.latLng(-60, -180);
-      const northEast = L.latLng(85, 180);
-      const bounds = L.latLngBounds(southWest, northEast);
+      const bounds = L.latLngBounds(L.latLng(-60, -180), L.latLng(85, 180));
 
-      const map = L.map(mapRef.current!, {
+      const map = L.map(mapDivRef.current, {
         center: [20, 0],
         zoom: 2,
         minZoom: 2,
@@ -115,14 +112,18 @@ export default function HarvestMap({ fill = false }: { fill?: boolean }) {
       L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
         subdomains: 'abcd',
         noWrap: true,
-        bounds: bounds,
+        bounds,
       }).addTo(map);
 
       L.control.zoom({ position: 'bottomright' }).addTo(map);
 
       mapInstanceRef.current = map;
-      // Force Leaflet to recalculate container size after mount
-      setTimeout(() => map.invalidateSize(), 50);
+
+      // Force size recalculation after paint
+      requestAnimationFrame(() => {
+        map.invalidateSize(true);
+      });
+
       setLeafletReady(true);
     });
 
@@ -130,8 +131,16 @@ export default function HarvestMap({ fill = false }: { fill?: boolean }) {
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
+        setLeafletReady(false);
       }
     };
+  }, []);
+
+  // Invalidate size on window resize
+  useEffect(() => {
+    const onResize = () => mapInstanceRef.current?.invalidateSize(true);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
   }, []);
 
   // Render GeoJSON layer
@@ -141,25 +150,16 @@ export default function HarvestMap({ fill = false }: { fill?: boolean }) {
     if (!map) return;
 
     import('leaflet').then(L => {
-      if (geoLayerRef.current) {
-        map.removeLayer(geoLayerRef.current);
-      }
+      if (geoLayerRef.current) map.removeLayer(geoLayerRef.current);
 
       const layer = L.geoJSON(fixedGeoData as any, {
         style: (feature: any) => {
           const name = feature?.properties?.country;
           const d = name ? dataMap.get(name) : null;
-          const ratio = d?.ratio ?? 0;
-          const presence = d?.presence ?? 'none';
           const fillColor = viewMode === 'where-we-are'
-            ? getWhereWeAreColor(ratio, presence)
-            : getWhereWeAreNotColor(ratio, presence);
-          return {
-            fillColor,
-            fillOpacity: 0.85,
-            color: '#1f2937',
-            weight: 0.8,
-          };
+            ? getWhereWeAreColor(d?.ratio ?? 0, d?.presence ?? 'none')
+            : getWhereWeAreNotColor(d?.ratio ?? 0, d?.presence ?? 'none');
+          return { fillColor, fillOpacity: 0.85, color: '#1f2937', weight: 0.8 };
         },
         onEachFeature: (feature: any, layer: any) => {
           const name = feature?.properties?.country;
@@ -167,43 +167,20 @@ export default function HarvestMap({ fill = false }: { fill?: boolean }) {
 
           layer.on('mouseover', function (this: any, e: any) {
             this.setStyle({ weight: 2, color: '#6366f1', fillOpacity: 0.95 });
-            if (e.target.bringToFront) e.target.bringToFront();
+            e.target.bringToFront?.();
           });
           layer.on('mouseout', function (this: any) {
-            if (geoLayerRef.current) geoLayerRef.current.resetStyle(this);
+            geoLayerRef.current?.resetStyle(this);
           });
 
-          let tooltip = '';
-          if (viewMode === 'where-we-are') {
-            if (d && d.ratio > 0) {
-              tooltip = `<div style="font-family:system-ui;font-size:13px;line-height:1.5">
-                <strong>${name}</strong><br/>
-                Members: ${formatNumber(d.adventist_members)}<br/>
-                Churches: ${formatNumber(d.churches)}<br/>
-                Ratio: ${formatRatio(d.ratio)}
-              </div>`;
-            } else {
-              tooltip = `<div style="font-family:system-ui;font-size:13px;line-height:1.5">
-                <strong>${name || 'Unknown'}</strong><br/>
-                ${d ? 'No established presence' : 'No data'}
-              </div>`;
-            }
-          } else {
-            if (d) {
-              const urgency = d.presence === 'none' ? '🔴 No Adventist presence'
-                : d.presence === 'minimal' ? '🟠 Minimal presence'
-                : d.presence === 'limited' ? '🟡 Limited presence'
-                : '🟢 Established presence';
-              tooltip = `<div style="font-family:system-ui;font-size:13px;line-height:1.5">
-                <strong>${name}</strong><br/>
-                Population: ${formatNumber(d.population)}<br/>
-                ${urgency}<br/>
-                ${d.ratio > 0 ? 'Ratio: ' + formatRatio(d.ratio) : ''}
-              </div>`;
-            } else {
-              tooltip = `<div style="font-family:system-ui;font-size:13px"><strong>${name || 'Unknown'}</strong><br/>No data</div>`;
-            }
-          }
+          const tooltip = viewMode === 'where-we-are'
+            ? d && d.ratio > 0
+              ? `<div style="font-family:sans-serif;font-size:13px;line-height:1.5"><strong>${name}</strong><br/>Members: ${formatNumber(d.adventist_members)}<br/>Churches: ${formatNumber(d.churches)}<br/>Ratio: ${formatRatio(d.ratio)}</div>`
+              : `<div style="font-family:sans-serif;font-size:13px"><strong>${name || 'Unknown'}</strong><br/>${d ? 'No established presence' : 'No data'}</div>`
+            : d
+              ? `<div style="font-family:sans-serif;font-size:13px;line-height:1.5"><strong>${name}</strong><br/>Population: ${formatNumber(d.population)}<br/>${d.presence === 'none' ? '🔴 No presence' : d.presence === 'minimal' ? '🟠 Minimal' : d.presence === 'limited' ? '🟡 Limited' : '🟢 Established'}</div>`
+              : `<div style="font-family:sans-serif;font-size:13px"><strong>${name || 'Unknown'}</strong><br/>No data</div>`;
+
           layer.bindTooltip(tooltip, { sticky: true, className: 'harvest-tooltip' });
         },
       });
@@ -213,17 +190,16 @@ export default function HarvestMap({ fill = false }: { fill?: boolean }) {
     });
   }, [leafletReady, fixedGeoData, missionData, viewMode, dataMap]);
 
+  // Outer container: use 100vw/100vh directly when fill=true — no CSS chain
+  const outerStyle: React.CSSProperties = fill
+    ? { position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }
+    : { position: 'relative', width: '100%', height: '70vh', minHeight: 400 };
+
   return (
-    <div className={fill ? "absolute inset-0" : "relative w-full"} style={fill ? {} : { height: '70vh', minHeight: '400px' }}>
-      {/* Leaflet CSS */}
-      <link
-        rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        crossOrigin=""
-      />
+    <div style={outerStyle}>
       <style>{`
         .harvest-tooltip {
-          background: rgba(17, 24, 39, 0.95) !important;
+          background: rgba(17,24,39,0.95) !important;
           color: white !important;
           border: 1px solid #4b5563 !important;
           border-radius: 8px !important;
@@ -232,61 +208,57 @@ export default function HarvestMap({ fill = false }: { fill?: boolean }) {
         }
         .harvest-tooltip::before { display: none !important; }
         .leaflet-control-zoom a {
-          background: rgba(31, 43, 61, 0.9) !important;
+          background: rgba(31,43,61,0.9) !important;
           color: white !important;
           border-color: #2a3a50 !important;
         }
       `}</style>
 
+      {/* Leaflet container — explicit 100% of the outer div */}
       <div
-        ref={mapRef}
-        className={fill ? "w-full h-full overflow-hidden" : "w-full h-full rounded-xl border border-[#2a3a50] overflow-hidden"}
-        style={{ background: '#1a1a2e' }}
+        ref={mapDivRef}
+        style={{
+          position: 'absolute',
+          top: 0, left: 0, right: 0, bottom: 0,
+          background: '#1a1a2e',
+        }}
       />
 
       {/* Toggle */}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[1000] flex bg-[#1f2b3d]/95 backdrop-blur rounded-full p-1 border border-[#2a3a50] shadow-lg">
-        <button
-          onClick={() => setViewMode('where-we-are')}
-          className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-            viewMode === 'where-we-are'
-              ? 'bg-[#6366f1] text-white shadow'
-              : 'text-gray-400 hover:text-white'
-          }`}
-        >
-          🌿 Where We Are
-        </button>
-        <button
-          onClick={() => setViewMode('where-we-are-not')}
-          className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-            viewMode === 'where-we-are-not'
-              ? 'bg-[#6366f1] text-white shadow'
-              : 'text-gray-400 hover:text-white'
-          }`}
-        >
-          🔥 Where We Are Not
-        </button>
+      <div style={{ position: 'absolute', top: 16, left: '50%', transform: 'translateX(-50%)', zIndex: 1000 }}
+        className="flex bg-[#1f2b3d]/95 backdrop-blur rounded-full p-1 border border-[#2a3a50] shadow-lg">
+        {(['where-we-are', 'where-we-are-not'] as ViewMode[]).map(mode => (
+          <button key={mode} onClick={() => setViewMode(mode)}
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${viewMode === mode ? 'bg-[#6366f1] text-white shadow' : 'text-gray-400 hover:text-white'}`}>
+            {mode === 'where-we-are' ? '🌿 Where We Are' : '🔥 Where We Are Not'}
+          </button>
+        ))}
       </div>
 
       {/* Legend */}
-      <div className="absolute bottom-6 left-4 z-[1000] bg-[#1f2b3d]/95 backdrop-blur rounded-lg p-3 border border-[#2a3a50] shadow-lg">
+      <div style={{ position: 'absolute', bottom: 24, left: 16, zIndex: 1000 }}
+        className="bg-[#1f2b3d]/95 backdrop-blur rounded-lg p-3 border border-[#2a3a50] shadow-lg">
         <div className="text-xs text-gray-400 mb-2 font-medium">
           {viewMode === 'where-we-are' ? 'Adventist Presence' : 'Unreached Level'}
         </div>
         <div className="flex items-center gap-2">
           {viewMode === 'where-we-are' ? (
             <>
-              <div className="flex items-center gap-1"><div className="w-4 h-3 rounded-sm" style={{ background: '#84cc16' }} /><span className="text-[10px] text-gray-400">Strong</span></div>
-              <div className="flex items-center gap-1"><div className="w-4 h-3 rounded-sm" style={{ background: '#65a30d' }} /><span className="text-[10px] text-gray-400">Medium</span></div>
-              <div className="flex items-center gap-1"><div className="w-4 h-3 rounded-sm" style={{ background: '#4d7c0f' }} /><span className="text-[10px] text-gray-400">Weak</span></div>
-              <div className="flex items-center gap-1"><div className="w-4 h-3 rounded-sm" style={{ background: '#374151' }} /><span className="text-[10px] text-gray-400">None</span></div>
+              {[['#84cc16','Strong'],['#65a30d','Medium'],['#4d7c0f','Weak'],['#374151','None']].map(([c,l]) => (
+                <div key={l} className="flex items-center gap-1">
+                  <div className="w-4 h-3 rounded-sm" style={{ background: c }} />
+                  <span className="text-[10px] text-gray-400">{l}</span>
+                </div>
+              ))}
             </>
           ) : (
             <>
-              <div className="flex items-center gap-1"><div className="w-4 h-3 rounded-sm" style={{ background: '#991b1b' }} /><span className="text-[10px] text-gray-400">None</span></div>
-              <div className="flex items-center gap-1"><div className="w-4 h-3 rounded-sm" style={{ background: '#ef4444' }} /><span className="text-[10px] text-gray-400">Weak</span></div>
-              <div className="flex items-center gap-1"><div className="w-4 h-3 rounded-sm" style={{ background: '#fca5a5' }} /><span className="text-[10px] text-gray-400">Medium</span></div>
-              <div className="flex items-center gap-1"><div className="w-4 h-3 rounded-sm" style={{ background: '#e5e7eb' }} /><span className="text-[10px] text-gray-400">Reached</span></div>
+              {[['#991b1b','None'],['#ef4444','Weak'],['#fca5a5','Medium'],['#e5e7eb','Reached']].map(([c,l]) => (
+                <div key={l} className="flex items-center gap-1">
+                  <div className="w-4 h-3 rounded-sm" style={{ background: c }} />
+                  <span className="text-[10px] text-gray-400">{l}</span>
+                </div>
+              ))}
             </>
           )}
         </div>
