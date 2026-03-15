@@ -22,7 +22,7 @@ export function GatedSection({ children, title, description }: GatedSectionProps
   }
 
   // Logged in but pending
-  if (user && user.accountStatus !== 'approved') {
+  if (user && (user.accountStatus as string) !== 'approved') {
     return (
       <div className={cn('relative rounded-xl overflow-hidden border', tokens.border.default)}>
         <div aria-hidden="true" style={{ filter: 'blur(4px)', userSelect: 'none', pointerEvents: 'none' }} className={cn('p-5', tokens.bg.card)}>
