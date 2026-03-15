@@ -1,0 +1,860 @@
+{
+  "generated": "2026-03-01",
+  "version": "1.0",
+  "methodology": "Insights derived from AdventistPulse LRP research files (001-040), ACNC 2023 AIS data, GC Annual Statistical Report 2024, and adventiststatistics.org. Confidence levels follow AdventistPulse Intel Card methodology.",
+  "confidence_key": {
+    "verified": "🟢 Primary authoritative source, confirmed",
+    "reported": "🟡 Published by organisation, not independently verified",
+    "community": "🔵 Submitted by Ground Truth contributors",
+    "inferred": "🟠 Calculated/estimated from available data",
+    "disputed": "🔴 Under community challenge"
+  },
+  "insights": [
+    {
+      "entity_level": "global",
+      "entity_name": "General Conference",
+      "entity_code": "GC",
+      "insights": [
+        {
+          "type": "context",
+          "title": "23.7 Million Members — But How Many Are Active?",
+          "body": "The Adventist Church reports 23.7 million members globally (2024), but 1.75 million names have been removed from rolls through audit adjustments since 2019. This data integrity reckoning — quietly underway — suggests the real active membership may be lower. AdventistPulse tracks this correction as a positive step toward honest metrics.",
+          "confidence": "verified",
+          "source_lrp": "LRP-014",
+          "metric_context": "membership_total"
+        },
+        {
+          "type": "comparison",
+          "title": "Growth Concentrated in the Global South",
+          "body": "Global growth of 3.95% (2024) masks a dramatic geographic divide. Sub-Saharan Africa and the Inter-American Division drive most numerical growth, while Western divisions (NAD, TED, EUD) hover near zero or negative. The church's centre of gravity has decisively shifted south and east.",
+          "confidence": "verified",
+          "source_lrp": "LRP-035",
+          "metric_context": "membership_growth"
+        },
+        {
+          "type": "trend",
+          "title": "The Youth Retention Crisis Is Global",
+          "body": "An estimated 70% of Adventist young people leave the church at some point, though return rates vary significantly by region and culture. High-retention communities (Korean, Pacific Islander, Orthodox-influenced) offer transferable lessons — see LRP-019 on cultural success factors.",
+          "confidence": "reported",
+          "source_lrp": "LRP-002",
+          "metric_context": "youth_retention"
+        },
+        {
+          "type": "research",
+          "title": "40 Living Research Projects Tracking Church Health",
+          "body": "AdventistPulse maintains 40 Living Research Projects (LRPs) covering youth retention, educational effectiveness, financial models, ministry approaches, and mission metrics. Each entity page links to relevant research — turning data into understanding.",
+          "confidence": "verified",
+          "source_lrp": "LRP-registry",
+          "metric_context": "research_overview"
+        },
+        {
+          "type": "opportunity",
+          "title": "Measurement Drives Mission",
+          "body": "The church invests billions annually in education, health, and development — but lacks systematic outcome measurement linking investment to spiritual formation. The opportunity: build the measurement infrastructure that turns good intentions into evidence-based strategy.",
+          "confidence": "inferred",
+          "source_lrp": "LRP-010",
+          "metric_context": "mission_effectiveness"
+        }
+      ]
+    },
+    {
+      "entity_level": "division",
+      "entity_name": "South Pacific Division",
+      "entity_code": "SPD",
+      "insights": [
+        {
+          "type": "context",
+          "title": "Highest Income Per Entity in Global Adventism",
+          "body": "SPD's $19.9M average income per registered entity is the highest of any Adventist division globally, driven by Australia's institutional network (Sanitarium, Adventist schools, aged care). This concentration creates both operational strength and structural vulnerability — see LRP-009 on financial model dependency.",
+          "confidence": "verified",
+          "source_lrp": "LRP-009",
+          "metric_context": "income_per_entity"
+        },
+        {
+          "type": "comparison",
+          "title": "PNG Dominates SPD Membership",
+          "body": "Papua New Guinea accounts for 72.8% of SPD membership (623,276 of 855,510). Australia contributes just 7.7% despite being the administrative and financial centre. Any SPD-wide statistic must be disaggregated to be meaningful for Australian planning.",
+          "confidence": "verified",
+          "source_lrp": "LRP-035",
+          "metric_context": "membership_composition"
+        },
+        {
+          "type": "trend",
+          "title": "Australia's Growth Rate: Best in a Decade",
+          "body": "Australia's 1.73% growth rate in 2024 is the strongest in at least 11 years, recovering fully from COVID disruption. While below the global average (3.95%), it outperforms all Western divisions and represents genuine momentum.",
+          "confidence": "verified",
+          "source_lrp": "LRP-035",
+          "metric_context": "membership_growth"
+        },
+        {
+          "type": "research",
+          "title": "Asset Efficiency: Best in Class Among Australian Denominations",
+          "body": "Adventist's 1.33x asset-to-income ratio is the lowest (most efficient) of any major Australian denomination. Presbyterian is 3.76x, Baptist 3.02x, Anglican 2.71x. Whether this reflects lean operations or data gaps, it's a distinctive structural feature worth understanding.",
+          "confidence": "reported",
+          "source_lrp": "LRP-009",
+          "metric_context": "asset_efficiency"
+        },
+        {
+          "type": "opportunity",
+          "title": "Education as Mission — The $400M Question",
+          "body": "Adventist schools generate ~$400M annually in Australia, making education the denomination's largest financial activity. The critical unanswered question: does this investment produce lifelong Adventists? If yes, it's the best evangelistic spend in Australian Christianity. LRP-003 is tracking this.",
+          "confidence": "inferred",
+          "source_lrp": "LRP-003",
+          "metric_context": "education_roi"
+        }
+      ]
+    },
+    {
+      "entity_level": "division",
+      "entity_name": "North American Division",
+      "entity_code": "NAD",
+      "insights": [
+        {
+          "type": "context",
+          "title": "Largest Western Division, Slowest Growth",
+          "body": "NAD remains the wealthiest division with extensive institutional infrastructure (universities, hospitals, media), but growth has slowed to approximately 0.3%. Immigration-driven congregations (Hispanic, Haitian, Korean) account for most new growth.",
+          "confidence": "reported",
+          "source_lrp": "LRP-019",
+          "metric_context": "membership_growth"
+        },
+        {
+          "type": "comparison",
+          "title": "Institutional Depth Unmatched Globally",
+          "body": "NAD operates more universities, hospitals, and media entities per member than any other division. This institutional density parallels Australia's pattern but at much larger scale — creating similar questions about mission return on investment.",
+          "confidence": "reported",
+          "source_lrp": "LRP-012",
+          "metric_context": "institutional_density"
+        },
+        {
+          "type": "trend",
+          "title": "Cultural Diversity Reshaping the Division",
+          "body": "NAD's fastest-growing segments are immigrant communities that bring high-retention cultural practices. Korean and Hispanic Adventist communities show retention rates significantly above the Anglo average — a pattern also observed in SPD's Pacific Islander congregations.",
+          "confidence": "reported",
+          "source_lrp": "LRP-019",
+          "metric_context": "cultural_composition"
+        },
+        {
+          "type": "opportunity",
+          "title": "Learning from High-Retention Subcultures",
+          "body": "NAD's multicultural congregations are a natural laboratory for retention research. Communities with strong intergenerational faith practices consistently outperform — suggesting the answer to youth retention may already exist within the division's own diverse membership.",
+          "confidence": "inferred",
+          "source_lrp": "LRP-006",
+          "metric_context": "youth_retention"
+        }
+      ]
+    },
+    {
+      "entity_level": "division",
+      "entity_name": "Trans-European Division",
+      "entity_code": "TED",
+      "insights": [
+        {
+          "type": "context",
+          "title": "Navigating Post-Christian Europe",
+          "body": "TED operates in some of the world's most secular societies, where religious affiliation is declining across all denominations. Adventist membership has been flat to slightly negative (-0.2%), mirroring broader European secularisation trends.",
+          "confidence": "reported",
+          "source_lrp": "LRP-020",
+          "metric_context": "membership_growth"
+        },
+        {
+          "type": "comparison",
+          "title": "Smallest Western Division by Membership",
+          "body": "TED's membership is small relative to its geographic and cultural complexity — spanning Scandinavia, the UK, Netherlands, and parts of the Middle East. Each national context requires distinct missional approaches.",
+          "confidence": "reported",
+          "source_lrp": "LRP-035",
+          "metric_context": "membership_total"
+        },
+        {
+          "type": "opportunity",
+          "title": "Innovation Laboratory for Secular Engagement",
+          "body": "TED's challenge is also its opportunity: developing evangelistic approaches that resonate in post-Christian contexts. Successful models here could transfer to increasingly secular Australia and North America. LRP-020 explores whether distinctive identity correlates with retention in such contexts.",
+          "confidence": "inferred",
+          "source_lrp": "LRP-020",
+          "metric_context": "mission_innovation"
+        }
+      ]
+    },
+    {
+      "entity_level": "division",
+      "entity_name": "Inter-European Division",
+      "entity_code": "EUD",
+      "insights": [
+        {
+          "type": "context",
+          "title": "Continental Europe's Adventist Presence",
+          "body": "EUD covers France, Germany, Italy, Spain, Portugal, and surrounding nations — historically Catholic and Lutheran territory. Growth is minimal (approximately 0.1%) but the division maintains strong educational and publishing institutions.",
+          "confidence": "reported",
+          "source_lrp": "LRP-035",
+          "metric_context": "membership_growth"
+        },
+        {
+          "type": "opportunity",
+          "title": "Cross-Cultural Ministry Models",
+          "body": "Like NAD, EUD's growth increasingly comes from immigrant communities. The division's experience balancing traditional European and newer multicultural congregations offers lessons for other Western divisions navigating demographic shifts.",
+          "confidence": "inferred",
+          "source_lrp": "LRP-019",
+          "metric_context": "cultural_composition"
+        }
+      ]
+    },
+    {
+      "entity_level": "division",
+      "entity_name": "East-Central Africa Division",
+      "entity_code": "ECD",
+      "insights": [
+        {
+          "type": "context",
+          "title": "One of the Fastest-Growing Divisions",
+          "body": "ECD (covering Rwanda, DRC, Kenya, and surrounding nations) is among the church's fastest-growing territories. Rwanda alone has one of the highest Adventist-to-population ratios in the world. Growth here is driven by community-embedded evangelism and strong local leadership.",
+          "confidence": "verified",
+          "source_lrp": "LRP-035",
+          "metric_context": "membership_growth"
+        },
+        {
+          "type": "comparison",
+          "title": "High Growth, Developing Infrastructure",
+          "body": "ECD's rapid membership growth outpaces institutional development. The ratio of members to pastors is among the highest globally, creating both pastoral care challenges and reliance on lay leadership — which some researchers identify as a growth factor itself.",
+          "confidence": "reported",
+          "source_lrp": "LRP-039",
+          "metric_context": "pastoral_ratio"
+        },
+        {
+          "type": "opportunity",
+          "title": "Lay Leadership as a Model",
+          "body": "ECD's necessity-driven lay leadership model produces leaders who are deeply embedded in their communities. Western divisions with generous pastor-to-member ratios might learn from this approach — engaging members as ministers rather than consumers of ministry.",
+          "confidence": "inferred",
+          "source_lrp": "LRP-039",
+          "metric_context": "leadership_development"
+        }
+      ]
+    },
+    {
+      "entity_level": "division",
+      "entity_name": "Southern Africa-Indian Ocean Division",
+      "entity_code": "SID",
+      "insights": [
+        {
+          "type": "context",
+          "title": "Strong Growth Amid Socioeconomic Challenges",
+          "body": "SID covers Southern Africa, Madagascar, and Indian Ocean islands — a region of strong Adventist identity and consistent growth despite significant economic challenges. The member-to-pastor ratio (2,078:1 in parts of Southern Africa) is among the highest globally.",
+          "confidence": "verified",
+          "source_lrp": "LRP-035",
+          "metric_context": "membership_growth"
+        },
+        {
+          "type": "opportunity",
+          "title": "Financial Sustainability Through Self-Supporting Models",
+          "body": "SID's experience developing sustainable ministry in resource-constrained environments offers insights for any entity seeking to reduce dependency on centralised funding. Self-supporting ministry models that work here could inspire innovation elsewhere.",
+          "confidence": "inferred",
+          "source_lrp": "LRP-009",
+          "metric_context": "financial_sustainability"
+        }
+      ]
+    },
+    {
+      "entity_level": "division",
+      "entity_name": "West-Central Africa Division",
+      "entity_code": "WAD",
+      "insights": [
+        {
+          "type": "context",
+          "title": "Expanding Frontiers in West Africa",
+          "body": "WAD covers Nigeria, Ghana, and francophone West Africa — a vast mission territory with significant growth potential. Nigeria's large population and diverse religious landscape make it one of the most complex mission fields in global Adventism.",
+          "confidence": "reported",
+          "source_lrp": "LRP-035",
+          "metric_context": "membership_growth"
+        },
+        {
+          "type": "opportunity",
+          "title": "Youth-Majority Demographics",
+          "body": "West Africa's median age is among the lowest globally. The church's ability to engage young people here will significantly shape its future trajectory. Youth retention strategies that work in this demographic context could prove transformative.",
+          "confidence": "inferred",
+          "source_lrp": "LRP-002",
+          "metric_context": "youth_demographics"
+        }
+      ]
+    },
+    {
+      "entity_level": "division",
+      "entity_name": "Inter-American Division",
+      "entity_code": "IAD",
+      "insights": [
+        {
+          "type": "context",
+          "title": "The Church's Largest Division by Membership",
+          "body": "IAD (Caribbean, Central America, Mexico, Colombia, Venezuela) is the largest or second-largest division by membership. Strong evangelistic traditions and deeply embedded community presence drive consistent growth across most territories.",
+          "confidence": "verified",
+          "source_lrp": "LRP-035",
+          "metric_context": "membership_total"
+        },
+        {
+          "type": "trend",
+          "title": "Retention Challenges Alongside Growth",
+          "body": "Despite strong baptismal numbers, IAD faces significant 'back door' losses. High accession rates are partially offset by dropout, raising the question of whether discipleship depth matches evangelistic breadth — a pattern LRP-010 explores.",
+          "confidence": "reported",
+          "source_lrp": "LRP-010",
+          "metric_context": "retention_rate"
+        }
+      ]
+    },
+    {
+      "entity_level": "division",
+      "entity_name": "South American Division",
+      "entity_code": "SAD",
+      "insights": [
+        {
+          "type": "context",
+          "title": "Brazil: The Adventist Heartland",
+          "body": "Brazil alone accounts for the majority of SAD's membership, making it one of the most significant national Adventist presences globally. SAD combines strong institutional development (universities, hospitals, media) with ongoing evangelistic momentum.",
+          "confidence": "verified",
+          "source_lrp": "LRP-035",
+          "metric_context": "membership_total"
+        },
+        {
+          "type": "comparison",
+          "title": "Balancing Institutional Maturity and Growth",
+          "body": "SAD represents what happens when a division successfully builds both institutional depth and maintains growth. This balance — which NAD and SPD struggle with — makes SAD a valuable case study for Western divisions.",
+          "confidence": "inferred",
+          "source_lrp": "LRP-009",
+          "metric_context": "institutional_growth_balance"
+        }
+      ]
+    },
+    {
+      "entity_level": "division",
+      "entity_name": "Southern Asia Division",
+      "entity_code": "SUD",
+      "insights": [
+        {
+          "type": "context",
+          "title": "India's Diverse Adventist Presence",
+          "body": "SUD is dominated by India — a nation of extraordinary religious, linguistic, and cultural diversity. Adventist growth patterns vary dramatically by state, with southern and northeastern India showing strong Adventist presence while northern states remain largely unreached.",
+          "confidence": "reported",
+          "source_lrp": "LRP-035",
+          "metric_context": "geographic_diversity"
+        },
+        {
+          "type": "opportunity",
+          "title": "Educational Institutions as Mission Platform",
+          "body": "SUD operates numerous schools and hospitals that serve as community entry points. The effectiveness of this institutional evangelism model — and whether it produces lasting church connection — parallels the question Australia faces with its $400M education investment.",
+          "confidence": "inferred",
+          "source_lrp": "LRP-003",
+          "metric_context": "education_mission"
+        }
+      ]
+    },
+    {
+      "entity_level": "division",
+      "entity_name": "Southern Asia-Pacific Division",
+      "entity_code": "SSD",
+      "insights": [
+        {
+          "type": "context",
+          "title": "Southeast Asia and the Philippines",
+          "body": "SSD covers the Philippines, Indonesia, and Southeast Asian nations. The Philippines is a major Adventist presence with strong growth, while Indonesia represents a significant mission field in the world's largest Muslim-majority nation.",
+          "confidence": "reported",
+          "source_lrp": "LRP-035",
+          "metric_context": "membership_composition"
+        },
+        {
+          "type": "trend",
+          "title": "Consistent Growth Across Diverse Contexts",
+          "body": "SSD maintains healthy growth rates across culturally diverse territories. Filipino Adventist communities — both domestically and in diaspora — contribute significantly to global Adventist growth and to other divisions through migration.",
+          "confidence": "reported",
+          "source_lrp": "LRP-019",
+          "metric_context": "membership_growth"
+        }
+      ]
+    },
+    {
+      "entity_level": "division",
+      "entity_name": "Northern Asia-Pacific Division",
+      "entity_code": "NSD",
+      "insights": [
+        {
+          "type": "context",
+          "title": "High-Retention Communities in East Asia",
+          "body": "NSD includes Korea and Japan — contrasting Adventist experiences. Korean Adventist communities show some of the highest retention rates globally, driven by strong family faith transmission and tight community bonds. Japan remains one of the most challenging mission fields.",
+          "confidence": "reported",
+          "source_lrp": "LRP-019",
+          "metric_context": "retention_comparison"
+        },
+        {
+          "type": "research",
+          "title": "Korean Model: A Retention Case Study",
+          "body": "LRP-019 identifies Korean Adventist communities as a high-retention case study. Key factors include intergenerational worship, strong family devotional practices, and community-embedded identity. These insights transfer to any entity seeking to improve retention.",
+          "confidence": "reported",
+          "source_lrp": "LRP-019",
+          "metric_context": "cultural_retention"
+        }
+      ]
+    },
+    {
+      "entity_level": "division",
+      "entity_name": "Euro-Asia Division",
+      "entity_code": "ESD",
+      "insights": [
+        {
+          "type": "context",
+          "title": "Post-Soviet Adventism",
+          "body": "ESD covers Russia and former Soviet states — territories where Adventism survived underground during the Soviet era and experienced rapid growth in the 1990s. Growth has since stabilised as the initial post-Soviet religious boom subsided.",
+          "confidence": "reported",
+          "source_lrp": "LRP-035",
+          "metric_context": "membership_history"
+        },
+        {
+          "type": "opportunity",
+          "title": "Resilience as Identity",
+          "body": "ESD's historical experience of faith under persecution has produced a distinctive Adventist identity — one that values commitment and sacrifice. This heritage, combined with contemporary engagement strategies, positions the division uniquely.",
+          "confidence": "inferred",
+          "source_lrp": "LRP-020",
+          "metric_context": "identity_strength"
+        }
+      ]
+    },
+    {
+      "entity_level": "attached_field",
+      "entity_name": "Middle East and North Africa Union Mission",
+      "entity_code": "MENAUM",
+      "insights": [
+        {
+          "type": "context",
+          "title": "Small Presence in Challenging Territory",
+          "body": "MENAUM operates as a GC-attached field in predominantly Muslim nations. Membership is small and growth is modest, but the Adventist presence — through education, health, and development — extends beyond baptismal numbers.",
+          "confidence": "reported",
+          "source_lrp": "LRP-035",
+          "metric_context": "membership_total"
+        },
+        {
+          "type": "opportunity",
+          "title": "Holistic Mission Models",
+          "body": "MENAUM's context requires mission approaches that integrate community service, education, and health — rather than traditional evangelistic campaigns. Models developed here may prove increasingly relevant as Western societies become more pluralistic.",
+          "confidence": "inferred",
+          "source_lrp": "LRP-010",
+          "metric_context": "mission_approach"
+        }
+      ]
+    },
+    {
+      "entity_level": "union",
+      "entity_name": "Australian Union Conference",
+      "entity_code": "AUC",
+      "insights": [
+        {
+          "type": "context",
+          "title": "A $1.66 Billion Enterprise with 66,215 Members",
+          "body": "The Adventist Church in Australia operates 83 ACNC-registered entities with $1.66B in combined gross income (2023) and $2.20B in total assets. It is the 6th largest religious charity sector in Australia by income, and the 9th largest single religious entity. Including Sanitarium and Sydney Adventist Hospital, the true sector may exceed $2.1 billion.",
+          "confidence": "verified",
+          "source_lrp": "LRP-009",
+          "metric_context": "financial_overview"
+        },
+        {
+          "type": "comparison",
+          "title": "Similar Income to Baptists, Radically Different Structure",
+          "body": "Adventist ($1.66B) and Baptist ($1.68B) generate nearly identical ACNC income — but Adventist does it through 83 entities while Baptists use 1,032. This 12x structural efficiency reflects the centralised conference model. Adventist also reports 2,526 volunteers versus Baptist's 49,508 — a reporting gap, not a reality gap.",
+          "confidence": "verified",
+          "source_lrp": "LRP-009",
+          "metric_context": "denominational_comparison"
+        },
+        {
+          "type": "trend",
+          "title": "Strongest Growth Year in a Decade",
+          "body": "AUC's 1.73% growth in 2024 (1,297 baptisms, net +1,129) is the best recorded in the 11-year dataset. Post-COVID recovery is complete, with baptisms returning to near pre-pandemic levels. The 10-year net gain is 7,103 members (+12.0%).",
+          "confidence": "verified",
+          "source_lrp": null,
+          "metric_context": "membership_growth"
+        },
+        {
+          "type": "research",
+          "title": "Hard Soil, Deep Roots",
+          "body": "Australia needs 43 members to produce 1 baptism versus the global average of 15. But this 'hard soil' narrative misses the other side: Australia's retention is among the best in the world. Low dropout, low missing-member rates. Members who join, stay. Quality over quantity may be the Australian story.",
+          "confidence": "verified",
+          "source_lrp": "LRP-006",
+          "metric_context": "accession_efficiency"
+        },
+        {
+          "type": "opportunity",
+          "title": "Learn from Your Own Best Performers",
+          "body": "The gap between Australia's fastest-growing conference (SNSW at 3.48% accession rate) and slowest (Tasmania at 0.91%) reveals that effective approaches already exist within the system. The opportunity isn't to import strategies from overseas — it's to study and replicate what's already working locally.",
+          "confidence": "verified",
+          "source_lrp": "LRP-034",
+          "metric_context": "conference_variance"
+        }
+      ]
+    },
+    {
+      "entity_level": "conference",
+      "entity_name": "South Queensland Conference",
+      "entity_code": "SQC",
+      "insights": [
+        {
+          "type": "context",
+          "title": "Australia's Largest Conference",
+          "body": "South Queensland leads AUC with 13,367 members across 85 churches (2024). With an average congregation of 157, it operates at close to the AUC average of 146 — a scale that allows meaningful program investment while maintaining community connection.",
+          "confidence": "verified",
+          "source_lrp": null,
+          "metric_context": "membership_total"
+        },
+        {
+          "type": "comparison",
+          "title": "Mid-Range Growth Despite Largest Base",
+          "body": "SQC's 2.14% accession rate (281 accessions in 2024) places it 7th of 9 conferences — below the AUC average. Larger conferences often face the 'incumbent's challenge' where maintaining existing operations consumes resources that could fuel growth.",
+          "confidence": "verified",
+          "source_lrp": "LRP-034",
+          "metric_context": "accession_rate"
+        },
+        {
+          "type": "trend",
+          "title": "Home to Adventist Infrastructure",
+          "body": "South Queensland hosts significant Adventist institutional presence including Avondale's Brisbane campus connections and multiple school systems. The relationship between institutional density and local church growth is a key question for LRP-003.",
+          "confidence": "reported",
+          "source_lrp": "LRP-003",
+          "metric_context": "institutional_presence"
+        },
+        {
+          "type": "opportunity",
+          "title": "Scale Enables Experimentation",
+          "body": "As the largest conference, SQC has the resource base to pilot innovative approaches — small group models, digital discipleship, community engagement strategies — that smaller conferences cannot easily test. What SQC learns can benefit the entire AUC.",
+          "confidence": "inferred",
+          "source_lrp": "LRP-036",
+          "metric_context": "innovation_capacity"
+        }
+      ]
+    },
+    {
+      "entity_level": "conference",
+      "entity_name": "North New South Wales Conference",
+      "entity_code": "NNSW",
+      "insights": [
+        {
+          "type": "context",
+          "title": "Avondale's Home Territory",
+          "body": "NNSW (12,574 members, 70 churches) is home to Avondale University — the church's premier tertiary institution in the South Pacific. This creates a unique faith ecosystem where denominational education, ministry training, and local church life intersect.",
+          "confidence": "verified",
+          "source_lrp": "LRP-012",
+          "metric_context": "membership_total"
+        },
+        {
+          "type": "comparison",
+          "title": "Lowest Growth Rate Among Large Conferences",
+          "body": "NNSW's 1.60% accession rate (201 accessions in 2024) is the second-lowest in AUC, ahead of only Tasmania. The highest absolute death count (129) combined with moderate accessions creates a tighter growth margin than its membership size suggests.",
+          "confidence": "verified",
+          "source_lrp": null,
+          "metric_context": "accession_rate"
+        },
+        {
+          "type": "trend",
+          "title": "Aging Membership Signal",
+          "body": "NNSW's death rate of 1.03% (129 deaths) is above the AUC average of 0.88%, suggesting an older membership profile. With the largest church average size (180 members), some congregations may be mature communities where revitalisation strategies could unlock new growth.",
+          "confidence": "verified",
+          "source_lrp": "LRP-017",
+          "metric_context": "death_rate"
+        },
+        {
+          "type": "opportunity",
+          "title": "University-Church Partnership Potential",
+          "body": "The presence of Avondale creates an untapped laboratory for faith formation research. Tracking whether Avondale graduates remain connected to NNSW churches could answer fundamental questions about the ROI of denominational education — see LRP-012.",
+          "confidence": "inferred",
+          "source_lrp": "LRP-012",
+          "metric_context": "education_retention"
+        }
+      ]
+    },
+    {
+      "entity_level": "conference",
+      "entity_name": "Victorian Conference",
+      "entity_code": "VIC",
+      "insights": [
+        {
+          "type": "context",
+          "title": "Melbourne: Australia's Most Multicultural Adventist Community",
+          "body": "Victorian Conference (11,933 members, 90 churches) has the most churches of any AUC conference, reflecting Melbourne's extraordinary cultural diversity. This diversity — Pacific Islander, African, Asian, and Anglo congregations — creates a rich but complex ministry landscape.",
+          "confidence": "verified",
+          "source_lrp": "LRP-019",
+          "metric_context": "membership_total"
+        },
+        {
+          "type": "comparison",
+          "title": "Smallest Average Congregation Size",
+          "body": "At 133 members per church, Victorian has the smallest average congregation of any major AUC conference. More churches serving fewer members per location may indicate strong community presence but also raises questions about resource sustainability across 90 locations.",
+          "confidence": "verified",
+          "source_lrp": "LRP-016",
+          "metric_context": "church_size"
+        },
+        {
+          "type": "trend",
+          "title": "Growth Driven by Diversity",
+          "body": "Victoria's 2.47% accession rate (288 accessions) is above the AUC average, likely driven by immigration and culturally-embedded faith transmission within multicultural congregations. LRP-019 explores what mainstream churches can learn from high-retention cultural communities.",
+          "confidence": "verified",
+          "source_lrp": "LRP-019",
+          "metric_context": "accession_rate"
+        },
+        {
+          "type": "opportunity",
+          "title": "Cross-Cultural Learning Laboratory",
+          "body": "With congregations spanning multiple cultures and languages, Victoria is a natural laboratory for understanding what drives retention across cultural contexts. High-retention communities here could mentor lower-retention ones — building strength from diversity.",
+          "confidence": "inferred",
+          "source_lrp": "LRP-019",
+          "metric_context": "cultural_retention"
+        }
+      ]
+    },
+    {
+      "entity_level": "conference",
+      "entity_name": "Greater Sydney Conference",
+      "entity_code": "GSC",
+      "insights": [
+        {
+          "type": "context",
+          "title": "Denominational Headquarters Territory",
+          "body": "Greater Sydney Conference (10,274 members, 70 churches) hosts the AUC headquarters in Wahroonga and serves Australia's largest city. Sydney's high cost of living and competitive religious marketplace create distinctive challenges for church planting and member retention.",
+          "confidence": "verified",
+          "source_lrp": null,
+          "metric_context": "membership_total"
+        },
+        {
+          "type": "comparison",
+          "title": "Above-Average Growth in an Urban Context",
+          "body": "GSC's 2.72% accession rate (274 accessions) is the third-highest in AUC — impressive for an urban conference where secular alternatives abound. Immigration-driven congregation growth likely contributes, as suggested by the lowest death rate outside SNSW (0.63%).",
+          "confidence": "verified",
+          "source_lrp": null,
+          "metric_context": "accession_rate"
+        },
+        {
+          "type": "trend",
+          "title": "Youngest Membership Profile Among Large Conferences",
+          "body": "GSC's death rate of 0.63% — well below the AUC average of 0.88% — suggests a younger membership, likely refreshed by immigration. This demographic advantage provides a window of opportunity for discipleship investment before aging patterns emerge.",
+          "confidence": "verified",
+          "source_lrp": "LRP-017",
+          "metric_context": "death_rate"
+        },
+        {
+          "type": "opportunity",
+          "title": "Urban Ministry Innovation Hub",
+          "body": "As the conference serving Australia's most populous and diverse city, GSC is positioned to develop urban ministry models that address secular culture, high living costs, and multicultural engagement — challenges facing Adventists worldwide.",
+          "confidence": "inferred",
+          "source_lrp": "LRP-020",
+          "metric_context": "urban_ministry"
+        }
+      ]
+    },
+    {
+      "entity_level": "conference",
+      "entity_name": "Western Australian Conference",
+      "entity_code": "WAC",
+      "insights": [
+        {
+          "type": "context",
+          "title": "Geographically Isolated, Financially Strong",
+          "body": "Western Australian Conference (7,262 members, 42 churches) serves the world's most isolated major city (Perth) and a vast state. Geographic isolation creates unique challenges for resource sharing and ministerial support but also fosters strong local church identity.",
+          "confidence": "verified",
+          "source_lrp": null,
+          "metric_context": "membership_total"
+        },
+        {
+          "type": "comparison",
+          "title": "Growth at the National Average",
+          "body": "WAC's 2.33% accession rate (165 accessions) places it near the AUC average — solid performance for a geographically dispersed conference. The church average of 173 members is the second-highest in AUC, suggesting larger, well-established congregations.",
+          "confidence": "verified",
+          "source_lrp": null,
+          "metric_context": "accession_rate"
+        },
+        {
+          "type": "opportunity",
+          "title": "Mining Economy and Generosity Patterns",
+          "body": "Western Australia's resource-driven economy creates distinctive income patterns — high average incomes but also boom-bust volatility. Understanding how economic cycles affect giving patterns could provide insights relevant to any resource-dependent regional economy.",
+          "confidence": "inferred",
+          "source_lrp": "LRP-009",
+          "metric_context": "economic_context"
+        }
+      ]
+    },
+    {
+      "entity_level": "conference",
+      "entity_name": "South Australian Conference",
+      "entity_code": "SAC",
+      "insights": [
+        {
+          "type": "context",
+          "title": "Small Conference, Steady Performance",
+          "body": "South Australian Conference (3,285 members, 29 churches) is a mid-size conference serving Adelaide and regional SA. With 113 members per church — the smallest average in AUC — it maintains a community-scale presence across diverse locations.",
+          "confidence": "verified",
+          "source_lrp": null,
+          "metric_context": "membership_total"
+        },
+        {
+          "type": "comparison",
+          "title": "Above-Average Accession Rate",
+          "body": "SAC's 2.53% accession rate (82 accessions in 2024) is above the AUC average. Combined with a below-average death rate (0.77%), this creates healthy net growth momentum for a conference of its size.",
+          "confidence": "verified",
+          "source_lrp": null,
+          "metric_context": "accession_rate"
+        },
+        {
+          "type": "opportunity",
+          "title": "Right-Sized for Innovation",
+          "body": "At 29 churches and ~3,300 members, SAC is small enough to implement conference-wide initiatives quickly but large enough to generate meaningful data. This makes it an ideal pilot environment for new approaches before scaling to larger conferences.",
+          "confidence": "inferred",
+          "source_lrp": "LRP-034",
+          "metric_context": "innovation_capacity"
+        }
+      ]
+    },
+    {
+      "entity_level": "conference",
+      "entity_name": "South New South Wales Conference",
+      "entity_code": "SNSW",
+      "insights": [
+        {
+          "type": "context",
+          "title": "Australia's Highest Accession Rate — The Growth Story",
+          "body": "SNSW recorded 106 accessions (82 baptisms + 24 professions of faith) for a 3.48% accession rate in 2024 — the highest in Australia. From a base of just 3,152 members across 31 churches, SNSW demonstrates that small conferences can outperform on growth metrics through consistent, personal evangelism.",
+          "confidence": "verified",
+          "source_lrp": null,
+          "metric_context": "accession_rate"
+        },
+        {
+          "type": "comparison",
+          "title": "Youngest Membership Profile in Australia",
+          "body": "SNSW's death rate of 0.56% (17 deaths) is the lowest in the AUC — less than half the NAC rate (1.90%) and well below the AUC average (0.88%). This suggests a younger membership profile, which bodes well for long-term sustainability and vibrancy.",
+          "confidence": "verified",
+          "source_lrp": null,
+          "metric_context": "death_rate"
+        },
+        {
+          "type": "trend",
+          "title": "Record Tithe Growth — $5.15M in 2025",
+          "body": "SNSW's estimated 2025 tithe of $5.15M represents a 7.9% increase over 2024 and a new record. The 6-year trajectory shows 30.6% growth from $3.94M (2019). Engaged members give approximately 5.1% of adjusted median income — generous giving that invites further growth.",
+          "confidence": "verified",
+          "source_lrp": "LRP-009",
+          "metric_context": "tithe_growth"
+        },
+        {
+          "type": "research",
+          "title": "The Tithe Gap — Realistic Expectations",
+          "body": "Age-adjusted modelling shows SNSW achieving 36.1% of theoretical maximum tithe potential (not the naive 23.3%). The 'engaged-only' model (estimating 60% active) shows 51.1% of potential. The honest story: engaged members ARE generous — giving over 5%. The invitation is to go from good to great.",
+          "confidence": "inferred",
+          "source_lrp": "LRP-009",
+          "metric_context": "tithe_gap"
+        },
+        {
+          "type": "opportunity",
+          "title": "AdventistPulse Pilot Conference",
+          "body": "SNSW is AdventistPulse's first conference-level Vital Signs pilot — the most detailed entity profile on the platform. Its combination of strong growth, transparent financial data, and willing leadership makes it a model for what data-informed ministry can look like across the AUC.",
+          "confidence": "verified",
+          "source_lrp": null,
+          "metric_context": "pilot_status"
+        }
+      ]
+    },
+    {
+      "entity_level": "conference",
+      "entity_name": "Northern Australian Conference",
+      "entity_code": "NAC",
+      "insights": [
+        {
+          "type": "context",
+          "title": "Remote Ministry Across Australia's Top End",
+          "body": "Northern Australian Conference (3,041 members, 26 churches) serves some of the most remote communities in Australia — including Indigenous communities, mining towns, and tropical urban centres. Ministry here requires unique approaches adapted to vast distances and diverse populations.",
+          "confidence": "verified",
+          "source_lrp": null,
+          "metric_context": "membership_total"
+        },
+        {
+          "type": "comparison",
+          "title": "Strong Accession Rate, Highest Death Rate",
+          "body": "NAC's 3.17% accession rate (95 accessions) is the second-highest in AUC — but its death rate of 1.90% (57 deaths) is the highest by a wide margin. The combination reflects both evangelistic success and the health challenges of remote and Indigenous communities.",
+          "confidence": "verified",
+          "source_lrp": null,
+          "metric_context": "vital_statistics"
+        },
+        {
+          "type": "trend",
+          "title": "Net Growth Despite Headwinds",
+          "body": "Despite the highest death rate in AUC, NAC achieves positive net growth because its accession rate outpaces losses. This resilience — growing in arguably the most challenging territory in Australia — deserves recognition and study.",
+          "confidence": "verified",
+          "source_lrp": null,
+          "metric_context": "net_growth"
+        },
+        {
+          "type": "opportunity",
+          "title": "Indigenous Ministry and Holistic Engagement",
+          "body": "NAC's unique demographic — including significant Indigenous population — presents an opportunity for culturally sensitive ministry models that integrate health, education, and community development. Approaches that succeed here can inform broader cross-cultural ministry.",
+          "confidence": "inferred",
+          "source_lrp": "LRP-019",
+          "metric_context": "cultural_ministry"
+        }
+      ]
+    },
+    {
+      "entity_level": "conference",
+      "entity_name": "Tasmanian Conference",
+      "entity_code": "TAS",
+      "insights": [
+        {
+          "type": "context",
+          "title": "Australia's Smallest Conference Faces Structural Headwinds",
+          "body": "Tasmanian Conference (1,327 members, 11 churches) is AUC's smallest — serving an island state with a small, aging, and geographically dispersed population. With just 121 members per church, each congregation operates at community scale.",
+          "confidence": "verified",
+          "source_lrp": null,
+          "metric_context": "membership_total"
+        },
+        {
+          "type": "comparison",
+          "title": "Deaths Outpacing Accessions",
+          "body": "In 2024, Tasmania recorded 12 accessions against 19 deaths — a net loss of 7 members. The death rate (1.43%) significantly exceeds the accession rate (0.91%), creating a membership trajectory that, without intervention, moves in the wrong direction.",
+          "confidence": "verified",
+          "source_lrp": null,
+          "metric_context": "vital_statistics"
+        },
+        {
+          "type": "trend",
+          "title": "Lowest 5-Year Average Growth in AUC",
+          "body": "Tasmania's 5-year average growth of approximately 0.4% is the lowest in the AUC. This reflects both the challenging demographic context (aging state population) and the difficulty of generating evangelistic momentum from a small base.",
+          "confidence": "reported",
+          "source_lrp": null,
+          "metric_context": "growth_trend"
+        },
+        {
+          "type": "opportunity",
+          "title": "Small Can Be Strategic",
+          "body": "At 11 churches, Tasmania can implement whole-conference strategies that are impossible at larger scale. A focused initiative — perhaps a SNSW-style partnership with AdventistPulse — could turn demographic headwinds into a catalyst for creative, data-informed reinvention.",
+          "confidence": "inferred",
+          "source_lrp": "LRP-034",
+          "metric_context": "strategic_opportunity"
+        }
+      ]
+    },
+    {
+      "entity_level": "union",
+      "entity_name": "New Zealand Pacific Union Conference",
+      "entity_code": "NZPUC",
+      "insights": [
+        {
+          "type": "context",
+          "title": "Pacific Influence in an Oceanic Context",
+          "body": "NZPUC (22,617 members) serves New Zealand and Pacific Island nations outside PNG. Pacific Islander Adventist communities — Tongan, Samoan, Fijian — bring strong intergenerational faith traditions and higher retention patterns than Anglo New Zealand congregations.",
+          "confidence": "verified",
+          "source_lrp": "LRP-019",
+          "metric_context": "membership_composition"
+        },
+        {
+          "type": "comparison",
+          "title": "Higher Accession Rate Than Australia",
+          "body": "NZPUC's 4.14% accession rate significantly outperforms AUC's 2.31%. Much of this growth is driven by Pacific Islander communities with strong evangelistic cultures and family-based faith transmission — patterns that LRP-019 identifies as transferable success factors.",
+          "confidence": "verified",
+          "source_lrp": "LRP-019",
+          "metric_context": "accession_rate"
+        },
+        {
+          "type": "opportunity",
+          "title": "Cross-Tasman Learning Partnership",
+          "body": "NZPUC and AUC share a division, similar regulatory environments, and overlapping cultural communities. Systematic knowledge sharing — particularly around what makes Pacific Islander congregations grow — could benefit both unions.",
+          "confidence": "inferred",
+          "source_lrp": "LRP-035",
+          "metric_context": "peer_learning"
+        }
+      ]
+    }
+  ]
+}
