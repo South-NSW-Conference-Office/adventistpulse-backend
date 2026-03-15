@@ -10,6 +10,7 @@ import PasswordInput from "@/components/auth/PasswordInput";
 import PasswordStrengthBar, { calcPasswordScore } from "@/components/auth/PasswordStrengthBar";
 import AuthSubmitButton from "@/components/auth/AuthSubmitButton";
 import { useAuth } from "@/contexts/AuthContext";
+import { usePublicRoute } from "@/lib/hooks/useRouteGuard";
 import { useToast } from "@/contexts/ToastContext";
 
 function PersonIcon() {
@@ -36,6 +37,7 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
 
   const { register, isLoading } = useAuth();
+  const { isReady } = usePublicRoute();
   const { toast }               = useToast();
   const router                  = useRouter();
 
@@ -50,6 +52,8 @@ export default function RegisterPage() {
       toast.fromApiError(err, "We couldn't create your account. Please check your details and try again.");
     }
   };
+
+  if (!isReady) return null;
 
   return (
     <AuthPageShell>

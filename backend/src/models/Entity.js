@@ -42,7 +42,7 @@ const entitySchema = new mongoose.Schema({
   // Tree structure
   parentCode: { type: String, default: null, trim: true },
   parentId:   { type: mongoose.Schema.Types.ObjectId, ref: 'Entity', default: null },
-  path:       { type: String, required: true, index: true }, // e.g. "GC/SPD/AUC/GSC"
+  path:       { type: String, required: true }, // e.g. "GC/SPD/AUC/GSC"
 
   isActive:   { type: Boolean, default: true },
 }, {
@@ -50,7 +50,7 @@ const entitySchema = new mongoose.Schema({
 })
 
 // Fast lookups
-entitySchema.index({ code: 1 })
+// Note: { code: 1 } index is already created by unique:true on the field — no explicit index needed
 entitySchema.index({ parentCode: 1 })
 entitySchema.index({ level: 1 })
 entitySchema.index({ path: 1 })

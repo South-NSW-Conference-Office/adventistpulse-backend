@@ -7,6 +7,7 @@ import WaterBackground from "./components/WaterBackground";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/contexts/ToastContext";
 import { consumeRedirectToast } from "@/lib/toast/redirect-toast";
+import { usePublicRoute } from "@/lib/hooks/useRouteGuard";
 
 /* ─── Inline SVG Icons ─── */
 
@@ -136,6 +137,7 @@ export default function LoginPage() {
   const { login, isLoading } = useAuth();
   const { toast } = useToast();
   const router = useRouter();
+  const { isReady } = usePublicRoute();
 
   // Consume any post-redirect toast (e.g. "Password updated" from reset-password page)
   useEffect(() => {
@@ -172,6 +174,9 @@ export default function LoginPage() {
       toast.fromApiError(err, "Sign-in failed. Please check your details and try again.");
     }
   };
+
+  // Don't flash the login form while session is being restored or user is being redirected
+  if (!isReady) return null;
 
   return (
     <div

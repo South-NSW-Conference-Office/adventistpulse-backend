@@ -7,6 +7,7 @@ import AuthCard from "@/components/auth/AuthCard";
 import { useToast } from "@/contexts/ToastContext";
 import { resendVerificationByEmail } from "@/lib/api/auth";
 import { ApiError } from "@/lib/api/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 const PENDING_EMAIL_KEY  = "pulse:pending_email";
 const COOLDOWN_SECONDS   = 60;
@@ -14,6 +15,15 @@ const COOLDOWN_SECONDS   = 60;
 export default function PendingVerificationPage() {
   const { toast }   = useToast();
   const router      = useRouter();
+  const { user, accessToken, isLoading } = useAuth();
+
+  // If already authenticated and approved, bounce to dashboard
+  useEffect(() => {
+    if (isLoading) return;
+    if (user && accessToken && user.accountStatus === "approved") {
+      router.replace("/dashboard");
+    }
+  }, [user, accessToken, isLoading, router]);
 
   const [email,    setEmail]    = useState<string | null>(null);
   const [cooldown, setCooldown] = useState(0);

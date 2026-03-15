@@ -10,7 +10,7 @@ export default function StatCard({ label, value, sub, trend, color = "#2563EB" }
   const isUp = trend !== undefined && trend >= 0;
 
   return (
-    <div className="bg-white rounded-2xl p-5 flex flex-col gap-1 border border-[#F0F0F0] shadow-sm hover:shadow-md transition-shadow">
+    <div className="flex flex-col gap-1 py-2 border-r border-[#E8EAED] last:border-r-0 pr-6 last:pr-0">
       <p className="text-[10px] font-bold tracking-widest uppercase text-[#9CA3AF]">
         {label}
       </p>

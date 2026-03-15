@@ -8,6 +8,7 @@ import AuthSubmitButton from "@/components/auth/AuthSubmitButton";
 import { useToast } from "@/contexts/ToastContext";
 import { forgotPassword } from "@/lib/api/auth";
 import { ApiError } from "@/lib/api/client";
+import { usePublicRoute } from "@/lib/hooks/useRouteGuard";
 
 function MailIcon() {
   return (
@@ -24,6 +25,7 @@ export default function ForgotPasswordPage() {
   const [submitted, setSubmitted] = useState(false);
 
   const { toast } = useToast();
+  const { isReady } = usePublicRoute();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,6 +77,8 @@ export default function ForgotPasswordPage() {
       </AuthPageShell>
     );
   }
+
+  if (!isReady) return null;
 
   return (
     <AuthPageShell>

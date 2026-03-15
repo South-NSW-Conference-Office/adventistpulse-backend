@@ -7,15 +7,18 @@ import AuthCard from "@/components/auth/AuthCard";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function PendingApprovalPage() {
-  const { user, accessToken, logout } = useAuth();
-  const router                        = useRouter();
+  const { user, accessToken, isLoading, logout } = useAuth();
+  const router                                   = useRouter();
 
   useEffect(() => {
+    if (isLoading) return; // wait for silent session restore
     if (!accessToken) { router.replace("/"); return; }
     if (user?.accountStatus === "approved") router.replace("/dashboard");
-  }, [accessToken, user, router]);
+  }, [accessToken, user, isLoading, router]);
 
   const handleSignOut = async () => { await logout(); router.replace("/"); };
+
+  if (isLoading || !accessToken) return null;
 
   return (
     <AuthPageShell>
