@@ -24,12 +24,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossOrigin="" />
       </head>
       <body
-        className={`${poppins.variable} font-[family-name:var(--font-poppins)] antialiased bg-[#F8F9FA] dark:bg-[#1a2332] min-h-screen`}
+        className={`${poppins.variable} font-[family-name:var(--font-poppins)] antialiased bg-white min-h-screen`}
       >
         <ThemeProvider>
           <ToastProvider>
