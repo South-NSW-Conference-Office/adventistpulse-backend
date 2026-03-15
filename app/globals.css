@@ -4,6 +4,11 @@
   font-family: var(--font-poppins), 'Poppins', sans-serif;
 }
 
+/* Remove Leaflet's default gray tile background */
+.leaflet-container {
+  background: #1a2332 !important;
+}
+
 @custom-variant dark (&:where(.dark, .dark *));
 @source "../lib";
 @source "../components";

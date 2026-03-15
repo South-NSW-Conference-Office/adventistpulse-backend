@@ -76,7 +76,7 @@ export function NavBar() {
   }, []);
 
   return (
-    <nav className="bg-white dark:bg-[#1a2332] border-b border-gray-200 dark:border-[#2a3a50] sticky top-0 z-[1100]">
+    <nav className="fixed top-0 left-0 right-0 z-[2000] bg-white/10 dark:bg-[#0d1117]/20 backdrop-blur-md border-b border-white/10">
       <div className="max-w-6xl mx-auto px-4 flex items-center justify-between h-14">
         {/* Logo */}
         <Link href="/" className="flex items-center hover:opacity-80 transition-opacity">
@@ -189,7 +189,7 @@ export function NavBar() {
 
       {/* Mobile menu */}
       {isOpen && (
-        <div className="md:hidden border-t border-gray-200 dark:border-[#2a3a50] bg-white dark:bg-[#1a2332] max-h-[80vh] overflow-y-auto">
+        <div className="md:hidden border-t border-white/10 bg-white/10 dark:bg-[#0d1117]/40 backdrop-blur-md max-h-[80vh] overflow-y-auto">
           <div className="px-4 py-3">
             {PILLARS.map(pillar => (
               <div key={pillar.label} className="mb-3">
