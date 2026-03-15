@@ -25,8 +25,8 @@ export default function Home() {
 
   return (
     <div id="main-content" className={cn("min-h-screen", tokens.bg.page, tokens.text.heading)}>
-      {/* Hero */}
-      <div style={{ position: 'relative', width: '100%', height: '100vh', overflow: 'hidden' }}>
+      {/* Hero — 100vw breakout so no parent container can constrain it */}
+      <div style={{ position: 'relative', left: '50%', right: '50%', marginLeft: '-50vw', marginRight: '-50vw', width: '100vw', height: '100vh', overflow: 'hidden' }}>
         {/* Map — fills entire hero */}
         <HarvestMapLoader fill />
 
