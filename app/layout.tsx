@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import { Inter } from "next/font/google";
+import { Poppins } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { ToastProvider } from "@/contexts/ToastContext";
 import { AuthProvider } from "@/contexts/AuthContext";
@@ -8,19 +7,10 @@ import { NavBar } from "@/components/NavBar";
 import { Footer } from "@/components/Footer";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const poppins = Poppins({
+  variable: "--font-poppins",
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -36,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased bg-[#F8F9FA] dark:bg-[#1a2332] min-h-screen`}
+        className={`${poppins.variable} font-[family-name:var(--font-poppins)] antialiased bg-[#F8F9FA] dark:bg-[#1a2332] min-h-screen`}
       >
         <ThemeProvider>
           <ToastProvider>

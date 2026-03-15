@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+* {
+  font-family: var(--font-poppins), 'Poppins', sans-serif;
+}
+
 @custom-variant dark (&:where(.dark, .dark *));
 @source "../lib";
 @source "../components";
