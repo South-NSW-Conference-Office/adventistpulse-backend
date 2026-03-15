@@ -3,11 +3,7 @@
  * No business logic. Just HTTP plumbing.
  */
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL;
-
-if (!API_BASE) {
-  throw new Error("NEXT_PUBLIC_API_URL is not set. Add it to your .env.local file.");
-}
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? '';
 
 export class ApiError extends Error {
   constructor(
@@ -36,6 +32,10 @@ export async function apiClient<T>(
     ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
     ...(extraHeaders as Record<string, string> | undefined),
   };
+
+  if (!API_BASE) {
+    throw new ApiError("NEXT_PUBLIC_API_URL is not configured.", 0, "CONFIG_ERROR");
+  }
 
   let res: Response;
   try {
