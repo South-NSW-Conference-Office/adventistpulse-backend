@@ -121,6 +121,8 @@ export default function HarvestMap({ fill = false }: { fill?: boolean }) {
       L.control.zoom({ position: 'bottomright' }).addTo(map);
 
       mapInstanceRef.current = map;
+      // Force Leaflet to recalculate container size after mount
+      setTimeout(() => map.invalidateSize(), 50);
       setLeafletReady(true);
     });
 
@@ -212,7 +214,7 @@ export default function HarvestMap({ fill = false }: { fill?: boolean }) {
   }, [leafletReady, fixedGeoData, missionData, viewMode, dataMap]);
 
   return (
-    <div className="relative w-full" style={fill ? { height: '100%', minHeight: 0 } : { height: '70vh', minHeight: '400px' }}>
+    <div className={fill ? "absolute inset-0" : "relative w-full"} style={fill ? {} : { height: '70vh', minHeight: '400px' }}>
       {/* Leaflet CSS */}
       <link
         rel="stylesheet"
