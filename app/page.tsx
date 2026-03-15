@@ -24,29 +24,20 @@ export default function Home() {
     .sort((a, b) => (b.latestYear?.membership?.ending ?? 0) - (a.latestYear?.membership?.ending ?? 0));
 
   return (
-    <main id="main-content" className={cn("min-h-screen", tokens.bg.page, tokens.text.heading)}>
+    <main id="main-content" className={cn("min-h-screen overflow-x-hidden", tokens.bg.page, tokens.text.heading)}>
       {/* Hero — full-bleed map with overlay content */}
-      <div className="relative w-full overflow-hidden" style={{ height: '100vh', minHeight: 600 }}>
-        {/* Map fills entire hero */}
+      <div className="relative w-screen overflow-hidden" style={{ height: '100vh', minHeight: 600, marginLeft: 'calc(-50vw + 50%)', marginRight: 'calc(-50vw + 50%)' }}>
+        {/* Map fills entire background */}
         <div className="absolute inset-0">
           <HarvestMapLoader fill />
         </div>
-
-        {/* Dark gradient overlay — top to bottom */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: 'linear-gradient(to bottom, rgba(10,14,23,0.72) 0%, rgba(10,14,23,0.45) 50%, rgba(10,14,23,0.75) 100%)',
-            zIndex: 500,
-          }}
-        />
 
         {/* Content on top */}
         <div className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center" style={{ zIndex: 600 }}>
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white drop-shadow-lg">
             Adventist <span className="text-[#6366f1]">Pulse</span>
           </h1>
-          <p className="text-lg md:text-xl mt-4 max-w-2xl mx-auto text-white/80 leading-relaxed">
+          <p className="text-lg md:text-xl mt-4 max-w-2xl mx-auto text-white/80 leading-relaxed drop-shadow">
             Data-driven mission intelligence for the Adventist Church.
             Unlock tools, insights and strategies to help finish the work.
           </p>
@@ -60,8 +51,8 @@ export default function Home() {
                 { label: `Baptisms (${gcStats.year})`, value: fmt(gcStats.baptisms) },
               ].map(({ label, value }) => (
                 <div key={label} className="text-center">
-                  <div className="text-2xl md:text-3xl font-bold text-white tabular-nums">{value}</div>
-                  <div className="text-xs text-white/60 mt-1 uppercase tracking-wider">{label}</div>
+                  <div className="text-2xl md:text-3xl font-bold text-white tabular-nums drop-shadow-lg">{value}</div>
+                  <div className="text-xs text-white/70 mt-1 uppercase tracking-wider drop-shadow">{label}</div>
                 </div>
               ))}
             </div>
