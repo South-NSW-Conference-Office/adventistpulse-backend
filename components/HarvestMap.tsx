@@ -81,12 +81,14 @@ export default function HarvestMap({ fill = false }: { fill?: boolean }) {
     };
   }, [geoData]);
 
-  // Init Leaflet — useLayoutEffect so DOM is ready with real dimensions
-  useLayoutEffect(() => {
+  // Init Leaflet
+  useEffect(() => {
     if (!mapDivRef.current || mapInstanceRef.current) return;
+    // Guard against StrictMode double-mount / already-init DOM node
+    if ((mapDivRef.current as any)._leaflet_id) return;
 
     import('leaflet').then(L => {
-      if (!mapDivRef.current) return;
+      if (!mapDivRef.current || mapInstanceRef.current) return;
 
       delete (L.Icon.Default.prototype as any)._getIconUrl;
       L.Icon.Default.mergeOptions({
@@ -129,8 +131,9 @@ export default function HarvestMap({ fill = false }: { fill?: boolean }) {
 
     return () => {
       if (mapInstanceRef.current) {
-        mapInstanceRef.current.remove();
+        try { mapInstanceRef.current.remove(); } catch {}
         mapInstanceRef.current = null;
+        geoLayerRef.current = null;
         setLeafletReady(false);
       }
     };
