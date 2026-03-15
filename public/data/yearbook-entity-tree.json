@@ -1,0 +1,1623 @@
+{
+  "generated": "2026-03-01",
+  "source": "Adventist Online Yearbook (adventistyearbook.org), 2025 Edition",
+  "statistics_date": "June 30, 2024",
+  "total_entities": 423,
+  "notes": "Entity tree covers organisational units only (GC → divisions → unions → conferences/missions/fields). EntityIDs and AdmFieldIDs from yearbook URLs. Membership and church counts from ASTR statistics dated June 30 2024 unless noted.",
+  "tree": {
+    "name": "General Conference",
+    "code": "GC",
+    "entity_id": "10010",
+    "adm_field_id": "GC",
+    "level": "general_conference",
+    "organized": "1863-05-21",
+    "churches": 102405,
+    "membership": 23235925,
+    "population": 8085347000,
+    "leadership": {
+      "president": "Ted N C Wilson",
+      "secretary": "Erton C Kohler",
+      "treasurer": "Paul H Douglas"
+    },
+    "children": [
+      {
+        "name": "East-Central Africa Division",
+        "code": "ECD",
+        "entity_id": "20731",
+        "adm_field_id": "ECD",
+        "level": "division",
+        "territory": "Burundi, Democratic Republic of Congo, Djibouti, Eritrea, Ethiopia, Kenya, Rwanda, Somalia, South Sudan, Sudan, Uganda, United Republic of Tanzania",
+        "churches": 20899,
+        "membership": 5508516,
+        "population": 523995000,
+        "leadership": {
+          "president": "Blasious M Ruguri",
+          "secretary": "Musa G Mitekaro",
+          "treasurer": "Yohannes Olana"
+        },
+        "children": [
+          {
+            "name": "East Kenya Union Conference",
+            "code": "EKUC",
+            "level": "union_conference",
+            "children_note": "Conferences/missions not individually scraped — yearbook lists this as a union conference within ECD"
+          },
+          {
+            "name": "Northern Tanzania Union Conference",
+            "code": "NTUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "West Kenya Union Conference",
+            "code": "WKUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "Burundi Union Mission",
+            "code": "BRUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "East Congo Union Mission",
+            "code": "ECUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "Eastern Ethiopia Union Mission",
+            "code": "EEUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "North East Congo Union Mission",
+            "code": "NECUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "Rwanda Union Mission",
+            "code": "RWUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "South Sudan Union Mission",
+            "code": "SSUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "Southern Tanzania Union Mission",
+            "code": "STUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "Uganda Union Mission",
+            "code": "UGUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "West Congo Union Mission",
+            "code": "WCUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "Western Ethiopia Union Mission",
+            "code": "WEUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "Eritrea Mission Field",
+            "code": "ERMF",
+            "level": "mission_field"
+          },
+          {
+            "name": "Sudan Field",
+            "code": "SUDF",
+            "level": "field"
+          }
+        ]
+      },
+      {
+        "name": "Euro-Asia Division",
+        "code": "ESD",
+        "entity_id": "10042",
+        "adm_field_id": "ESD",
+        "level": "division",
+        "territory": "Afghanistan, Armenia, Azerbaijan, Belarus, Georgia, Kazakhstan, Kyrgyzstan, Republic of Moldova, Russian Federation, Tajikistan, Turkmenistan, a portion of Ukraine, Uzbekistan",
+        "churches": 951,
+        "membership": 57671,
+        "population": 306806000,
+        "leadership": {
+          "president": "Mikhail F Kaminskiy",
+          "secretary": "Ivan I Velgosha",
+          "treasurer": "Oleg V Voronyuk"
+        },
+        "children": [
+          {
+            "name": "West Russian Union Conference",
+            "code": "WRUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "Caucasus Union Mission",
+            "code": "CAUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "East Russian Union Mission",
+            "code": "ERUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "Southern Union Mission",
+            "code": "SOUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "Belarus Union of Churches Conference",
+            "code": "BUCC",
+            "level": "union_of_churches_conference"
+          },
+          {
+            "name": "Moldova Union of Churches Conference",
+            "code": "MUCC",
+            "level": "union_of_churches_conference"
+          },
+          {
+            "name": "Far Eastern Union of Churches Mission",
+            "code": "FEUCM",
+            "level": "union_of_churches_mission"
+          },
+          {
+            "name": "Crimea Mission",
+            "code": "CRIM",
+            "level": "mission"
+          },
+          {
+            "name": "Armenian Field",
+            "code": "ARMF",
+            "level": "field"
+          },
+          {
+            "name": "Don Field",
+            "code": "DONF",
+            "level": "field"
+          },
+          {
+            "name": "Georgian Field",
+            "code": "GEOF",
+            "level": "field"
+          }
+        ]
+      },
+      {
+        "name": "Inter-American Division",
+        "code": "IAD",
+        "entity_id": "13902",
+        "adm_field_id": "IAD",
+        "level": "division",
+        "territory": "Anguilla, Antigua and Barbuda, Aruba, Bahamas, Barbados, Belize, British Virgin Islands, Cayman Islands, Colombia, Costa Rica, Cuba, Curacao, Dominica, Dominican Republic, El Salvador, French Guiana, Grenada, Guadeloupe, Guatemala, Guyana, Haiti, Honduras, Jamaica, Martinique, Mexico, Montserrat, Nicaragua, Panama, Puerto Rico, Saint Kitts and Nevis, Saint Lucia, Saint Vincent and the Grenadines, Sint Maarten, Suriname, Trinidad and Tobago, Turks and Caicos Islands, United States Virgin Islands, Venezuela",
+        "churches": 16509,
+        "membership": 3740412,
+        "population": 307266000,
+        "leadership": {
+          "president": "Elie Henry",
+          "secretary": "Leonard A Johnson",
+          "treasurer": "Ivelisse Herrera"
+        },
+        "children": [
+          {
+            "name": "Caribbean Union Conference",
+            "code": "CBUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "Chiapas Mexican Union Conference",
+            "code": "CMUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "Cuban Union Conference",
+            "code": "CUUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "Dominican Union Conference",
+            "code": "DOUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "French Antilles-Guiana Union Conference",
+            "code": "FAGUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "Inter-Oceanic Mexican Union Conference",
+            "code": "IOMUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "Jamaica Union Conference",
+            "code": "JAUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "North Colombian Union Conference",
+            "code": "NCUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "North Mexican Union Conference",
+            "code": "NMUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "Puerto Rican Union Conference",
+            "code": "PRUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "South Colombian Union Conference",
+            "code": "SCUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "Atlantic Caribbean Union Mission",
+            "code": "ACUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "Belize Union Mission",
+            "code": "BLUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "Central Mexican Union Mission",
+            "code": "CMUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "Costa Rica Union Mission",
+            "code": "CRUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "Dutch Caribbean Union Mission",
+            "code": "DCUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "East Venezuela Union Mission",
+            "code": "EVUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "El Salvador Union Mission",
+            "code": "ESUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "Guatemala Union Mission",
+            "code": "GTUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "Haitian Union Mission",
+            "code": "HAUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "Honduras Union Mission",
+            "code": "HNUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "Nicaragua Union Mission",
+            "code": "NIUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "Panama Union Mission",
+            "code": "PNUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "Southeast Mexican Union Mission",
+            "code": "SEMUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "West Venezuela Union Mission",
+            "code": "WVUM",
+            "level": "union_mission"
+          }
+        ]
+      },
+      {
+        "name": "Inter-European Division",
+        "code": "EUD",
+        "entity_id": "13733",
+        "adm_field_id": "EUD",
+        "level": "division",
+        "territory": "Andorra, Austria, Belgium, Bulgaria, Czechia, France, Germany, Gibraltar, Holy See, Italy, Liechtenstein, Luxembourg, Malta, Monaco, Portugal, Romania, San Marino, Slovakia, Spain, Switzerland",
+        "churches": 2511,
+        "membership": 182411,
+        "population": 343037000,
+        "leadership": {
+          "president": "Mario Brito",
+          "secretary": "Barna Magyarosi",
+          "treasurer": "Norbert Zens"
+        },
+        "children": [
+          {
+            "name": "Czecho-Slovakian Union Conference",
+            "code": "CSUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "Franco-Belgian Union Conference",
+            "code": "FBUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "North German Union Conference",
+            "code": "NGUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "Romanian Union Conference",
+            "code": "ROUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "South German Union Conference",
+            "code": "SGUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "Swiss Union Conference",
+            "code": "SWUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "Austrian Union of Churches Conference",
+            "code": "AUOCC",
+            "level": "union_of_churches_conference"
+          },
+          {
+            "name": "Bulgarian Union of Churches Conference",
+            "code": "BUOCC",
+            "level": "union_of_churches_conference"
+          },
+          {
+            "name": "Italian Union of Churches Conference",
+            "code": "IUOCC",
+            "level": "union_of_churches_conference"
+          },
+          {
+            "name": "Portuguese Union of Churches Conference",
+            "code": "PUOCC",
+            "level": "union_of_churches_conference"
+          },
+          {
+            "name": "Spanish Union of Churches Conference",
+            "code": "SUOCC",
+            "level": "union_of_churches_conference"
+          }
+        ]
+      },
+      {
+        "name": "North American Division",
+        "code": "NAD",
+        "entity_id": "14197",
+        "adm_field_id": "NAD",
+        "level": "division",
+        "territory": "Bermuda, Canada, Federated States of Micronesia, Guam, Johnston Island, Marshall Islands, Midway Islands, Northern Mariana Islands, Palau, United States of America, Wake Island, Saint Pierre and Miquelon",
+        "churches": 5775,
+        "membership": 1268572,
+        "population": 378473000,
+        "leadership": {
+          "president": "G Alexander Bryant",
+          "secretary": "Kyoshin Ahn",
+          "treasurer": "Judy R Glass"
+        },
+        "children": [
+          {
+            "name": "Atlantic Union Conference",
+            "code": "ATUC",
+            "entity_id": "14212",
+            "adm_field_id": "ATUC",
+            "level": "union_conference",
+            "territory": "Bermuda, Connecticut, Maine, Massachusetts, New Hampshire, New York, Rhode Island, Vermont",
+            "churches": 620,
+            "membership": 135899,
+            "leadership": {
+              "president": "Abraham J Jules",
+              "secretary": "Theodore A Huskins",
+              "treasurer": "Elias F Zabala Sr"
+            },
+            "children": [
+              {
+                "name": "Bermuda Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Greater New York Conference",
+                "level": "conference"
+              },
+              {
+                "name": "New York Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Northeastern Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Northern New England Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Southern New England Conference",
+                "level": "conference"
+              }
+            ]
+          },
+          {
+            "name": "Seventh-day Adventist Church in Canada",
+            "code": "SDACC",
+            "entity_id": "14799",
+            "level": "union_conference",
+            "territory": "Canada, Saint Pierre and Miquelon",
+            "children": [
+              {
+                "name": "Alberta Conference",
+                "level": "conference"
+              },
+              {
+                "name": "British Columbia Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Manitoba-Saskatchewan Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Maritime Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Ontario Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Quebec Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Seventh-day Adventist Church in Newfoundland and Labrador",
+                "level": "conference"
+              }
+            ]
+          },
+          {
+            "name": "Columbia Union Conference",
+            "code": "COUC",
+            "entity_id": "14445",
+            "adm_field_id": "COUC",
+            "level": "union_conference",
+            "territory": "Delaware, Maryland, New Jersey, Ohio, Pennsylvania, Virginia, West Virginia, District of Columbia",
+            "churches": 768,
+            "membership": 153879,
+            "children": [
+              {
+                "name": "Allegheny East Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Allegheny West Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Chesapeake Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Mountain View Conference",
+                "level": "conference"
+              },
+              {
+                "name": "New Jersey Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Ohio Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Pennsylvania Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Potomac Conference",
+                "level": "conference"
+              }
+            ]
+          },
+          {
+            "name": "Lake Union Conference",
+            "code": "LKUC",
+            "adm_field_id": "LKUC",
+            "level": "union_conference",
+            "territory": "Illinois, Indiana, Michigan, Wisconsin, a portion of Minnesota",
+            "churches": 501,
+            "membership": 89806,
+            "leadership": {
+              "president": "Kenneth A Denslow"
+            },
+            "children": [
+              {
+                "name": "Illinois Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Indiana Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Lake Region Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Michigan Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Wisconsin Conference",
+                "level": "conference"
+              }
+            ]
+          },
+          {
+            "name": "Mid-America Union Conference",
+            "code": "MAUC",
+            "adm_field_id": "MAUC",
+            "level": "union_conference",
+            "territory": "Colorado, Iowa, Kansas, Minnesota, Missouri, Nebraska, North Dakota, South Dakota, Wyoming, San Juan County in New Mexico",
+            "churches": 458,
+            "membership": 66057,
+            "children": [
+              {
+                "name": "Central States Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Dakota Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Iowa-Missouri Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Kansas-Nebraska Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Minnesota Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Rocky Mountain Conference",
+                "level": "conference"
+              }
+            ]
+          },
+          {
+            "name": "North Pacific Union Conference",
+            "code": "NPUC",
+            "adm_field_id": "NPUC",
+            "level": "union_conference",
+            "territory": "Alaska, Idaho, Montana, Oregon, Washington",
+            "churches": 459,
+            "membership": 103265,
+            "leadership": {
+              "president": "John C Freedman"
+            },
+            "children": [
+              {
+                "name": "Alaska Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Idaho Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Montana Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Oregon Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Upper Columbia Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Washington Conference",
+                "level": "conference"
+              }
+            ]
+          },
+          {
+            "name": "Pacific Union Conference",
+            "code": "PAUC",
+            "adm_field_id": "PAUC",
+            "level": "union_conference",
+            "territory": "Arizona, California, Hawaii, Nevada, Utah, Johnston Island, Midway Islands",
+            "churches": 725,
+            "membership": 219478,
+            "leadership": {
+              "president": "Bradford C Newton"
+            },
+            "children": [
+              {
+                "name": "Arizona Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Central California Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Hawaii Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Nevada-Utah Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Northern California Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Southeastern California Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Southern California Conference",
+                "level": "conference"
+              }
+            ]
+          },
+          {
+            "name": "Southern Union Conference",
+            "code": "NSUC",
+            "entity_id": "12629",
+            "adm_field_id": "NSUC",
+            "level": "union_conference",
+            "territory": "Alabama, Florida, Georgia, Kentucky, Mississippi, North Carolina, South Carolina, Tennessee",
+            "churches": 1229,
+            "membership": 300218,
+            "children": [
+              {
+                "name": "Carolina Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Florida Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Georgia-Cumberland Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Gulf States Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Kentucky-Tennessee Conference",
+                "level": "conference"
+              },
+              {
+                "name": "South Atlantic Conference",
+                "level": "conference"
+              },
+              {
+                "name": "South Central Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Southeastern Conference",
+                "level": "conference"
+              }
+            ]
+          },
+          {
+            "name": "Southwestern Union Conference",
+            "code": "SWUC",
+            "adm_field_id": "SWUC",
+            "level": "union_conference",
+            "territory": "Arkansas, Louisiana, New Mexico (except San Juan County), Oklahoma, Texas",
+            "churches": 601,
+            "membership": 126864,
+            "leadership": {
+              "president": "Carlos J Craig"
+            },
+            "children": [
+              {
+                "name": "Arkansas-Louisiana Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Oklahoma Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Southwest Region Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Texas Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Texico Conference",
+                "level": "conference"
+              }
+            ]
+          },
+          {
+            "name": "Guam-Micronesia Mission",
+            "code": "GUMM",
+            "adm_field_id": "GUMM",
+            "level": "attached_field",
+            "territory": "Guam, Wake Island, Northern Mariana Islands, Federated States of Micronesia, Republic of Palau, Republic of the Marshall Islands",
+            "churches": 38,
+            "membership": 5566,
+            "leadership": {
+              "president": "Matthew Kirk"
+            },
+            "children": []
+          }
+        ]
+      },
+      {
+        "name": "Northern Asia-Pacific Division",
+        "code": "NSD",
+        "entity_id": "10344",
+        "adm_field_id": "NSD",
+        "level": "division",
+        "territory": "Bangladesh, Democratic People's Republic of Korea, Japan, Mongolia, Nepal, Pakistan, Republic of Korea, Sri Lanka, Taiwan",
+        "churches": 1197,
+        "membership": 358244,
+        "population": 697778000,
+        "leadership": {
+          "president": "Yo Han Kim",
+          "secretary": "Hiroshi Yamaji",
+          "treasurer": "TaeSeung Kim (Ted)"
+        },
+        "children": [
+          {
+            "name": "Japan Union Conference",
+            "code": "JUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "Korean Union Conference",
+            "code": "KUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "Bangladesh Union Mission",
+            "code": "BDUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "Pakistan Union Section",
+            "code": "PKUS",
+            "level": "union_section"
+          },
+          {
+            "name": "Taiwan Conference",
+            "code": "TWCF",
+            "level": "attached_conference"
+          },
+          {
+            "name": "Mongolia Mission",
+            "code": "MNGM",
+            "level": "attached_mission"
+          },
+          {
+            "name": "Sri Lanka Mission",
+            "code": "SLKM",
+            "level": "attached_mission"
+          },
+          {
+            "name": "Nepal Section",
+            "code": "NPLS",
+            "level": "attached_section"
+          }
+        ]
+      },
+      {
+        "name": "South American Division",
+        "code": "SAD",
+        "entity_id": "10621",
+        "adm_field_id": "SAD",
+        "level": "division",
+        "territory": "Argentina, Bolivia, Brazil, Chile, Ecuador, Falkland Islands (Malvinas), Paraguay, Peru, Uruguay",
+        "churches": 15774,
+        "membership": 2691253,
+        "population": 354172000,
+        "leadership": {
+          "president": "Stanley Arco",
+          "secretary": "Edward Heidinger",
+          "treasurer": "Edson Medeiros"
+        },
+        "children": [
+          {
+            "name": "Argentina Union Conference",
+            "code": "ARUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "Central Brazil Union Conference",
+            "code": "CBUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "South Brazil Union Conference",
+            "code": "SBUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "Southeast Brazil Union Conference",
+            "code": "SEBUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "Bolivia Union Mission",
+            "code": "BOLUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "Chile Union Mission",
+            "code": "CHLUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "East Brazil Union Mission",
+            "code": "EBUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "Ecuador Union Mission",
+            "code": "ECUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "North Brazil Union Mission",
+            "code": "NBUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "North Peru Union Mission",
+            "code": "NPUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "Northeast Brazil Union Mission",
+            "code": "NEBUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "Northwest Brazil Union Mission",
+            "code": "NWBUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "South Peru Union Mission",
+            "code": "SPUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "West Central Brazil Union Mission",
+            "code": "WCBUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "Paraguay Union of Churches Mission",
+            "code": "PYUOCM",
+            "level": "union_of_churches_mission"
+          },
+          {
+            "name": "Uruguay Union of Churches Mission",
+            "code": "UYUOCM",
+            "level": "union_of_churches_mission"
+          },
+          {
+            "name": "Falkland Islands (Malvinas) Field Station",
+            "code": "FKFS",
+            "level": "field_station"
+          }
+        ]
+      },
+      {
+        "name": "South Pacific Division",
+        "code": "SPD",
+        "entity_id": "13276",
+        "adm_field_id": "SPD",
+        "level": "division",
+        "territory": "American Samoa, Australia, Cook Islands, Fiji, French Polynesia, Kiribati, Nauru, New Caledonia, New Zealand, Niue, Papua New Guinea, Pitcairn, Samoa, Solomon Islands, Tokelau, Tonga, Tuvalu, Vanuatu, Wallis and Futuna Islands",
+        "churches": 2390,
+        "membership": 824647,
+        "population": 45464000,
+        "leadership": {
+          "president": "Glenn C Townend",
+          "secretary": "Michael B Sikuri",
+          "treasurer": "J Francois Keet"
+        },
+        "children": [
+          {
+            "name": "Australian Union Conference",
+            "code": "AUC",
+            "entity_id": "20197",
+            "adm_field_id": "AUSU",
+            "level": "union_conference",
+            "territory": "Australia",
+            "churches": 450,
+            "membership": 65477,
+            "population": 27304000,
+            "leadership": {
+              "president": "Brendan Pratt",
+              "secretary": "Jeffrey Masengi",
+              "treasurer": "Graeme Drinkall"
+            },
+            "children": [
+              {
+                "name": "Greater Sydney Conference",
+                "level": "conference"
+              },
+              {
+                "name": "North New South Wales Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Northern Australian Conference",
+                "level": "conference"
+              },
+              {
+                "name": "South Australian Conference",
+                "level": "conference"
+              },
+              {
+                "name": "South New South Wales Conference",
+                "code": "SNSW",
+                "entity_id": "13330",
+                "level": "conference"
+              },
+              {
+                "name": "South Queensland Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Tasmanian Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Victorian Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Western Australian Conference",
+                "level": "conference"
+              }
+            ]
+          },
+          {
+            "name": "New Zealand Pacific Union Conference",
+            "code": "NZPUC",
+            "entity_id": "20198",
+            "adm_field_id": "NZPU",
+            "level": "union_conference",
+            "territory": "Cook Islands, French Polynesia, New Caledonia, New Zealand, Pitcairn Island, Wallis and Futuna Islands",
+            "churches": 158,
+            "membership": 22291,
+            "population": 5945000,
+            "leadership": {
+              "president": "Edward Tupa'i",
+              "secretary_treasurer": "Kheir A Boutros"
+            },
+            "children": [
+              {
+                "name": "North New Zealand Conference",
+                "level": "conference"
+              },
+              {
+                "name": "South New Zealand Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Cook Islands Mission",
+                "level": "mission"
+              },
+              {
+                "name": "French Polynesia Mission",
+                "level": "mission"
+              },
+              {
+                "name": "New Caledonia Mission",
+                "level": "mission"
+              },
+              {
+                "name": "Pitcairn Field Station",
+                "level": "field_station"
+              }
+            ]
+          },
+          {
+            "name": "Papua New Guinea Union Mission",
+            "code": "PNGUM",
+            "entity_id": "13305",
+            "adm_field_id": "PNGUM",
+            "level": "union_mission",
+            "territory": "Papua New Guinea",
+            "churches": 1203,
+            "membership": 595786,
+            "population": 9690000,
+            "leadership": {
+              "president": "Malachi Yani",
+              "secretary": "Leonard Sumatau",
+              "treasurer": "Kenton Ghona"
+            },
+            "children": [
+              {
+                "name": "Central Papua Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Bougainville Mission",
+                "level": "mission"
+              },
+              {
+                "name": "Eastern Highlands Simbu Mission",
+                "level": "mission"
+              },
+              {
+                "name": "Madang Manus Mission",
+                "level": "mission"
+              },
+              {
+                "name": "Morobe Mission",
+                "level": "mission"
+              },
+              {
+                "name": "New Britain New Ireland Mission",
+                "level": "mission"
+              },
+              {
+                "name": "Northern and Milne Bay Mission",
+                "level": "mission"
+              },
+              {
+                "name": "Sepik Mission",
+                "level": "mission"
+              },
+              {
+                "name": "South West Papua Mission",
+                "level": "mission"
+              },
+              {
+                "name": "Western Highlands Mission",
+                "level": "mission"
+              }
+            ]
+          },
+          {
+            "name": "Trans Pacific Union Mission",
+            "code": "TPUM",
+            "entity_id": "20199",
+            "adm_field_id": "TPACU",
+            "level": "union_mission",
+            "territory": "American Samoa, Fiji, Kiribati, Nauru, Niue, Samoa, Solomon Islands, Tokelau, Tonga, Tuvalu, Vanuatu",
+            "churches": 579,
+            "membership": 141093,
+            "population": 2525000,
+            "leadership": {
+              "president": "Maveni Kaufononga",
+              "secretary": "Jane C Gibson-Opetaia",
+              "treasurer": "Fraser J Alekevu"
+            },
+            "children": [
+              {
+                "name": "American Samoa Mission",
+                "level": "mission"
+              },
+              {
+                "name": "Fiji Mission",
+                "level": "mission"
+              },
+              {
+                "name": "Kiribati Mission",
+                "level": "mission"
+              },
+              {
+                "name": "Samoa-Tokelau Mission",
+                "level": "mission"
+              },
+              {
+                "name": "Solomon Islands Mission",
+                "level": "mission"
+              },
+              {
+                "name": "Tonga Mission",
+                "level": "mission"
+              },
+              {
+                "name": "Vanuatu Mission",
+                "level": "mission"
+              },
+              {
+                "name": "Tuvalu Region",
+                "level": "region"
+              },
+              {
+                "name": "Niue Field Station",
+                "level": "field_station"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Southern Africa-Indian Ocean Division",
+        "code": "SID",
+        "entity_id": "10555",
+        "adm_field_id": "SID",
+        "level": "division",
+        "territory": "Angola, Botswana, Comoros, Eswatini, Lesotho, Madagascar, Malawi, Mauritius, Mayotte, Mozambique, Namibia, Reunion, Saint Helena, Sao Tome and Principe, Seychelles, South Africa, Zambia, Zimbabwe",
+        "churches": 14789,
+        "membership": 4250498,
+        "population": 235625000,
+        "leadership": {
+          "president": "Harrington S Akombwa",
+          "secretary": "Gideon P Reyneke",
+          "treasurer": "Hopekings K Ngomba"
+        },
+        "children": [
+          {
+            "name": "Botswana Union Conference",
+            "code": "BWUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "Indian Ocean Union Conference",
+            "code": "IOUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "Malawi Union Conference",
+            "code": "MWUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "Northern Zambia Union Conference",
+            "code": "NZUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "Southern Africa Union Conference",
+            "code": "SAUC",
+            "adm_field_id": "SAUC",
+            "level": "union_conference",
+            "territory": "Eswatini, Lesotho, Namibia, Saint Helena, South Africa",
+            "churches": 1440,
+            "membership": 181616,
+            "children": [
+              {
+                "name": "Cape Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Eswatini Conference",
+                "level": "conference"
+              },
+              {
+                "name": "KwaZulu Natal-Free State Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Lesotho Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Namibia North Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Namibia South Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Northern Conference",
+                "level": "conference"
+              },
+              {
+                "name": "Trans-Orange Conference",
+                "level": "conference"
+              }
+            ]
+          },
+          {
+            "name": "Southern Zambia Union Conference",
+            "code": "SZUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "Zimbabwe Central Union Conference",
+            "code": "ZCUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "Zimbabwe East Union Conference",
+            "code": "ZEUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "Zimbabwe West Union Conference",
+            "code": "ZWUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "Mozambique Union Mission",
+            "code": "MZUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "North-Eastern Angola Union Mission",
+            "code": "NEAUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "South-Western Angola Union Mission",
+            "code": "SWAUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "Sao Tome and Principe Mission",
+            "code": "STPM",
+            "level": "mission"
+          }
+        ]
+      },
+      {
+        "name": "Southern Asia Division",
+        "code": "SUD",
+        "entity_id": "13153",
+        "adm_field_id": "SUD",
+        "level": "division",
+        "territory": "Bhutan, India, Maldives",
+        "churches": 4580,
+        "membership": 1168958,
+        "population": 1443079000,
+        "leadership": {
+          "president": "Ezras Lakra",
+          "secretary": "John Victor Chinta",
+          "treasurer": "Riches Christian"
+        },
+        "children": [
+          {
+            "name": "East-Central India Union Section",
+            "code": "ECIUS",
+            "level": "union_section"
+          },
+          {
+            "name": "Northeast India Union Section",
+            "code": "NEIUS",
+            "level": "union_section"
+          },
+          {
+            "name": "Northern India Union Section",
+            "code": "NIUS",
+            "level": "union_section"
+          },
+          {
+            "name": "South-Central India Union Section",
+            "code": "SCIUS",
+            "level": "union_section"
+          },
+          {
+            "name": "Southeast India Union Section",
+            "code": "SEIUS",
+            "level": "union_section"
+          },
+          {
+            "name": "Southwest India Union Section",
+            "code": "SWIUS",
+            "level": "union_section"
+          },
+          {
+            "name": "Western India Union Section",
+            "code": "WIUS",
+            "level": "union_section"
+          },
+          {
+            "name": "Andaman and Nicobar Island Region",
+            "code": "ANIR",
+            "level": "region"
+          },
+          {
+            "name": "East Himalayan Field",
+            "code": "EHF",
+            "level": "field"
+          }
+        ]
+      },
+      {
+        "name": "Southern Asia-Pacific Division",
+        "code": "SSD",
+        "entity_id": "10488",
+        "adm_field_id": "SSD",
+        "level": "division",
+        "territory": "Brunei Darussalam, Cambodia, Indonesia, Lao People's Democratic Republic, Malaysia, Myanmar, Philippines, Singapore, Thailand, Timor-Leste, Vietnam",
+        "churches": 8587,
+        "membership": 1548395,
+        "population": 692922000,
+        "leadership": {
+          "president": "Roger O Caderma",
+          "secretary": "Wendell W Mandolang",
+          "treasurer": "Jacinto M Adap"
+        },
+        "children": [
+          {
+            "name": "Central Philippine Union Conference",
+            "code": "CPUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "East Indonesia Union Conference",
+            "code": "EIUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "Southwestern Philippine Union Conference",
+            "code": "SWPUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "Malaysia Union Mission",
+            "code": "MYUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "Myanmar Union Mission",
+            "code": "MMUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "Northern Luzon Philippine Union Mission",
+            "code": "NLPUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "Southeastern Asia Union Mission",
+            "code": "SEAUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "Southeastern Philippine Union Mission",
+            "code": "SEPUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "Southern Luzon Philippine Union Mission",
+            "code": "SLPUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "West Indonesia Union Mission",
+            "code": "WIUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "Singapore Conference",
+            "code": "SGCF",
+            "level": "attached_conference"
+          },
+          {
+            "name": "Timor-Leste Mission",
+            "code": "TLMM",
+            "level": "attached_mission"
+          }
+        ]
+      },
+      {
+        "name": "Trans-European Division",
+        "code": "TED",
+        "entity_id": "13018",
+        "adm_field_id": "TED",
+        "level": "division",
+        "territory": "Aland Islands, Albania, Bosnia and Herzegovina, Croatia, Denmark, Estonia, Faroe Islands, Finland, Greece, Greenland, Guernsey, Hungary, Iceland, Ireland, Isle of Man, Jersey, Latvia, Lithuania, Montenegro, Netherlands, North Macedonia, Norway, Poland, Serbia, Slovenia, Sweden, United Kingdom of Great Britain and Northern Ireland, southern portion of Cyprus",
+        "churches": 1178,
+        "membership": 91496,
+        "population": 208294000,
+        "leadership": {
+          "president": "Daniel Duda",
+          "secretary": "Robert Cs Csizmadia",
+          "treasurer": "Nenad Jepuranovic"
+        },
+        "children": [
+          {
+            "name": "Adriatic Union Conference",
+            "code": "ADUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "Baltic Union Conference",
+            "code": "BAUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "British Union Conference",
+            "code": "BRUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "Hungarian Union Conference",
+            "code": "HUUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "Norwegian Union Conference",
+            "code": "NOUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "Polish Union Conference",
+            "code": "PLUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "South-East European Union Conference",
+            "code": "SEEUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "Danish Union of Churches Conference",
+            "code": "DKUCC",
+            "level": "union_of_churches_conference"
+          },
+          {
+            "name": "Finland Union of Churches Conference",
+            "code": "FIUCC",
+            "level": "union_of_churches_conference"
+          },
+          {
+            "name": "Netherlands Union of Churches Conference",
+            "code": "NLUCC",
+            "level": "union_of_churches_conference"
+          },
+          {
+            "name": "Swedish Union of Churches Conference",
+            "code": "SEUCC",
+            "level": "union_of_churches_conference"
+          },
+          {
+            "name": "Cyprus Region",
+            "code": "CYPR",
+            "level": "region"
+          },
+          {
+            "name": "Greek Mission",
+            "code": "GRKM",
+            "level": "mission"
+          },
+          {
+            "name": "Iceland Conference",
+            "code": "ICEC",
+            "level": "attached_conference"
+          }
+        ]
+      },
+      {
+        "name": "West-Central Africa Division",
+        "code": "WAD",
+        "entity_id": "10421",
+        "adm_field_id": "WAD",
+        "level": "division",
+        "territory": "Benin, Burkina Faso, Cabo Verde, Cameroon, Central African Republic, Chad, Congo, Cote d'Ivoire, Equatorial Guinea, Gabon, Gambia, Ghana, Guinea, Guinea-Bissau, Liberia, Mali, Mauritania, Niger, Nigeria, Senegal, Sierra Leone, Togo",
+        "churches": 5341,
+        "membership": 1016479,
+        "population": 507859000,
+        "leadership": {
+          "president": "Robert Osei-Bonsu",
+          "secretary": "Selom Kwasi Sessou",
+          "treasurer": "Markus Dangana Musa"
+        },
+        "children": [
+          {
+            "name": "Eastern Nigeria Union Conference",
+            "code": "ENUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "Mid-Ghana Union Conference",
+            "code": "MGUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "Northern Nigeria Union Conference",
+            "code": "NNUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "Southern Ghana Union Conference",
+            "code": "SGUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "Western Nigeria Union Conference",
+            "code": "WNUC",
+            "level": "union_conference"
+          },
+          {
+            "name": "Cameroon Union Mission",
+            "code": "CMUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "Central African Union Mission",
+            "code": "CAUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "Eastern Sahel Union Mission",
+            "code": "ESUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "North-Central Ghana Union Mission",
+            "code": "NCGUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "West African Union Mission",
+            "code": "WAUM",
+            "level": "union_mission"
+          },
+          {
+            "name": "Western Sahel Union Mission",
+            "code": "WSUM",
+            "level": "union_mission"
+          }
+        ]
+      },
+      {
+        "name": "Ukrainian Union Conference",
+        "code": "UKUC",
+        "level": "gc_attached_union",
+        "territory": "Ukraine (except portion under ESD)"
+      },
+      {
+        "name": "Chinese Union Mission",
+        "code": "CHUM",
+        "level": "gc_attached_union",
+        "territory": "China"
+      },
+      {
+        "name": "Middle East and North Africa Union Mission",
+        "code": "MENAUM",
+        "level": "gc_attached_union",
+        "territory": "Middle East and North Africa"
+      },
+      {
+        "name": "Israel Field",
+        "code": "ISRF",
+        "level": "gc_attached_field",
+        "territory": "Israel"
+      }
+    ]
+  }
+}

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 40" fill="none">
+  <!-- "Adventist" in Inter 800 — dark grey for light backgrounds -->
+  <text x="0" y="32" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-weight="800" font-size="34" fill="#1e293b" letter-spacing="-0.02em">Adventist</text>
+  <!-- Heartbeat ECG line — indigo -->
+  <polyline points="180,25 186,25 190,17 194,35 198,10 202,30 206,22 212,22" stroke="#6366F1" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- "Pulse" in Inter 800 — indigo -->
+  <text x="213" y="32" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-weight="800" font-size="34" fill="#6366F1" letter-spacing="-0.02em">Pulse</text>
+</svg>
