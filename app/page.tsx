@@ -24,9 +24,9 @@ export default function Home() {
     .sort((a, b) => (b.latestYear?.membership?.ending ?? 0) - (a.latestYear?.membership?.ending ?? 0));
 
   return (
-    <main id="main-content" className={cn("min-h-screen overflow-x-hidden", tokens.bg.page, tokens.text.heading)}>
+    <div id="main-content" className={cn("min-h-screen", tokens.bg.page, tokens.text.heading)}>
       {/* Hero — full-bleed map covering full viewport incl. NavBar */}
-      <div className="relative w-screen overflow-hidden" style={{ height: '100vh', marginLeft: 'calc(-50vw + 50%)', marginRight: 'calc(-50vw + 50%)' }}>
+      <div className="relative w-full overflow-hidden" style={{ height: '100vh' }}>
         {/* Map fills entire background */}
         <div className="absolute inset-0">
           <HarvestMapLoader fill />
@@ -164,7 +164,7 @@ export default function Home() {
           <p>{allEntities.length} entities tracked · Data from adventiststatistics.org</p>
         </div>
       </div>
-    </main>
+    </div>
   );
 }
 

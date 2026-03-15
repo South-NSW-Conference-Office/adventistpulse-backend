@@ -238,7 +238,7 @@ export default function HarvestMap({ fill = false }: { fill?: boolean }) {
 
       <div
         ref={mapRef}
-        className="w-full h-full rounded-xl border border-[#2a3a50] overflow-hidden"
+        className={fill ? "w-full h-full overflow-hidden" : "w-full h-full rounded-xl border border-[#2a3a50] overflow-hidden"}
         style={{ background: '#1a1a2e' }}
       />
 
