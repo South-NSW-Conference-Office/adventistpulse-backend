@@ -14,7 +14,7 @@ export function Breadcrumbs({ items }: { items: OrgUnit[] }) {
           {i > 0 && <span className="text-slate-600 mx-1">›</span>}
           <Link
             href={`/entity/${item.code}`}
-            className="hover:text-white hover:text-[#6366F1] transition-colors"
+            className="hover:text-white hover:text-[#14b8a6] transition-colors"
           >
             {item.name}
           </Link>

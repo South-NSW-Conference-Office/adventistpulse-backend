@@ -43,7 +43,7 @@ export function BrowseSearchFilter({ entities, level }: BrowseSearchFilterProps)
       sortFn: (a, b) => a.name.localeCompare(b.name),
       render: (e) => (
         <div>
-          <Link href={`/entity/${e.code}`} className={cn('font-medium hover:text-[#6366F1]', tokens.text.heading)}>
+          <Link href={`/entity/${e.code}`} className={cn('font-medium hover:text-[#14b8a6]', tokens.text.heading)}>
             {e.name}
           </Link>
           <span className="text-xs text-gray-400 dark:text-slate-600 ml-2">{e.code}</span>
@@ -108,7 +108,7 @@ export function BrowseSearchFilter({ entities, level }: BrowseSearchFilterProps)
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={`Search ${levelLabel}...`}
-            className="w-full bg-white dark:bg-[#1f2b3d] border border-gray-200 dark:border-[#2a3a50] rounded-lg pl-10 pr-4 py-2.5 text-sm text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-slate-500 focus:outline-none focus:border-[#6366F1] focus:ring-1 focus:ring-[#6366F1]/30 transition-colors"
+            className="w-full bg-white dark:bg-[#1f2b3d] border border-gray-200 dark:border-[#2a3a50] rounded-lg pl-10 pr-4 py-2.5 text-sm text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-slate-500 focus:outline-none focus:border-[#14b8a6] focus:ring-1 focus:ring-[#14b8a6]/30 transition-colors"
           />
           {searchQuery && (
             <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">

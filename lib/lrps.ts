@@ -60,7 +60,7 @@ export function getAllTags(): { tag: string; count: number }[] {
 
 export function getGradeColor(grade: string): string {
   if (grade.startsWith('A')) return 'text-emerald-400';
-  if (grade.startsWith('B')) return 'text-[#6366F1]';
+  if (grade.startsWith('B')) return 'text-[#14b8a6]';
   if (grade.startsWith('C')) return 'text-yellow-400';
   if (grade.startsWith('D')) return 'text-red-400';
   return 'text-slate-400';
@@ -68,7 +68,7 @@ export function getGradeColor(grade: string): string {
 
 export function getGradeBg(grade: string): string {
   if (grade.startsWith('A')) return 'bg-emerald-500/10 border-emerald-500/30';
-  if (grade.startsWith('B')) return 'bg-[#6366F1]/10 border-[#6366F1]/30';
+  if (grade.startsWith('B')) return 'bg-[#14b8a6]/10 border-[#14b8a6]/30';
   if (grade.startsWith('C')) return 'bg-yellow-500/10 border-yellow-500/30';
   if (grade.startsWith('D')) return 'bg-red-500/10 border-red-500/30';
   return 'bg-slate-500/10 border-slate-500/30';
@@ -78,7 +78,7 @@ export function getStatusLabel(status: string): { label: string; color: string }
   const s = status.toLowerCase().replace(/[^a-z_]/g, '');
   switch (s) {
     case 'published': return { label: 'Published', color: 'text-emerald-400' };
-    case 'peer_reviewed': return { label: 'Peer Reviewed', color: 'text-[#6366F1]' };
+    case 'peer_reviewed': return { label: 'Peer Reviewed', color: 'text-[#14b8a6]' };
     default: return { label: '', color: '' };
   }
 }

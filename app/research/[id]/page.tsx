@@ -38,7 +38,7 @@ export default async function LRPDetailPage({ params }: { params: Promise<{ id: 
         <nav className="text-sm text-gray-400 dark:text-slate-500 mb-8">
           <Link href="/" className="hover:text-gray-600 dark:hover:text-slate-300">Home</Link>
           <span className="mx-2">›</span>
-          <Link href="/research" className="text-[#6366F1] hover:underline">Research</Link>
+          <Link href="/research" className="text-[#14b8a6] hover:underline">Research</Link>
           <span className="mx-2">›</span>
           <span className="text-gray-600 dark:text-slate-400">{lrp.id}</span>
         </nav>
@@ -46,7 +46,7 @@ export default async function LRPDetailPage({ params }: { params: Promise<{ id: 
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-3">
-            <span className="text-sm font-mono font-bold text-[#6366F1]">{lrp.id}</span>
+            <span className="text-sm font-mono font-bold text-[#14b8a6]">{lrp.id}</span>
             <div className={cn('px-2 py-0.5 rounded border text-xs font-bold', getGradeBg(lrp.grade))}>
               <span className={getGradeColor(lrp.grade)}>{lrp.grade}</span>
               {lrp.score > 0 && <span className="text-gray-400 dark:text-slate-500 ml-1">({lrp.score}/100)</span>}
@@ -57,7 +57,7 @@ export default async function LRPDetailPage({ params }: { params: Promise<{ id: 
             {lrp.title}
           </h1>
           {lrp.coreQuestion && (
-            <p className="text-lg text-indigo-400 dark:text-indigo-300 italic">
+            <p className="text-lg text-teal-400 dark:text-teal-300 italic">
               &ldquo;{lrp.coreQuestion}&rdquo;
             </p>
           )}
@@ -86,7 +86,7 @@ export default async function LRPDetailPage({ params }: { params: Promise<{ id: 
         {/* Tags & Regions */}
         <div className="flex flex-wrap gap-2 mb-8">
           {lrp.tags.map(tag => (
-            <span key={tag} className="text-xs px-2.5 py-1 rounded-full bg-[#6366F1]/10 text-[#6366F1] border border-[#6366F1]/20">
+            <span key={tag} className="text-xs px-2.5 py-1 rounded-full bg-[#14b8a6]/10 text-[#14b8a6] border border-[#14b8a6]/20">
               {tag}
             </span>
           ))}
@@ -116,8 +116,8 @@ export default async function LRPDetailPage({ params }: { params: Promise<{ id: 
             <div className="space-y-3">
               {lrp.keyFindings.map((finding, i) => (
                 <div key={i} className={cn('flex gap-3 rounded-xl p-4 border', tokens.bg.card, tokens.border.default)}>
-                  <div className="flex-shrink-0 w-7 h-7 rounded-full bg-[#6366F1]/10 border border-[#6366F1]/20 flex items-center justify-center">
-                    <span className="text-xs font-bold text-[#6366F1]">{i + 1}</span>
+                  <div className="flex-shrink-0 w-7 h-7 rounded-full bg-[#14b8a6]/10 border border-[#14b8a6]/20 flex items-center justify-center">
+                    <span className="text-xs font-bold text-[#14b8a6]">{i + 1}</span>
                   </div>
                   <p className="text-sm text-gray-600 dark:text-slate-300 leading-relaxed">{finding}</p>
                 </div>
@@ -139,7 +139,7 @@ export default async function LRPDetailPage({ params }: { params: Promise<{ id: 
                       <span className="text-xs text-gray-400 dark:text-slate-500 w-32 shrink-0">{cat.label}</span>
                       <div className="flex-1 h-2 bg-gray-200 dark:bg-[#334155] rounded-full overflow-hidden">
                         <div
-                          className="h-full rounded-full bg-[#6366F1]"
+                          className="h-full rounded-full bg-[#14b8a6]"
                           style={{ width: `${(val / cat.max) * 100}%` }}
                         />
                       </div>
@@ -177,14 +177,14 @@ export default async function LRPDetailPage({ params }: { params: Promise<{ id: 
                 <Link
                   key={related.id}
                   href={`/research/${related.id}`}
-                  className={cn('flex items-center gap-4 rounded-xl p-4 border hover:border-[#6366F1]/50 transition-colors', tokens.bg.card, tokens.border.default)}
+                  className={cn('flex items-center gap-4 rounded-xl p-4 border hover:border-[#14b8a6]/50 transition-colors', tokens.bg.card, tokens.border.default)}
                 >
                   <div className={cn('flex-shrink-0 w-10 h-10 rounded border flex flex-col items-center justify-center', getGradeBg(related.grade))}>
                     <span className={cn('text-xs font-bold', getGradeColor(related.grade))}>{related.grade}</span>
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-xs font-mono text-[#6366F1]">{related.id}</span>
+                      <span className="text-xs font-mono text-[#14b8a6]">{related.id}</span>
                     </div>
                     <h3 className={cn('text-sm font-semibold truncate', tokens.text.heading)}>{related.title}</h3>
                   </div>
@@ -196,7 +196,7 @@ export default async function LRPDetailPage({ params }: { params: Promise<{ id: 
 
         {/* Back */}
         <div className="pt-4 border-t border-gray-200 dark:border-[#334155]">
-          <Link href="/research" className="text-sm text-[#6366F1] hover:underline">
+          <Link href="/research" className="text-sm text-[#14b8a6] hover:underline">
             ← Back to Research Library
           </Link>
         </div>

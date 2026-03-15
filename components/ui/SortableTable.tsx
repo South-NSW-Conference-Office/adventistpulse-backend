@@ -72,7 +72,7 @@ export function SortableTable<T>({
                       'px-4 py-3 text-xs font-semibold text-gray-500 dark:text-slate-500 select-none',
                       alignClass,
                       col.hideOnMobile && 'hidden sm:table-cell',
-                      sortable && 'cursor-pointer hover:text-[#6366F1] transition-colors',
+                      sortable && 'cursor-pointer hover:text-[#14b8a6] transition-colors',
                     )}
                     onClick={sortable ? () => handleSort(col.key) : undefined}
                   >
@@ -81,8 +81,8 @@ export function SortableTable<T>({
                       {sortable && (
                         active ? (
                           sortDir === 'asc' 
-                            ? <ArrowUp className="w-3 h-3 text-[#6366F1]" />
-                            : <ArrowDown className="w-3 h-3 text-[#6366F1]" />
+                            ? <ArrowUp className="w-3 h-3 text-[#14b8a6]" />
+                            : <ArrowDown className="w-3 h-3 text-[#14b8a6]" />
                         ) : (
                           <ArrowUpDown className="w-3 h-3 opacity-30" />
                         )

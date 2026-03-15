@@ -33,10 +33,10 @@ export function ChildrenList({ entities }: { entities: EntityWithStats[] }) {
               <Link
                 key={entity.code}
                 href={`/entity/${entity.code}`}
-                className="bg-white dark:bg-[#1a2332] border border-gray-200 dark:border-[#2a3a50] rounded-lg p-4 hover:border-[#6366F1]/50 hover:shadow-md dark:hover:bg-[#1f2b3d]/80 transition-all group cursor-pointer"
+                className="bg-white dark:bg-[#1a2332] border border-gray-200 dark:border-[#2a3a50] rounded-lg p-4 hover:border-[#14b8a6]/50 hover:shadow-md dark:hover:bg-[#1f2b3d]/80 transition-all group cursor-pointer"
               >
                 <div className="flex items-start justify-between gap-2">
-                  <h3 className="font-semibold text-gray-900 dark:text-slate-200 group-hover:text-[#6366f1] dark:group-hover:text-white text-sm leading-tight">
+                  <h3 className="font-semibold text-gray-900 dark:text-slate-200 group-hover:text-[#14b8a6] dark:group-hover:text-white text-sm leading-tight">
                     {entity.name}
                   </h3>
                   <LevelBadge level={entity.level} size="sm" />

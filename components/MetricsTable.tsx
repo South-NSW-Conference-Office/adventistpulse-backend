@@ -54,7 +54,7 @@ function SortHeader({ label, sortKey, currentKey, currentDir, onSort, className 
       <span className="inline-flex items-center gap-1">
         {label}
         {isActive && (
-          <span className="text-[#6366F1]">{currentDir === 'desc' ? '↓' : '↑'}</span>
+          <span className="text-[#14b8a6]">{currentDir === 'desc' ? '↓' : '↑'}</span>
         )}
       </span>
     </th>
@@ -166,7 +166,7 @@ export function MetricsTable({ stats }: { stats: YearlyStats[] }) {
                 <>
                   <tr
                     key={s.year}
-                    className={`border-b border-gray-200 dark:border-[#2a3a50]/50 hover:bg-gray-100 dark:hover:bg-gray-100/50 dark:hover:bg-slate-800/30 ${hasBreakdown ? 'cursor-pointer' : ''} ${isHighest ? 'bg-[#6366F1]/5' : ''}`}
+                    className={`border-b border-gray-200 dark:border-[#2a3a50]/50 hover:bg-gray-100 dark:hover:bg-gray-100/50 dark:hover:bg-slate-800/30 ${hasBreakdown ? 'cursor-pointer' : ''} ${isHighest ? 'bg-[#14b8a6]/5' : ''}`}
                     onClick={() => hasBreakdown && toggleYear(s.year)}
                   >
                     <td className="py-2 px-3 text-gray-700 dark:text-slate-300 font-medium tabular-nums">
@@ -174,7 +174,7 @@ export function MetricsTable({ stats }: { stats: YearlyStats[] }) {
                         <span className="text-slate-600 mr-1 text-xs">{isExpanded ? '▾' : '▸'}</span>
                       )}
                       {s.year}
-                      {isHighest && <span className="ml-1 text-[#6366F1] text-xs">★</span>}
+                      {isHighest && <span className="ml-1 text-[#14b8a6] text-xs">★</span>}
                     </td>
                     <td className={`py-2 px-3 text-right tabular-nums ${isHighest && sortKey === 'membership' ? 'text-[#8b5cf6] font-semibold' : 'text-gray-900 dark:text-white'}`}>{fmt(s.membership.ending)}</td>
                     <td className={`py-2 px-3 text-right tabular-nums ${isHighest && sortKey === 'accessions' ? 'text-[#8b5cf6] font-semibold' : 'text-gray-900 dark:text-white'}`}>{fmt(getAccessions(s))}</td>

@@ -14,7 +14,7 @@ export default function MapPage() {
   const [tab, setTab] = useState<Tab>('heatmap')
 
   return (
-    <div className={cn('flex flex-col', tokens.bg.page)} style={{ height: 'calc(100vh - 64px)' }}>
+    <div className={cn('flex flex-col', tokens.bg.page)} style={{ height: 'calc(100vh - 100px)' }}>
       {/* Header bar */}
       <div className={cn(
         'flex items-center justify-between px-6 py-3 border-b shrink-0',

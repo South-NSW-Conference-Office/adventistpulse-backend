@@ -50,7 +50,7 @@ export function RankingsTable({ rankings, metric }: { rankings: RankedEntity[]; 
       sortFn: (a, b) => a.name.localeCompare(b.name),
       render: (e) => (
         <div>
-          <Link href={`/entity/${e.code}`} className={cn('font-medium hover:text-[#6366F1]', tokens.text.heading)} onClick={ev => ev.stopPropagation()}>
+          <Link href={`/entity/${e.code}`} className={cn('font-medium hover:text-[#14b8a6]', tokens.text.heading)} onClick={ev => ev.stopPropagation()}>
             {e.name}
           </Link>
           <span className="text-xs text-gray-400 dark:text-slate-600 ml-2">{e.level}</span>
@@ -86,7 +86,7 @@ export function RankingsTable({ rankings, metric }: { rankings: RankedEntity[]; 
         return (
           <div className="w-full bg-gray-100 dark:bg-[#2a3a50] rounded-full h-2 overflow-hidden">
             <div
-              className={cn('h-full rounded-full transition-all', isPositive ? 'bg-[#6366F1]' : 'bg-red-500')}
+              className={cn('h-full rounded-full transition-all', isPositive ? 'bg-[#14b8a6]' : 'bg-red-500')}
               style={{ width: `${barWidth}%` }}
             />
           </div>

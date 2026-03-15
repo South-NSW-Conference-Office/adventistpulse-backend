@@ -6,7 +6,7 @@ function FlatlineSvg() {
   return (
     <svg
       viewBox="0 0 200 60"
-      className="w-48 h-16 text-[#6366f1] opacity-70"
+      className="w-48 h-16 text-[#14b8a6] opacity-70"
       fill="none"
       stroke="currentColor"
       strokeWidth="2.5"
@@ -55,7 +55,7 @@ export default function NotFound() {
               tokens.bg.card,
               tokens.border.default,
               tokens.text.body,
-              'hover:border-[#6366f1]/50'
+              'hover:border-[#14b8a6]/50'
             )}
           >
             Browse Entities

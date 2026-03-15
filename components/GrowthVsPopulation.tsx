@@ -273,7 +273,7 @@ export function GrowthVsPopulation({
             onClick={() => handleRangeClick(r.label)}
             className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-colors ${
               activeRange === r.label && !customRange
-                ? 'bg-[#6366f1] text-white'
+                ? 'bg-[#14b8a6] text-white'
                 : 'bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/20'
             }`}
           >
@@ -283,7 +283,7 @@ export function GrowthVsPopulation({
         {customRange && (
           <button
             onClick={resetZoom}
-            className="px-3 py-1.5 text-xs font-semibold rounded-md bg-[#6366f1] text-white ml-2"
+            className="px-3 py-1.5 text-xs font-semibold rounded-md bg-[#14b8a6] text-white ml-2"
           >
             {customRange[0]}–{customRange[1]} ✕
           </button>
@@ -327,8 +327,8 @@ export function GrowthVsPopulation({
             <>
               <defs>
                 <linearGradient id="memGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#6366f1" stopOpacity="0.15" />
-                  <stop offset="100%" stopColor="#6366f1" stopOpacity="0.02" />
+                  <stop offset="0%" stopColor="#14b8a6" stopOpacity="0.15" />
+                  <stop offset="100%" stopColor="#14b8a6" stopOpacity="0.02" />
                 </linearGradient>
               </defs>
               <path
@@ -342,13 +342,13 @@ export function GrowthVsPopulation({
 
           {/* Lines */}
           {hasPopulation && <path d={makePath(popPoints)} fill="none" stroke="#ef4444" strokeWidth="2" opacity="0.6" />}
-          <path d={makePath(memPoints)} fill="none" stroke="#6366f1" strokeWidth="2.5" />
+          <path d={makePath(memPoints)} fill="none" stroke="#14b8a6" strokeWidth="2.5" />
           {hasPopulation && <path d={makePath(pctPoints)} fill="none" stroke="#22c55e" strokeWidth="2" strokeDasharray="6 3" />}
 
           {/* Data points */}
           {filteredData.map((d, i) => (
             <g key={d.year}>
-              <circle cx={xScale(d.year)} cy={yMem(d.membership)} r="3" fill="#6366f1"
+              <circle cx={xScale(d.year)} cy={yMem(d.membership)} r="3" fill="#14b8a6"
                 opacity={hoveredIdx === i ? 1 : 0.7} />
               {hasPopulation && (
                 <>
@@ -376,15 +376,15 @@ export function GrowthVsPopulation({
             <rect
               x={Math.min(dragX1, dragX2)} y={PAD.top}
               width={Math.abs(dragX2 - dragX1)} height={plotH}
-              fill="#6366f1" opacity="0.1"
-              stroke="#6366f1" strokeWidth="1" strokeDasharray="4 2"
+              fill="#14b8a6" opacity="0.1"
+              stroke="#14b8a6" strokeWidth="1" strokeDasharray="4 2"
             />
           )}
 
           {/* Left Y-axis: Membership */}
           {memTicks.map((v, i) => (
             <text key={`yl${i}`} x={PAD.left - 6} y={yMem(v) + 3}
-              textAnchor="end" className="fill-[#6366f1]" fontSize="10">{formatNum(v)}</text>
+              textAnchor="end" className="fill-[#14b8a6]" fontSize="10">{formatNum(v)}</text>
           ))}
 
           {/* Right Y-axis: % of Population (only with population) */}
@@ -401,7 +401,7 @@ export function GrowthVsPopulation({
 
           {/* Axis labels */}
           <text x={12} y={PAD.top + plotH / 2} textAnchor="middle"
-            className="fill-[#6366f1]" fontSize="9" transform={`rotate(-90, 12, ${PAD.top + plotH / 2})`}>
+            className="fill-[#14b8a6]" fontSize="9" transform={`rotate(-90, 12, ${PAD.top + plotH / 2})`}>
             Membership
           </text>
           {hasPopulation && (
@@ -431,7 +431,7 @@ export function GrowthVsPopulation({
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#6366f1]" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#14b8a6]" />
                     <span className="text-gray-500 dark:text-gray-400">{membershipLabel}</span>
                   </div>
                   <span className="font-bold text-gray-900 dark:text-white">{formatNum(d.membership)}</span>
@@ -480,7 +480,7 @@ export function GrowthVsPopulation({
       {/* Legend */}
       <div className="flex flex-wrap items-center gap-5 mt-4 text-xs text-gray-500 dark:text-gray-400">
         <div className="flex items-center gap-2">
-          <div className="w-4 h-0.5 bg-[#6366f1] rounded" />
+          <div className="w-4 h-0.5 bg-[#14b8a6] rounded" />
           {membershipLabel}
         </div>
         {hasPopulation && (

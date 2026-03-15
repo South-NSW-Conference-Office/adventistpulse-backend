@@ -48,7 +48,7 @@ export default async function BrowsePage({ searchParams }: Props) {
               href={`/browse?level=${level.key}`}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 activeLevel === level.key
-                  ? 'bg-[#6366F1]/10 text-[#6366F1] border border-[#6366F1]/30'
+                  ? 'bg-[#14b8a6]/10 text-[#14b8a6] border border-[#14b8a6]/30'
                   : 'bg-gray-50 dark:bg-[#1f2b3d] text-gray-600 dark:text-slate-400 border border-gray-200 dark:border-[#2a3a50] hover:text-gray-900 dark:hover:text-white'
               }`}
             >

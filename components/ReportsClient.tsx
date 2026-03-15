@@ -32,9 +32,18 @@ interface Brief {
   featured?: boolean;
 }
 
+interface FeaturedReport {
+  slug: string;
+  title: string;
+  subtitle: string;
+  date: string;
+  readTime: string;
+}
+
 interface ReportsClientProps {
   vitalSigns: VitalSign[];
   briefs: Brief[];
+  stateOfAdventism: FeaturedReport;
 }
 
 /* ---------- Helpers ---------- */
@@ -47,7 +56,7 @@ function sortByLevel(a: VitalSign, b: VitalSign) {
 
 /* ---------- Component ---------- */
 
-export default function ReportsClient({ vitalSigns, briefs }: ReportsClientProps) {
+export default function ReportsClient({ vitalSigns, briefs, stateOfAdventism }: ReportsClientProps) {
   const [vsSearch, setVsSearch] = useState('');
   const [briefSearch, setBriefSearch] = useState('');
   const [activeTag, setActiveTag] = useState('all');
@@ -85,11 +94,131 @@ export default function ReportsClient({ vitalSigns, briefs }: ReportsClientProps
 
   return (
     <div className="space-y-16 mt-12">
-      {/* ── Vital Signs ── */}
+
+      {/* ── Pulse Briefs ── */}
       <Section
-        title="Vital Signs"
-        subtitle="Annual health reports for every entity. Search to find any entity's data page."
+        title="Pulse Briefs"
+        subtitle="Data stories, anomalies, and insights from across the world church."
       >
+        <div className="flex gap-8 items-start">
+
+          {/* Main — cards only */}
+          <div className="flex-1 min-w-0 space-y-4">
+            {/* Brief list */}
+            <div className="divide-y divide-gray-100 dark:divide-[#2a3a50]">
+              {filteredBriefs.map(b => (
+                <Link key={b.slug} href={`/reports/${b.slug}`} className="block py-8 group">
+                  {/* Meta row */}
+                  <div className="flex items-center gap-3 text-xs text-gray-400 mb-3">
+                    <span>{formatDate(b.date)}</span>
+                    <span className="w-px h-3 bg-gray-200 dark:bg-[#2a3a50]" />
+                    <span className="text-[#14b8a6] font-semibold uppercase tracking-wide">{b.readTime}</span>
+                  </div>
+                  {/* Title */}
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white leading-snug mb-2 group-hover:text-[#14b8a6] transition-colors">
+                    {b.title}
+                  </h3>
+                  {/* Subtitle */}
+                  <p className="text-sm text-gray-500 dark:text-slate-400 leading-relaxed line-clamp-2 mb-4">
+                    {b.subtitle}
+                  </p>
+                  {/* Learn more */}
+                  <span className="text-sm font-semibold text-[#14b8a6] inline-flex items-center gap-1">
+                    Learn more &rsaquo;
+                  </span>
+                </Link>
+              ))}
+              {filteredBriefs.length === 0 && (
+                <p className={cn('text-sm py-8', tokens.text.muted)}>No briefs match your filters.</p>
+              )}
+              {/* Subtitle below articles */}
+              <p className={cn('text-sm mt-6 pt-6 border-t', tokens.text.muted, tokens.border.default)}>
+                Data-driven analysis of the global Seventh-day Adventist Church.
+              </p>
+            </div>
+          </div>
+
+          {/* Right sidebar — search + tag filters */}
+          <div className="w-48 shrink-0 sticky top-20">
+
+            {/* Search */}
+            <div className="relative mb-3">
+              <Search className={cn('absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5', tokens.text.muted)} />
+              <input
+                type="text"
+                placeholder="Search briefs..."
+                value={briefSearch}
+                onChange={e => setBriefSearch(e.target.value)}
+                className={cn(
+                  'w-full pl-8 pr-3 py-2 rounded-lg border text-xs',
+                  tokens.bg.card, tokens.border.default, tokens.text.body,
+                  'focus:outline-none focus:ring-2 focus:ring-[#14b8a6]/40'
+                )}
+              />
+            </div>
+
+            <p className={cn('text-xs font-semibold uppercase tracking-wider mb-2', tokens.text.muted)}>Filter by Tag</p>
+            <div className="flex flex-col gap-1 overflow-y-auto" style={{ maxHeight: '60vh' }}>
+              <button
+                onClick={() => setActiveTag('all')}
+                className={cn(
+                  'text-left rounded-lg px-3 py-1.5 text-xs font-medium transition-colors',
+                  activeTag === 'all'
+                    ? 'bg-[#14b8a6] text-white'
+                    : cn(tokens.text.muted, 'hover:bg-gray-100 dark:hover:bg-[#253344]')
+                )}
+              >
+                All
+              </button>
+              {allTags.map(tag => {
+                const isRegion = REGION_TAGS.includes(tag);
+                return (
+                  <button
+                    key={tag}
+                    onClick={() => setActiveTag(tag)}
+                    className={cn(
+                      'text-left rounded-lg px-3 py-1.5 text-xs font-medium transition-colors capitalize',
+                      activeTag === tag
+                        ? 'bg-[#14b8a6] text-white'
+                        : isRegion
+                          ? cn('text-emerald-500 hover:bg-emerald-500/10')
+                          : cn(tokens.text.muted, 'hover:bg-gray-100 dark:hover:bg-[#253344]')
+                    )}
+                  >
+                    {isRegion && <Globe2 className="w-3 h-3 inline mr-1.5 opacity-70" />}{tag}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+        </div>
+      </Section>
+
+      {/* ── State of Adventism ── */}
+      {stateOfAdventism && (
+      <Section title="State of Adventism" subtitle="The flagship annual report on the health of the global Adventist Church.">
+        <Link href={`/reports/${stateOfAdventism.slug}`} className="block group">
+          <div className="border-b border-gray-100 dark:border-[#2a3a50] py-8 group">
+            <div className="flex items-center gap-3 text-xs text-gray-400 mb-3">
+              <span>{formatDate(stateOfAdventism.date)}</span>
+              <span className="w-px h-3 bg-gray-200 dark:bg-[#2a3a50]" />
+              <span className="text-[#14b8a6] font-semibold uppercase tracking-wide">{stateOfAdventism.readTime}</span>
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white leading-snug mb-2 group-hover:text-[#14b8a6] transition-colors">
+              {stateOfAdventism.title}
+            </h3>
+            <p className="text-sm text-gray-500 dark:text-slate-400 leading-relaxed mb-4">
+              {stateOfAdventism.subtitle}
+            </p>
+            <span className="text-sm font-semibold text-[#14b8a6]">Learn more &rsaquo;</span>
+          </div>
+        </Link>
+      </Section>
+      )}
+
+      {/* ── Vital Signs ── */}
+      <Section title="Vital Signs" subtitle="Annual health reports for every entity. Search to find any entity's data page.">
         <div className="relative max-w-lg">
           <Search className={cn('absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4', tokens.text.muted)} />
           <input
@@ -100,27 +229,20 @@ export default function ReportsClient({ vitalSigns, briefs }: ReportsClientProps
             className={cn(
               'w-full pl-10 pr-4 py-3 rounded-lg border text-sm',
               tokens.bg.card, tokens.border.default, tokens.text.body,
-              'focus:outline-none focus:ring-2 focus:ring-[#6366f1]/40'
+              'focus:outline-none focus:ring-2 focus:ring-[#14b8a6]/40'
             )}
           />
         </div>
-
         {vsSearch.length > 0 && (
           <div className={cn('rounded-lg border divide-y max-h-80 overflow-y-auto', tokens.bg.card, tokens.border.default)}>
             {filteredVS.slice(0, 20).map(v => (
-              <Link
-                key={v.slug}
-                href={`/entity/${v.entityCode}`}
-                className={cn('flex items-center justify-between px-4 py-3 hover:bg-[#6366f1]/5 transition-colors')}
-              >
+              <Link key={v.slug} href={`/entity/${v.entityCode}`} className={cn('flex items-center justify-between px-4 py-3 hover:bg-[#14b8a6]/5 transition-colors')}>
                 <div className="flex items-center gap-3 min-w-0">
                   <FileText className={cn('h-4 w-4 shrink-0', tokens.text.accent)} />
                   <div className="min-w-0">
                     <p className={cn('font-medium truncate', tokens.text.heading)}>{v.entityName}</p>
                     {v.parentCodes.length > 0 && (
-                      <p className={cn('text-xs truncate', tokens.text.muted)}>
-                        {[...v.parentCodes].reverse().join(' → ')}
-                      </p>
+                      <p className={cn('text-xs truncate', tokens.text.muted)}>{[...v.parentCodes].reverse().join(' → ')}</p>
                     )}
                   </div>
                 </div>
@@ -130,17 +252,10 @@ export default function ReportsClient({ vitalSigns, briefs }: ReportsClientProps
                 </div>
               </Link>
             ))}
-            {filteredVS.length === 0 && (
-              <p className={cn('text-sm px-4 py-3', tokens.text.muted)}>No entities match your search.</p>
-            )}
-            {filteredVS.length > 20 && (
-              <p className={cn('text-xs px-4 py-2 text-center', tokens.text.muted)}>
-                Showing 20 of {filteredVS.length} results — refine your search
-              </p>
-            )}
+            {filteredVS.length === 0 && <p className={cn('text-sm px-4 py-3', tokens.text.muted)}>No entities match your search.</p>}
+            {filteredVS.length > 20 && <p className={cn('text-xs px-4 py-2 text-center', tokens.text.muted)}>Showing 20 of {filteredVS.length} results — refine your search</p>}
           </div>
         )}
-
         {vsSearch.length === 0 && (
           <div className={cn('flex items-center gap-6 text-sm', tokens.text.muted)}>
             <span>{vitalSigns.length} entities available</span>
@@ -150,97 +265,6 @@ export default function ReportsClient({ vitalSigns, briefs }: ReportsClientProps
         )}
       </Section>
 
-      {/* ── Pulse Briefs ── */}
-      <Section
-        title="Pulse Briefs"
-        subtitle="Data stories, anomalies, and insights from across the world church."
-      >
-        {/* Tag pills */}
-        <div className="flex flex-wrap gap-2">
-          <button
-            onClick={() => setActiveTag('all')}
-            className={cn(
-              'rounded-full px-3 py-1 text-xs font-medium border transition-colors',
-              activeTag === 'all'
-                ? cn(tokens.bg.accent, tokens.text.onAccent, 'border-transparent')
-                : cn(tokens.bg.cardAlt, tokens.text.muted, tokens.border.default, 'hover:border-[#6366f1]/50')
-            )}
-          >
-            All
-          </button>
-          {allTags.map(tag => {
-            const isRegion = REGION_TAGS.includes(tag);
-            return (
-              <button
-                key={tag}
-                onClick={() => setActiveTag(tag)}
-                className={cn(
-                  'rounded-full px-3 py-1 text-xs font-medium border transition-colors capitalize',
-                  activeTag === tag
-                    ? cn(tokens.bg.accent, tokens.text.onAccent, 'border-transparent')
-                    : isRegion
-                      ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:border-emerald-500/50'
-                      : cn(tokens.bg.cardAlt, tokens.text.muted, tokens.border.default, 'hover:border-[#6366f1]/50')
-                )}
-              >
-                {isRegion ? <><Globe2 className="w-3 h-3 inline mr-1" />{tag}</> : tag}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Search */}
-        <div className="relative max-w-md">
-          <Search className={cn('absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4', tokens.text.muted)} />
-          <input
-            type="text"
-            placeholder="Search briefs..."
-            value={briefSearch}
-            onChange={e => setBriefSearch(e.target.value)}
-            className={cn(
-              'w-full pl-10 pr-4 py-2 rounded-lg border text-sm',
-              tokens.bg.card, tokens.border.default, tokens.text.body,
-              'focus:outline-none focus:ring-2 focus:ring-[#6366f1]/40'
-            )}
-          />
-        </div>
-
-        {/* Brief cards */}
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredBriefs.map(b => (
-            <Link key={b.slug} href={`/reports/${b.slug}`}>
-              <Card
-                hover
-                className={cn(
-                  'h-full flex flex-col gap-3 cursor-pointer',
-                  b.featured && 'ring-2 ring-[#6366f1]/60'
-                )}
-              >
-                <div className="flex items-start gap-2">
-                  <Newspaper className={cn('h-4 w-4 shrink-0 mt-0.5', tokens.text.accent)} />
-                  <h3 className={cn('font-semibold leading-tight', tokens.text.heading)}>{b.title}</h3>
-                </div>
-
-                <p className={cn('text-sm line-clamp-2 flex-1', tokens.text.body)}>{b.subtitle}</p>
-
-                <div className="flex flex-wrap gap-1.5">
-                  {b.tags.map(t => (
-                    <Badge key={t} variant="neutral" className="text-[10px]">{t.toLowerCase()}</Badge>
-                  ))}
-                </div>
-
-                <div className={cn('flex items-center justify-between text-xs', tokens.text.muted)}>
-                  <span>{formatDate(b.date)} &middot; {b.readTime}</span>
-                  <span className={tokens.text.accent}>Read &rarr;</span>
-                </div>
-              </Card>
-            </Link>
-          ))}
-          {filteredBriefs.length === 0 && (
-            <p className={cn('text-sm col-span-full', tokens.text.muted)}>No briefs match your filters.</p>
-          )}
-        </div>
-      </Section>
     </div>
   );
 }

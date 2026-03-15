@@ -29,7 +29,7 @@ const COLORS = [
   '#06b6d4', // cyan
   '#f97316', // orange
   '#14b8a6', // teal
-  '#6366f1', // indigo
+  '#14b8a6', // indigo
 ];
 
 function fmtVal(n: number): string {

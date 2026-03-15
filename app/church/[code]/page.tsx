@@ -227,169 +227,181 @@ export default async function ChurchPage({ params }: Props) {
 
       <main className={cn('min-h-screen', tokens.bg.page, tokens.text.heading)}>
 
-        {/* ── 1. Header band ─────────────────────────────────────────── */}
-        <div className={cn('border-b', tokens.border.default)}>
-          <div className="max-w-6xl mx-auto grid md:grid-cols-[1fr_400px]">
-          <div className="px-4 py-8">
+        {/* ── 1. Hero ────────────────────────────────────────────────── */}
+        <div className="relative overflow-hidden bg-gradient-to-br from-[#4338ca] via-[#14b8a6] to-[#1e1b4b]">
 
-            {/* Breadcrumb */}
-            <nav className={cn('inline-flex items-center gap-1.5 text-sm mb-4', tokens.text.muted)}>
-              <Link href="/" className="hover:underline flex items-center gap-1">
-                <ArrowLeft className="w-3.5 h-3.5" />
-                Adventist Pulse
-              </Link>
-              {church.conference && (
-                <>
-                  <ChevronRight className="w-3.5 h-3.5" />
-                  <Link href={`/entity/${church.conference}`} className="hover:underline">
-                    {church.conferenceName || church.conference}
-                  </Link>
-                </>
-              )}
-              <ChevronRight className="w-3.5 h-3.5" />
-              <span>{displayName}</span>
-            </nav>
+          {/* Dot-grid texture */}
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 opacity-[0.07]"
+            style={{
+              backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)',
+              backgroundSize: '26px 26px',
+            }}
+          />
 
-            {/* Name + gauge row */}
-            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+          {/* Bottom fade into page background */}
+          <div
+            aria-hidden="true"
+            className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-[#F8F9FA] dark:from-[#1a2332] to-transparent"
+          />
+
+          <div className="relative max-w-6xl mx-auto px-4 pt-8 pb-16">
+            <div className="grid md:grid-cols-[1fr_400px] gap-8 items-start">
+
+              {/* ── Left: text content ── */}
               <div>
-                <div className="flex flex-wrap items-center gap-3">
-                  <h1 className={cn('text-3xl sm:text-4xl font-bold', tokens.text.heading)}>
-                    {displayName}
-                  </h1>
-                  <span className={cn(
-                    'inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold border',
-                    tokens.bg.accentSoft, tokens.text.accent, tokens.border.default
-                  )}>
-                    <Building2 className="w-3 h-3" />
-                    Seventh-day Adventist Church
-                  </span>
-                </div>
+
+                {/* Breadcrumb */}
+                <nav className="inline-flex items-center gap-1.5 text-sm mb-6 text-white/60">
+                  <Link href="/" className="hover:text-white transition-colors flex items-center gap-1">
+                    <ArrowLeft className="w-3.5 h-3.5" />
+                    Adventist Pulse
+                  </Link>
+                  {church.conference && (
+                    <>
+                      <ChevronRight className="w-3.5 h-3.5" />
+                      <Link href={`/entity/${church.conference}`} className="hover:text-white transition-colors">
+                        {church.conferenceName || church.conference}
+                      </Link>
+                    </>
+                  )}
+                  <ChevronRight className="w-3.5 h-3.5" />
+                  <span className="text-white/40">{displayName}</span>
+                </nav>
+
+                {/* Church name */}
+                <h1 className="text-4xl sm:text-5xl font-extrabold text-white leading-tight tracking-tight mb-3">
+                  {displayName}
+                </h1>
+
+                {/* Denomination badge */}
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/15 text-white border border-white/20 backdrop-blur-sm mb-4">
+                  <Building2 className="w-3 h-3" />
+                  Seventh-day Adventist Church
+                </span>
+
+                {/* Pastor */}
                 {church.pastor && (
-                  <p className={cn('mt-2 text-sm flex items-center gap-1.5', tokens.text.body)}>
-                    <Users className="w-4 h-4 text-gray-400" />
+                  <p className="flex items-center gap-1.5 text-sm text-white/75 mt-1">
+                    <Users className="w-4 h-4 text-white/40 shrink-0" />
                     {church.pastor}
                   </p>
                 )}
+
+                {/* Description */}
                 {church.description && (
-                  <p className={cn('mt-3 text-sm leading-relaxed max-w-xl', tokens.text.muted)}>
+                  <p className="mt-3 text-sm leading-relaxed text-white/65 max-w-lg">
                     {church.description}
                   </p>
                 )}
-              </div>
 
-              {/* Completeness gauge */}
-              <div className="flex flex-col items-center shrink-0">
-                <CircularGauge score={score.total} />
-                <span className={cn('text-xs font-medium mt-1', scoreColor)}>
-                  Profile {score.total}% complete
-                </span>
-              </div>
-            </div>
-
-            {/* Address + service times row */}
-            <div className="mt-4 flex flex-wrap gap-4 text-sm">
-              {church.address && (
-                <span className={cn('flex items-center gap-1.5', tokens.text.body)}>
-                  <MapPin className="w-4 h-4 shrink-0 text-gray-400" />
-                  {church.address}, {church.suburb} {church.state} {church.postcode}
-                </span>
-              )}
-              {church.sabbathSchoolTime ? (
-                <span className={cn('flex items-center gap-1.5', tokens.text.body)}>
-                  <Clock className="w-4 h-4 shrink-0 text-gray-400" />
-                  Sabbath School: {church.sabbathSchoolTime}
-                </span>
-              ) : (
-                <span className={cn('flex items-center gap-1.5', tokens.text.muted)}>
-                  <Clock className="w-4 h-4 shrink-0" />
-                  Sabbath School: <span className="italic">Not provided</span>
-                </span>
-              )}
-              {church.worshipTime ? (
-                <span className={cn('flex items-center gap-1.5', tokens.text.body)}>
-                  <Clock className="w-4 h-4 shrink-0 text-gray-400" />
-                  Worship: {church.worshipTime}
-                </span>
-              ) : (
-                <span className={cn('flex items-center gap-1.5', tokens.text.muted)}>
-                  <Clock className="w-4 h-4 shrink-0" />
-                  Worship: <span className="italic">Not provided</span>
-                </span>
-              )}
-              {church.phone && (
-                <span className={cn('flex items-center gap-1.5', tokens.text.body)}>
-                  <Phone className="w-4 h-4 shrink-0 text-gray-400" />
-                  {church.phone}
-                </span>
-              )}
-              {church.email && (
-                <a
-                  href={`mailto:${church.email}`}
-                  className={cn('flex items-center gap-1.5 hover:underline', tokens.text.body)}
-                >
-                  <Mail className="w-4 h-4 shrink-0 text-gray-400" />
-                  {church.email}
-                </a>
-              )}
-            </div>
-
-            {/* Action buttons */}
-            <div className="mt-5 flex flex-wrap gap-3">
-              <a
-                href={mapsUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={cn(
-                  'inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border transition-colors',
-                  tokens.bg.card, tokens.border.default, tokens.text.body,
-                  'hover:border-[#6366f1]/50 hover:text-[#6366f1]'
-                )}
-              >
-                <MapPin className="w-4 h-4" />
-                Google Maps
-              </a>
-              {church.website && church.website !== '#' && !church.website.startsWith('#') && (
-                <a
-                  href={church.website.startsWith('http') ? church.website : `https://${church.website}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={cn(
-                    'inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border transition-colors',
-                    tokens.bg.card, tokens.border.default, tokens.text.body,
-                    'hover:border-[#6366f1]/50 hover:text-[#6366f1]'
+                {/* Info pills */}
+                <div className="mt-5 flex flex-wrap gap-2">
+                  {church.address && (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs bg-white/10 text-white/90 border border-white/15 backdrop-blur-sm">
+                      <MapPin className="w-3.5 h-3.5 shrink-0 text-white/50" />
+                      {church.address}, {church.suburb} {church.state} {church.postcode}
+                    </span>
                   )}
-                >
-                  <Globe className="w-4 h-4" />
-                  Visit Website
-                </a>
-              )}
-            </div>
-          </div>{/* end left column */}
+                  {church.sabbathSchoolTime && (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs bg-white/10 text-white/90 border border-white/15">
+                      <Clock className="w-3.5 h-3.5 shrink-0 text-white/50" />
+                      Sabbath School: {church.sabbathSchoolTime}
+                    </span>
+                  )}
+                  {church.worshipTime && (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs bg-white/10 text-white/90 border border-white/15">
+                      <Clock className="w-3.5 h-3.5 shrink-0 text-white/50" />
+                      Worship: {church.worshipTime}
+                    </span>
+                  )}
+                  {church.phone && (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs bg-white/10 text-white/90 border border-white/15">
+                      <Phone className="w-3.5 h-3.5 shrink-0 text-white/50" />
+                      {church.phone}
+                    </span>
+                  )}
+                  {church.email && (
+                    <a
+                      href={`mailto:${church.email}`}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs bg-white/10 text-white/90 border border-white/15 hover:bg-white/20 transition-colors"
+                    >
+                      <Mail className="w-3.5 h-3.5 shrink-0 text-white/50" />
+                      {church.email}
+                    </a>
+                  )}
+                </div>
 
-          {/* Right column — live Google Maps embed */}
-          {church.address ? (
-            <div className="hidden md:block relative min-h-[320px] border-l border-[var(--border-default)]">
-              <iframe
-                src={`https://www.google.com/maps/embed/v1/place?key=NEXT_PUBLIC_GOOGLE_MAPS_API_KEY_REMOVED&q=${encodeURIComponent(`${church.address}, ${church.suburb} ${church.state} ${church.postcode}`)}&zoom=15`}
-                className="absolute inset-0 w-full h-full border-0"
-                loading="lazy"
-                allowFullScreen
-                referrerPolicy="no-referrer-when-downgrade"
-                title={`Map of ${church.name}`}
-              />
-            </div>
-          ) : (
-            <div className={cn('hidden md:flex items-center justify-center min-h-[320px] border-l', tokens.border.default, tokens.bg.cardAlt)}>
-              <div className="text-center px-6">
-                <MapPin className={cn('w-8 h-8 mx-auto mb-2', tokens.text.muted)} />
-                <p className={cn('text-sm', tokens.text.muted)}>Address not yet recorded</p>
-              </div>
-            </div>
-          )}
+                {/* Action buttons */}
+                <div className="mt-6 flex flex-wrap gap-3">
+                  <a
+                    href={mapsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-white text-[#0d9488] hover:bg-white/90 transition-colors shadow-md"
+                  >
+                    <MapPin className="w-4 h-4" />
+                    Google Maps
+                  </a>
+                  {church.website && church.website !== '#' && !church.website.startsWith('#') && (
+                    <a
+                      href={church.website.startsWith('http') ? church.website : `https://${church.website}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-white/15 text-white border border-white/25 hover:bg-white/25 transition-colors backdrop-blur-sm"
+                    >
+                      <Globe className="w-4 h-4" />
+                      Visit Website
+                    </a>
+                  )}
+                </div>
 
-          </div>{/* end hero grid */}
-        </div>
+              </div>{/* end left content */}
+
+              {/* ── Right: gauge + map ── */}
+              <div className="hidden md:flex flex-col gap-3 pt-2">
+
+                {/* Profile score card */}
+                <div className="flex items-center gap-4 bg-white/10 backdrop-blur-sm border border-white/15 rounded-2xl px-5 py-4">
+                  <CircularGauge score={score.total} />
+                  <div>
+                    <p className="text-white font-semibold text-sm">Profile Score</p>
+                    <p className={`text-xs font-medium mt-0.5 ${
+                      score.total >= 80 ? 'text-green-300' :
+                      score.total >= 50 ? 'text-yellow-300' : 'text-red-300'
+                    }`}>
+                      {score.total >= 80 ? 'Fully contributing' :
+                       score.total >= 50 ? 'Partially contributing' : 'Low contribution'}
+                    </p>
+                    <p className="text-white/45 text-xs mt-0.5">{score.total}/100 points</p>
+                  </div>
+                </div>
+
+                {/* Map embed */}
+                {church.address ? (
+                  <div className="relative h-[260px] rounded-2xl overflow-hidden shadow-2xl border border-white/20">
+                    <iframe
+                      src={`https://www.google.com/maps/embed/v1/place?key=NEXT_PUBLIC_GOOGLE_MAPS_API_KEY_REMOVED&q=${encodeURIComponent(`${church.address}, ${church.suburb} ${church.state} ${church.postcode}`)}&zoom=15`}
+                      className="absolute inset-0 w-full h-full border-0"
+                      loading="lazy"
+                      allowFullScreen
+                      referrerPolicy="no-referrer-when-downgrade"
+                      title={`Map of ${church.name}`}
+                    />
+                  </div>
+                ) : (
+                  <div className="h-[260px] rounded-2xl bg-white/10 border border-white/15 flex flex-col items-center justify-center text-white/50 backdrop-blur-sm">
+                    <MapPin className="w-8 h-8 mb-2 text-white/25" />
+                    <p className="text-sm">Address not yet recorded</p>
+                  </div>
+                )}
+
+              </div>{/* end right column */}
+
+            </div>
+          </div>
+        </div>{/* end hero */}
 
         {/* ── Church Analytics Charts ───────────────────────────────── */}
         <div className={cn('border-b', tokens.border.default)}>
@@ -546,7 +558,7 @@ export default async function ChurchPage({ params }: Props) {
                 {missing.length > 0 && (
                   <Card accent>
                     <div className="flex items-center gap-2 mb-3">
-                      <Zap className="w-4 h-4 text-[#6366f1]" />
+                      <Zap className="w-4 h-4 text-[#14b8a6]" />
                       <h3 className={cn('text-sm font-semibold', tokens.text.heading)}>
                         Quick Wins — unlock {quickWins.reduce((s, b) => s + b.max, 0)} pts
                       </h3>
@@ -574,7 +586,7 @@ export default async function ChurchPage({ params }: Props) {
                 'flex items-start gap-3 p-4 rounded-xl border',
                 tokens.bg.accentSoft, tokens.border.default
               )}>
-                <Building2 className="w-5 h-5 shrink-0 text-[#6366f1] mt-0.5" />
+                <Building2 className="w-5 h-5 shrink-0 text-[#14b8a6] mt-0.5" />
                 <div>
                   <p className={cn('text-sm font-semibold', tokens.text.heading)}>
                     Is this your church?
@@ -667,7 +679,7 @@ export default async function ChurchPage({ params }: Props) {
             {nearby.length > 0 && (
               <div>
                 <h3 className={cn('text-sm font-semibold mb-3 flex items-center gap-2', tokens.text.heading)}>
-                  <Navigation className="w-4 h-4 text-[#6366f1]" />
+                  <Navigation className="w-4 h-4 text-[#14b8a6]" />
                   Nearby Adventist Churches
                 </h3>
                 <div className="grid gap-3 sm:grid-cols-3">
@@ -683,7 +695,7 @@ export default async function ChurchPage({ params }: Props) {
                         className={cn(
                           'block p-4 rounded-xl border transition-colors',
                           tokens.bg.card, tokens.border.default, tokens.bg.cardHover,
-                          'hover:border-[#6366f1]/50'
+                          'hover:border-[#14b8a6]/50'
                         )}
                       >
                         <p className={cn('text-sm font-semibold', tokens.text.heading)}>
@@ -714,7 +726,7 @@ export default async function ChurchPage({ params }: Props) {
                   {[70, 45, 85, 30, 60].map((w, i) => (
                     <div key={i} className="flex items-center gap-3">
                       <div className={cn('h-3 rounded-full', tokens.bg.accentSoft)} style={{ width: '60px' }} />
-                      <div className="h-5 rounded-full bg-[#6366f1]/30" style={{ width: `${w}%` }} />
+                      <div className="h-5 rounded-full bg-[#14b8a6]/30" style={{ width: `${w}%` }} />
                       <div className={cn('h-3 rounded-full', tokens.bg.cardAlt)} style={{ width: '40px' }} />
                     </div>
                   ))}
@@ -749,7 +761,7 @@ export default async function ChurchPage({ params }: Props) {
                     { icon: TrendingUp,    label: 'Strategy Reports', desc: 'Actionable growth strategies' },
                   ].map(({ icon: Icon, label, desc }) => (
                     <div key={label} className={cn('flex items-start gap-3 p-4 rounded-lg', tokens.bg.cardAlt)}>
-                      <Icon className="w-5 h-5 shrink-0 text-[#6366f1] mt-0.5" />
+                      <Icon className="w-5 h-5 shrink-0 text-[#14b8a6] mt-0.5" />
                       <div>
                         <p className={cn('text-sm font-semibold', tokens.text.heading)}>{label}</p>
                         <p className={cn('text-xs mt-0.5', tokens.text.muted)}>{desc}</p>
@@ -773,7 +785,7 @@ export default async function ChurchPage({ params }: Props) {
                 <ul className={cn('text-xs mb-5 space-y-1', tokens.text.body)}>
                   {['AI Insights', 'Financial Health', 'Ask AI', 'Benchmarking', 'Strategy Reports'].map(f => (
                     <li key={f} className="flex items-center justify-center gap-1.5">
-                      <CheckCircle2 className="w-3 h-3 text-[#6366f1]" />
+                      <CheckCircle2 className="w-3 h-3 text-[#14b8a6]" />
                       {f}
                     </li>
                   ))}

@@ -1,8 +1,8 @@
 import type { EntityLevel } from '@/types/pulse';
 
 const LEVEL_CONFIG: Record<EntityLevel, { label: string; color: string }> = {
-  gc: { label: 'GC', color: 'bg-purple-500/20 text-purple-300 border-purple-500/30' },
-  division: { label: 'Division', color: 'bg-[#6366F1]/20 text-[#8b5cf6] border-[#6366F1]/30' },
+  gc: { label: 'GC', color: 'bg-teal-500/20 text-teal-300 border-teal-500/30' },
+  division: { label: 'Division', color: 'bg-[#14b8a6]/20 text-[#8b5cf6] border-[#14b8a6]/30' },
   union: { label: 'Union', color: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30' },
   conference: { label: 'Conference', color: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' },
   mission: { label: 'Mission', color: 'bg-amber-500/20 text-amber-300 border-amber-500/30' },

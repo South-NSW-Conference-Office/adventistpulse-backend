@@ -1,15 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ThemeToggle } from './ThemeToggle';
-import { useTheme } from './ThemeProvider';
-import { CommandSearch } from './CommandSearch';
 import { Logo } from './Logo';
 import { useAuth } from '@/contexts/AuthContext';
 import { tokens, cn } from '@/lib/theme';
-import { BarChart3, FileText, Globe2, Microscope, Search, Earth, DollarSign, Wrench, User, LogOut } from 'lucide-react';
+import { BarChart3, FileText, Globe2, Microscope, LogOut } from 'lucide-react';
 
 const PILLARS = [
   {
@@ -52,8 +49,6 @@ const PILLARS = [
 export function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
   const [openPillar, setOpenPillar] = useState<string | null>(null);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const { theme } = useTheme();
   const { user, logout } = useAuth();
   const router = useRouter();
 
@@ -62,32 +57,18 @@ export function NavBar() {
     router.push('/');
   };
 
-  // Global CMD+K / Ctrl+K handler
-  useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault();
-        setIsSearchOpen(true);
-      }
-    }
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
   return (
     <nav className="fixed top-0 left-0 right-0 z-[2000] bg-white/10 dark:bg-[#0d1117]/20 backdrop-blur-md border-b border-white/10">
-      <div className="max-w-6xl mx-auto px-4 flex items-center justify-between h-14">
-        {/* Logo */}
-        <Link href="/" className="flex items-center hover:opacity-80 transition-opacity">
+      <div className="px-6 md:px-10 flex items-center justify-between h-14">
+        {/* Logo - Left */}
+        <Link href="/" className="flex items-center hover:opacity-80 transition-opacity flex-shrink-0">
           <Logo size="md" className="text-gray-900 dark:text-white" />
         </Link>
 
-        {/* Desktop nav — 4 pillars and theme toggle */}
-        <div className="hidden md:flex items-center gap-1">
+        {/* Navigation Menu - Center */}
+        <div className="hidden md:flex items-center gap-1 flex-1 justify-center">
           {PILLARS.map(pillar =>
             pillar.children ? (
-              /* Statistics dropdown */
               <div
                 key={pillar.label}
                 className="relative group"
@@ -96,9 +77,9 @@ export function NavBar() {
               >
                 <Link
                   href={pillar.href}
-                  className="px-3 py-2 text-sm text-gray-600 dark:text-slate-400 hover:text-[#6366F1] transition-colors flex items-center gap-1"
+                  className="px-3 py-2 text-sm text-gray-600 dark:text-slate-400 hover:text-[#14b8a6] transition-colors flex items-center gap-1"
                 >
-                  <pillar.icon className="w-4 h-4" /> {pillar.label} <span className="text-[10px] opacity-60">▾</span>
+                  {pillar.label} <span className="text-[10px] opacity-60">▾</span>
                 </Link>
                 {openPillar === pillar.label && (
                   <div className="absolute left-0 top-full pt-1 z-50">
@@ -119,72 +100,54 @@ export function NavBar() {
                 )}
               </div>
             ) : (
-              /* Direct link pillars */
               <Link
                 key={pillar.label}
                 href={pillar.href}
-                className="px-3 py-2 text-sm text-gray-600 dark:text-slate-400 hover:text-[#6366F1] transition-colors flex items-center gap-1.5"
+                className="px-3 py-2 text-sm text-gray-600 dark:text-slate-400 hover:text-[#14b8a6] transition-colors"
               >
-                <pillar.icon className="w-4 h-4" /> {pillar.label}
+                {pillar.label}
               </Link>
             )
           )}
+        </div>
 
-          {/* Search pill */}
-          <button
-            onClick={() => setIsSearchOpen(true)}
-            className="ml-2 px-3 py-1.5 text-xs text-gray-500 dark:text-slate-500 hover:text-[#6366F1] border border-gray-200 dark:border-[#2a3a50] rounded-full transition-colors flex items-center gap-1.5"
-          >
-            <Search className="w-3.5 h-3.5" /> Search
-            <kbd className="text-[10px] text-gray-400 dark:text-slate-600">⌘K</kbd>
-          </button>
-
-
-
-          {/* Auth */}
-          <div className="ml-2 flex items-center gap-2">
-            {user ? (
-              <>
-                <span className={cn('text-xs hidden lg:block max-w-[120px] truncate', tokens.text.muted)}>
-                  {user.name ?? user.email}
-                </span>
-                <button
-                  onClick={handleSignOut}
-                  className={cn('flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs border transition-colors', tokens.border.default, tokens.text.body, 'hover:bg-gray-100 dark:hover:bg-[#253344]')}
-                  title="Sign out"
-                >
-                  <LogOut className="w-3.5 h-3.5" /> Sign out
-                </button>
-              </>
-            ) : (
-              <>
-                <Link href="/login" className={cn('px-3 py-1.5 rounded-full text-xs border transition-colors', tokens.border.default, tokens.text.body, 'hover:bg-gray-100 dark:hover:bg-[#253344]')}>
-                  Sign in
-                </Link>
-                <Link href="/register" className="px-3 py-1.5 rounded-full text-xs font-semibold text-white bg-[#6366f1] hover:bg-[#4f46e5] transition-colors">
-                  Register
-                </Link>
-              </>
-            )}
-          </div>
-
-          {/* Theme Toggle */}
+        {/* Auth & Theme Toggle - Right */}
+        <div className="flex items-center gap-2 flex-shrink-0">
+          {user ? (
+            <>
+              <span className={cn('text-xs hidden lg:block max-w-[120px] truncate', tokens.text.muted)}>
+                {user.name ?? user.email}
+              </span>
+              <button
+                onClick={handleSignOut}
+                className={cn('flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs border transition-colors', tokens.border.default, tokens.text.body, 'hover:bg-gray-100 dark:hover:bg-[#253344]')}
+                title="Sign out"
+              >
+                <LogOut className="w-3.5 h-3.5" /> Sign out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link href="/login" className="text-sm text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors">
+                Sign in
+              </Link>
+              <Link href="/register" className="text-sm font-semibold text-[#14b8a6] hover:text-[#0d9488] transition-colors">
+                Sign up
+              </Link>
+            </>
+          )}
           <div className="ml-2">
-            <ThemeToggle />
           </div>
         </div>
 
-        {/* Mobile menu button and theme toggle */}
-        <div className="flex items-center gap-2 md:hidden">
-          <ThemeToggle />
-          <button
-            className="text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white p-2"
-            onClick={() => setIsOpen(!isOpen)}
-            aria-label="Toggle menu"
-          >
-            {isOpen ? '✕' : '☰'}
-          </button>
-        </div>
+        {/* Mobile menu button */}
+        <button
+          className="md:hidden text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white p-2 ml-auto"
+          onClick={() => setIsOpen(!isOpen)}
+          aria-label="Toggle menu"
+        >
+          {isOpen ? '✕' : '☰'}
+        </button>
       </div>
 
       {/* Mobile menu */}
@@ -199,8 +162,8 @@ export function NavBar() {
                       className="w-full text-left py-2 text-sm font-medium text-gray-700 dark:text-slate-300 flex items-center justify-between"
                       onClick={() => setOpenPillar(openPillar === pillar.label ? null : pillar.label)}
                     >
-                      <span className="flex items-center gap-2"><pillar.icon className="w-4 h-4 text-[#6366F1]" /> {pillar.label}</span>
-                      <span className={`text-xs transition-transform ${openPillar === pillar.label ? 'rotate-180' : ''}`}>▾</span>
+                      <span>{pillar.label}</span>
+                      <span className="text-[10px] opacity-60">▾</span>
                     </button>
                     {openPillar === pillar.label && (
                       <div className="ml-4 border-l border-gray-200 dark:border-[#2a3a50] pl-3 space-y-0.5">
@@ -223,7 +186,7 @@ export function NavBar() {
                     className="flex items-center gap-2 py-2 text-sm font-medium text-gray-700 dark:text-slate-300 hover:text-gray-900 dark:hover:text-white transition-colors"
                     onClick={() => setIsOpen(false)}
                   >
-                    <pillar.icon className="w-4 h-4 text-[#6366F1]" /> {pillar.label}
+                    {pillar.label}
                   </Link>
                 )}
               </div>
@@ -243,7 +206,7 @@ export function NavBar() {
                   <Link href="/login" onClick={() => setIsOpen(false)} className={cn('flex-1 text-center py-2 rounded-full text-sm border', tokens.border.default, tokens.text.body)}>
                     Sign in
                   </Link>
-                  <Link href="/register" onClick={() => setIsOpen(false)} className="flex-1 text-center py-2 rounded-full text-sm font-semibold text-white bg-[#6366f1]">
+                  <Link href="/register" onClick={() => setIsOpen(false)} className="flex-1 text-center py-2 rounded-full text-sm font-semibold text-white bg-[#14b8a6]">
                     Register
                   </Link>
                 </div>
@@ -252,12 +215,6 @@ export function NavBar() {
           </div>
         </div>
       )}
-
-      {/* Command Search Modal */}
-      <CommandSearch 
-        isOpen={isSearchOpen} 
-        onClose={() => setIsSearchOpen(false)} 
-      />
     </nav>
   );
 }
