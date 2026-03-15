@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import { GatedSection } from '@/components/GatedSection';
 import Script from 'next/script';
 import dynamic from 'next/dynamic';
 
@@ -473,9 +474,11 @@ export default async function ChurchPage({ params }: Props) {
         <div className={cn('border-b', tokens.border.default)}>
           <div className="max-w-6xl mx-auto px-4 py-8">
             <h2 className={cn('text-lg font-bold mb-5', tokens.text.heading)}>Pulse Notes</h2>
-            <div className="relative rounded-xl overflow-hidden">
-              <div aria-hidden="true" style={{ filter: 'blur(5px)', userSelect: 'none', pointerEvents: 'none' }}
-                className={cn('rounded-xl border p-5 space-y-3', tokens.bg.card, tokens.border.default)}>
+            <GatedSection
+              title="Pulse Notes"
+              description="Read and contribute Pulse Notes for this church"
+            >
+              <div className={cn('rounded-xl border p-5 space-y-3', tokens.bg.card, tokens.border.default)}>
                 {[
                   '"School-to-church transition is our biggest gap." — Phil Y., Senior Member · 👍 12',
                   '"We need more young adult programs." — Sarah M., Youth Leader · 👍 8',
@@ -484,12 +487,7 @@ export default async function ChurchPage({ params }: Props) {
                   <div key={note} className={cn('p-4 rounded-lg text-sm', tokens.bg.cardAlt, tokens.text.body)}>{note}</div>
                 ))}
               </div>
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/75 dark:bg-[#1a2332]/85 backdrop-blur-sm rounded-xl text-center px-6">
-                <Lock className={cn('w-7 h-7 mb-3', tokens.text.accent)} />
-                <p className={cn('text-sm font-semibold mb-1', tokens.text.heading)}>Request beta access</p>
-                <p className={cn('text-sm', tokens.text.muted)}>Read and contribute Pulse Notes for this church</p>
-              </div>
-            </div>
+            </GatedSection>
           </div>
         </div>
 
@@ -707,13 +705,11 @@ export default async function ChurchPage({ params }: Props) {
 
           {/* ── 5. Soft gate — Membership & Demographics ─────────── */}
           <Section title="Membership &amp; Demographics">
-            <div className="relative rounded-xl overflow-hidden">
-              {/* Blurred placeholder */}
-              <div
-                aria-hidden="true"
-                className={cn('p-6', tokens.bg.card, tokens.border.default, 'border rounded-xl')}
-                style={{ filter: 'blur(6px)', userSelect: 'none', pointerEvents: 'none' }}
-              >
+            <GatedSection
+              title="Membership &amp; Demographics"
+              description="Access membership intelligence, demographics, and vitality scores for this church."
+            >
+              <div className={cn('p-6', tokens.bg.card, tokens.border.default, 'border rounded-xl')}>
                 <div className="space-y-4">
                   {[70, 45, 85, 30, 60].map((w, i) => (
                     <div key={i} className="flex items-center gap-3">
@@ -732,25 +728,7 @@ export default async function ChurchPage({ params }: Props) {
                   ))}
                 </div>
               </div>
-
-              {/* Overlay */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/70 dark:bg-[#1a2332]/80 backdrop-blur-sm rounded-xl px-6 text-center">
-                <Lock className={cn('w-8 h-8 mb-3', tokens.text.accent)} />
-                <h3 className={cn('text-lg font-semibold mb-2', tokens.text.heading)}>
-                  Membership &amp; Demographics
-                </h3>
-                <p className={cn('text-sm max-w-xs mb-4', tokens.text.body)}>
-                  Join the Adventist Pulse beta to access membership intelligence, demographics, and vitality scores for this church.
-                </p>
-                <button className={cn(
-                  'inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors',
-                  tokens.bg.accent, tokens.bg.accentHover, tokens.text.onAccent
-                )}>
-                  Request Beta Access
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
+            </GatedSection>
           </Section>
 
           {/* ── 6. Hard gate — Church Tools ──────────────────────── */}
@@ -801,7 +779,7 @@ export default async function ChurchPage({ params }: Props) {
                   ))}
                 </ul>
                 <a
-                  href="https://adventistpulse.org/beta"
+                  href="/register"
                   className={cn(
                     'inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors',
                     tokens.bg.accent, tokens.bg.accentHover, tokens.text.onAccent

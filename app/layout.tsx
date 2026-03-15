@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { ToastProvider } from "@/contexts/ToastContext";
+import { AuthProvider } from "@/contexts/AuthContext";
 import { NavBar } from "@/components/NavBar";
 import { Footer } from "@/components/Footer";
 import "./globals.css";
@@ -37,9 +39,13 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased bg-[#F8F9FA] dark:bg-[#1a2332] min-h-screen`}
       >
         <ThemeProvider>
-          <NavBar />
-          <main>{children}</main>
-          <Footer />
+          <ToastProvider>
+            <AuthProvider>
+              <NavBar />
+              <main>{children}</main>
+              <Footer />
+            </AuthProvider>
+          </ToastProvider>
         </ThemeProvider>
       </body>
     </html>
