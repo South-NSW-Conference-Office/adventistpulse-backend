@@ -25,15 +25,13 @@ export default function Home() {
 
   return (
     <div id="main-content" className={cn("min-h-screen", tokens.bg.page, tokens.text.heading)}>
-      {/* Hero — full-bleed map covering full viewport incl. NavBar */}
-      <div className="relative w-full overflow-hidden" style={{ height: '100vh' }}>
-        {/* Map fills entire background */}
-        <div className="absolute inset-0" style={{ zIndex: 0 }}>
-          <HarvestMapLoader fill />
-        </div>
+      {/* Hero */}
+      <div style={{ position: 'relative', width: '100%', height: '100vh', overflow: 'hidden' }}>
+        {/* Map — fills entire hero */}
+        <HarvestMapLoader fill />
 
-        {/* Content on top */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center" style={{ zIndex: 600 }}>
+        {/* Content overlay */}
+        <div style={{ position: 'absolute', inset: 0, zIndex: 600, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '0 16px', textAlign: 'center' }}>
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white drop-shadow-lg">
             Adventist <span className="text-[#6366f1]">Pulse</span>
           </h1>
