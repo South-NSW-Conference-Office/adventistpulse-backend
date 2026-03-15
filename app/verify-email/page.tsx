@@ -1,83 +1,148 @@
-'use client';
+"use client";
 
-import { useEffect, useState, Suspense } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { tokens, cn } from '@/lib/theme';
-import { CheckCircle, XCircle, Loader2 } from 'lucide-react';
+import { useEffect, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
+import AuthPageShell from "@/components/auth/AuthPageShell";
+import AuthCard from "@/components/auth/AuthCard";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/contexts/ToastContext";
+import { verifyEmail } from "@/lib/api/auth";
+import { ApiError } from "@/lib/api/client";
+import { setRedirectToast } from "@/lib/toast/redirect-toast";
+import Link from "next/link";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL;
+type VerifyState = "loading" | "success" | "error" | "no-token";
 
 function VerifyEmailContent() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
-  const [message, setMessage] = useState('');
+  const params        = useSearchParams();
+  const { accessToken } = useAuth();
+  const { toast }     = useToast();
+  const router        = useRouter();
+  const didVerify     = useRef(false);
+
+  const [state, setState]   = useState<VerifyState>("loading");
+  const [errMsg, setErrMsg] = useState("");
 
   useEffect(() => {
-    const token = searchParams.get('token');
+    if (didVerify.current) return;
+    didVerify.current = true;
+
+    const token = params.get("token");
+
     if (!token) {
-      setStatus('error');
-      setMessage('No verification token found. Please use the link from your email.');
+      setState("no-token");
       return;
     }
 
-    fetch(`${API_BASE}/api/v1/auth/verify-email?token=${encodeURIComponent(token)}`)
-      .then(res => res.json())
-      .then(data => {
-        if (data.status === 'success') {
-          setStatus('success');
-          setTimeout(() => router.push('/onboarding'), 2500);
-        } else {
-          setStatus('error');
-          setMessage(data.error?.message ?? 'Verification failed. The link may have expired.');
-        }
+    verifyEmail(token)
+      .then(() => {
+        // Clean up the pending email from sessionStorage — flow is complete
+        sessionStorage.removeItem("pulse:pending_email");
+        setState("success");
+        setRedirectToast({ type: "success", message: "Email verified! Please sign in to continue." });
+        setTimeout(() => router.replace("/"), 1800);
       })
-      .catch(() => {
-        setStatus('error');
-        setMessage('Network error. Please check your connection and try again.');
+      .catch((err) => {
+        const msg =
+          err instanceof ApiError
+            ? err.message
+            : "Verification failed — please try again.";
+        setErrMsg(msg);
+        setState("error");
       });
-  }, [searchParams, router]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
+  if (state === "loading") {
+    return (
+      <AuthCard title="Verifying your email…" subtitle="Just a moment.">
+        <div className="flex justify-center py-4">
+          <svg className="animate-spin w-8 h-8 text-[#9CA3AF]" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" className="opacity-25" />
+            <path d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" fill="currentColor" className="opacity-75" />
+          </svg>
+        </div>
+      </AuthCard>
+    );
+  }
+
+  if (state === "success") {
+    return (
+      <AuthCard title="Email verified!" subtitle="Taking you to the sign-in page…">
+        <div className="flex justify-center py-2">
+          <div className="w-16 h-16 rounded-2xl flex items-center justify-center" style={{ background: "#F0FDF4" }}>
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+              <polyline points="22 4 12 14.01 9 11.01" />
+            </svg>
+          </div>
+        </div>
+      </AuthCard>
+    );
+  }
+
+  if (state === "no-token") {
+    return (
+      <AuthCard title="Invalid link" subtitle="This verification link is missing or malformed." backLink={{ label: "Back to sign in", href: "/login" }}>
+        <div className="flex justify-center py-2">
+          <div className="w-16 h-16 rounded-2xl flex items-center justify-center" style={{ background: "#FFF7ED" }}>
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#F97316" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+          </div>
+        </div>
+        {accessToken && (
+          <Link href="/pending-verification" className="block text-center text-[13px] text-[#2563EB] font-semibold hover:underline">
+            Request a new verification email →
+          </Link>
+        )}
+      </AuthCard>
+    );
+  }
+
+  // error state
   return (
-    <div className={cn('min-h-screen flex items-center justify-center px-4', tokens.bg.page)}>
-      <div className={cn('w-full max-w-md rounded-2xl border p-10 text-center', tokens.bg.card, tokens.border.default)}>
-        {status === 'loading' && (
-          <>
-            <Loader2 className={cn('w-10 h-10 mx-auto mb-4 animate-spin', tokens.text.accent)} />
-            <h2 className={cn('text-lg font-semibold', tokens.text.heading)}>Verifying your email…</h2>
-          </>
-        )}
-        {status === 'success' && (
-          <>
-            <CheckCircle className="w-10 h-10 mx-auto mb-4 text-green-500" />
-            <h2 className={cn('text-lg font-semibold mb-2', tokens.text.heading)}>Email verified!</h2>
-            <p className={cn('text-sm', tokens.text.muted)}>Redirecting you to complete your profile…</p>
-          </>
-        )}
-        {status === 'error' && (
-          <>
-            <XCircle className="w-10 h-10 mx-auto mb-4 text-red-500" />
-            <h2 className={cn('text-lg font-semibold mb-2', tokens.text.heading)}>Verification failed</h2>
-            <p className={cn('text-sm mb-6', tokens.text.muted)}>{message}</p>
-            <Link href="/login" className={cn('text-sm font-semibold hover:underline', tokens.text.accent)}>
-              Back to sign in
-            </Link>
-          </>
-        )}
+    <AuthCard title="Link expired" subtitle={errMsg || "This link has expired or has already been used."} backLink={{ label: "Back to sign in", href: "/login" }}>
+      <div className="flex justify-center py-2">
+        <div className="w-16 h-16 rounded-2xl flex items-center justify-center" style={{ background: "#FEF2F2" }}>
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="15" y1="9" x2="9" y2="15" />
+            <line x1="9" y1="9" x2="15" y2="15" />
+          </svg>
+        </div>
       </div>
-    </div>
+      {accessToken ? (
+        <Link href="/pending-verification" className="block text-center text-[13px] text-[#2563EB] font-semibold hover:underline">
+          Request a new verification email →
+        </Link>
+      ) : (
+        <Link href="/forgot-password" className="block text-center text-[13px] text-[#2563EB] font-semibold hover:underline">
+          Go to forgot password →
+        </Link>
+      )}
+    </AuthCard>
   );
 }
 
 export default function VerifyEmailPage() {
   return (
-    <Suspense fallback={
-      <div className={cn('min-h-screen flex items-center justify-center', tokens.bg.page)}>
-        <Loader2 className={cn('w-8 h-8 animate-spin', tokens.text.accent)} />
-      </div>
-    }>
-      <VerifyEmailContent />
-    </Suspense>
+    <AuthPageShell>
+      <Suspense fallback={
+        <AuthCard title="Verifying…" subtitle="Just a moment.">
+          <div className="flex justify-center py-4">
+            <svg className="animate-spin w-8 h-8 text-[#9CA3AF]" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" className="opacity-25" />
+              <path d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" fill="currentColor" className="opacity-75" />
+            </svg>
+          </div>
+        </AuthCard>
+      }>
+        <VerifyEmailContent />
+      </Suspense>
+    </AuthPageShell>
   );
 }

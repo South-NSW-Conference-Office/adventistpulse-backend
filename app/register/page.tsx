@@ -1,138 +1,118 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { useAuth } from '@/contexts/AuthContext';
-import { useToast } from '@/contexts/ToastContext';
-import { usePublicRoute } from '@/lib/hooks/useRouteGuard';
-import { tokens, cn } from '@/lib/theme';
-import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import AuthPageShell from "@/components/auth/AuthPageShell";
+import AuthCard from "@/components/auth/AuthCard";
+import AuthInput from "@/components/auth/AuthInput";
+import PasswordInput from "@/components/auth/PasswordInput";
+import PasswordStrengthBar, { calcPasswordScore } from "@/components/auth/PasswordStrengthBar";
+import AuthSubmitButton from "@/components/auth/AuthSubmitButton";
+import { useAuth } from "@/contexts/AuthContext";
+import { usePublicRoute } from "@/lib/hooks/useRouteGuard";
+import { useToast } from "@/contexts/ToastContext";
 
-function passwordStrength(p: string): { label: string; color: string; width: string } | null {
-  if (!p) return null;
-  if (p.length < 8) return { label: 'Too short', color: 'bg-red-500', width: 'w-1/4' };
-  if (p.length < 12) return { label: 'Weak', color: 'bg-orange-500', width: 'w-2/4' };
-  const variety = [/[A-Z]/, /[a-z]/, /\d/, /[^a-zA-Z0-9]/].filter(r => r.test(p)).length;
-  if (variety < 3) return { label: 'Fair', color: 'bg-yellow-500', width: 'w-3/4' };
-  return { label: 'Strong', color: 'bg-green-500', width: 'w-full' };
+function PersonIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
+    </svg>
+  );
+}
+
+function MailIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+      <polyline points="22,6 12,13 2,6" />
+    </svg>
+  );
 }
 
 export default function RegisterPage() {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
+  const [name, setName]       = useState("");
+  const [email, setEmail]     = useState("");
+  const [password, setPassword] = useState("");
 
   const { register, isLoading } = useAuth();
-  const { toast } = useToast();
-  const router = useRouter();
   const { isReady } = usePublicRoute();
+  const { toast }               = useToast();
+  const router                  = useRouter();
 
-  const strength = passwordStrength(password);
+  const passwordScore = calcPasswordScore(password);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await register(name, email, password);
-      router.push('/pending-verification');
+      router.push("/pending-verification");
     } catch (err) {
-      toast.fromApiError(err, "Couldn't create your account. Please check your details and try again.");
+      toast.fromApiError(err, "We couldn't create your account. Please check your details and try again.");
     }
   };
 
   if (!isReady) return null;
 
   return (
-    <div className={cn('min-h-screen flex items-center justify-center px-4 py-12', tokens.bg.page)}>
-      <div className={cn('w-full max-w-md rounded-2xl border p-8', tokens.bg.card, tokens.border.default)}>
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className={cn('text-2xl font-bold mb-1', tokens.text.heading)}>Create account</h1>
-          <p className={cn('text-sm', tokens.text.muted)}>Join Adventist Pulse to access church intelligence</p>
-        </div>
+    <AuthPageShell>
+      <AuthCard
+        title="Create account"
+        subtitle="Join Adventist Pulse to access church health analytics."
+      >
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <AuthInput
+            label="Full Name"
+            type="text"
+            placeholder="Your name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            autoComplete="name"
+            required
+            icon={<PersonIcon />}
+          />
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Name */}
+          <AuthInput
+            label="Email"
+            type="email"
+            placeholder="you@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            autoComplete="email"
+            required
+            icon={<MailIcon />}
+          />
+
           <div>
-            <label className={cn('block text-xs font-medium mb-1.5', tokens.text.muted)}>Full name</label>
-            <div className={cn('flex items-center gap-3 px-3.5 h-11 rounded-lg border', tokens.bg.cardAlt, tokens.border.default)}>
-              <User className={cn('w-4 h-4 shrink-0', tokens.text.muted)} />
-              <input
-                type="text"
-                placeholder="Your name"
-                value={name}
-                onChange={e => setName(e.target.value)}
-                required
-                autoComplete="name"
-                className="flex-1 bg-transparent outline-none text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600"
-              />
-            </div>
+            <PasswordInput
+              label="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Min. 12 characters"
+              autoComplete="new-password"
+            />
+            <PasswordStrengthBar score={passwordScore} />
           </div>
 
-          {/* Email */}
-          <div>
-            <label className={cn('block text-xs font-medium mb-1.5', tokens.text.muted)}>Email address</label>
-            <div className={cn('flex items-center gap-3 px-3.5 h-11 rounded-lg border', tokens.bg.cardAlt, tokens.border.default)}>
-              <Mail className={cn('w-4 h-4 shrink-0', tokens.text.muted)} />
-              <input
-                type="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                required
-                autoComplete="email"
-                className="flex-1 bg-transparent outline-none text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600"
-              />
-            </div>
-          </div>
+          <p className="text-[11px] text-[#9CA3AF] -mt-1">
+            Must be at least 12 characters with a mix of letters, numbers, and symbols.
+          </p>
 
-          {/* Password */}
-          <div>
-            <label className={cn('block text-xs font-medium mb-1.5', tokens.text.muted)}>Password</label>
-            <div className={cn('flex items-center gap-3 px-3.5 h-11 rounded-lg border', tokens.bg.cardAlt, tokens.border.default)}>
-              <Lock className={cn('w-4 h-4 shrink-0', tokens.text.muted)} />
-              <input
-                type={showPassword ? 'text' : 'password'}
-                placeholder="At least 12 characters"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                required
-                minLength={12}
-                autoComplete="new-password"
-                className="flex-1 bg-transparent outline-none text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600"
-              />
-              <button type="button" onClick={() => setShowPassword(v => !v)} className={cn('shrink-0', tokens.text.muted)} tabIndex={-1}>
-                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>
-            </div>
-            {strength && (
-              <div className="mt-2 space-y-1">
-                <div className="h-1 rounded-full bg-gray-200 dark:bg-gray-700">
-                  <div className={cn('h-1 rounded-full transition-all', strength.color, strength.width)} />
-                </div>
-                <p className={cn('text-xs', strength.color.replace('bg-', 'text-'))}>{strength.label}</p>
-              </div>
-            )}
-          </div>
-
-          {/* Submit */}
-          <button
-            type="submit"
-            disabled={isLoading}
-            className={cn('w-full h-11 rounded-full text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-50 mt-2', tokens.bg.accent)}
-          >
-            {isLoading ? 'Creating account…' : 'Create account'}
-          </button>
+          <AuthSubmitButton
+            label="Create account"
+            loadingLabel="Creating account…"
+            isLoading={isLoading}
+          />
         </form>
 
-        <p className={cn('mt-6 text-center text-sm', tokens.text.muted)}>
-          Already have an account?{' '}
-          <Link href="/login" className={cn('font-semibold hover:underline', tokens.text.accent)}>
+        <p className="text-[13px] text-[#999] text-center">
+          Already have an account?{" "}
+          <Link href="/login" className="text-[#1a1a1a] font-semibold hover:underline">
             Sign in
           </Link>
         </p>
-      </div>
-    </div>
+      </AuthCard>
+    </AuthPageShell>
   );
 }

@@ -1,49 +1,64 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useAuth } from '@/contexts/AuthContext';
-import { useRouter } from 'next/navigation';
-import { tokens, cn } from '@/lib/theme';
-import { Clock } from 'lucide-react';
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import AuthPageShell from "@/components/auth/AuthPageShell";
+import AuthCard from "@/components/auth/AuthCard";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function PendingApprovalPage() {
-  const { user, logout } = useAuth();
-  const router = useRouter();
+  const { user, accessToken, isLoading, logout } = useAuth();
+  const router                                   = useRouter();
+
+  useEffect(() => {
+    if (isLoading) return; // wait for silent session restore
+    if (!accessToken) { router.replace("/login"); return; }
+    if (user?.accountStatus === "approved") router.replace("/");
+  }, [accessToken, user, isLoading, router]);
+
+  const handleSignOut = async () => { await logout(); router.replace("/login"); };
+
+  if (isLoading || !accessToken) return null;
 
   return (
-    <div className={cn('min-h-screen flex items-center justify-center px-4', tokens.bg.page)}>
-      <div className={cn('w-full max-w-md rounded-2xl border p-10 text-center', tokens.bg.card, tokens.border.default)}>
-        <div className={cn('inline-flex items-center justify-center w-14 h-14 rounded-full mb-5', tokens.bg.accentSoft)}>
-          <Clock className={cn('w-7 h-7', tokens.text.accent)} />
+    <AuthPageShell>
+      <AuthCard
+        title="Application under review"
+        subtitle="Your profile has been submitted and is awaiting administrator approval."
+      >
+        {/* Clock illustration */}
+        <div className="flex justify-center py-2">
+          <div className="w-16 h-16 rounded-2xl flex items-center justify-center" style={{ background: "#EFF6FF" }}>
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563EB" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+          </div>
         </div>
 
-        <h1 className={cn('text-xl font-bold mb-2', tokens.text.heading)}>Application submitted</h1>
-        <p className={cn('text-sm mb-6', tokens.text.muted)}>
-          Your application is under review. You&apos;ll receive an email once it&apos;s approved.
-          This usually takes 1–2 business days.
-        </p>
-
-        {user && (
-          <p className={cn('text-xs mb-6 px-4 py-3 rounded-lg', tokens.bg.cardAlt, tokens.text.muted)}>
-            Signed in as <span className={cn('font-medium', tokens.text.body)}>{user.email}</span>
+        <div className="flex flex-col gap-3 text-center">
+          <p className="text-[13px] text-[#6B7280] leading-relaxed">
+            An administrator will review your application and approve or reject it.
+            This typically takes <strong className="text-[#111]">one to three business days</strong>.
           </p>
-        )}
-
-        <div className="space-y-3">
-          <Link
-            href="/"
-            className={cn('block w-full h-11 rounded-full text-sm font-semibold text-white text-center leading-[44px]', tokens.bg.accent)}
-          >
-            Browse public data
-          </Link>
-          <button
-            onClick={async () => { await logout(); router.push('/'); }}
-            className={cn('block w-full h-11 rounded-full text-sm font-semibold border text-center', tokens.border.default, tokens.text.body, 'hover:bg-gray-100 dark:hover:bg-[#253344] transition-colors')}
-          >
-            Sign out
-          </button>
+          <p className="text-[13px] text-[#6B7280] leading-relaxed">
+            You will receive an email notification at{" "}
+            <strong className="text-[#111]">{user?.email ?? "your email address"}</strong>{" "}
+            once a decision has been made.
+          </p>
+          <p className="text-[12px] text-[#9CA3AF]">
+            Nothing to do now — we&apos;ll be in touch.
+          </p>
         </div>
-      </div>
-    </div>
+
+        <button
+          type="button"
+          onClick={handleSignOut}
+          className="w-full h-12 rounded-3xl border border-[#E5E7EB] text-[14px] font-semibold text-[#374151] hover:bg-[#F9FAFB] transition-colors"
+        >
+          Sign out
+        </button>
+      </AuthCard>
+    </AuthPageShell>
   );
 }
