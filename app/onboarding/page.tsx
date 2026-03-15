@@ -1,294 +1,498 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthContext';
-import { useToast } from '@/contexts/ToastContext';
-import { submitOnboarding, getOnboardingStatus, type OnboardingProfileData } from '@/lib/api/onboarding';
-import { ApiError } from '@/lib/api/client';
-import { getDivisions, getEntityChildren, type EntityOption } from '@/lib/api/entities';
-import { COUNTRIES } from '@/lib/data/countries';
-import { tokens, cn } from '@/lib/theme';
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import WaterBackground from "@/app/components/WaterBackground";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/contexts/ToastContext";
+import { submitOnboarding, getOnboardingStatus, type OnboardingProfileData } from "@/lib/api/onboarding";
+import { ApiError } from "@/lib/api/client";
+import CountrySelect from "@/components/ui/CountrySelect";
+import { COUNTRIES } from "@/lib/data/countries";
+import { getDivisions, getEntityChildren, type EntityOption } from "@/lib/api/entities";
 
 const CHURCH_ROLES = [
-  { value: 'member', label: 'Church Member' },
-  { value: 'deacon', label: 'Deacon' },
-  { value: 'deaconess', label: 'Deaconess' },
-  { value: 'elder', label: 'Elder' },
-  { value: 'pastor', label: 'Pastor' },
-  { value: 'bible_worker', label: 'Bible Worker' },
-  { value: 'local_church_officer', label: 'Local Church Officer' },
-  { value: 'conference_officer', label: 'Conference Officer' },
-  { value: 'union_officer', label: 'Union Officer' },
-  { value: 'division_officer', label: 'Division Officer' },
-  { value: 'gc_officer', label: 'GC Officer' },
-  { value: 'other', label: 'Other' },
+  { value: "member",               label: "Church Member" },
+  { value: "deacon",               label: "Deacon" },
+  { value: "deaconess",            label: "Deaconess" },
+  { value: "elder",                label: "Elder" },
+  { value: "pastor",               label: "Pastor" },
+  { value: "bible_worker",         label: "Bible Worker" },
+  { value: "local_church_officer", label: "Local Church Officer" },
+  { value: "conference_officer",   label: "Conference Officer" },
+  { value: "union_officer",        label: "Union Officer" },
+  { value: "division_officer",     label: "Division Officer" },
+  { value: "gc_officer",           label: "GC Officer" },
+  { value: "other",                label: "Other" },
 ];
 
-const STEPS = ['Personal & Location', 'Church Affiliation', 'Role & Purpose'];
+const STEPS = ["Personal & Location", "Church Affiliation", "Role & Purpose"];
 
-const inputCls = cn('w-full px-3.5 py-2.5 rounded-lg border text-sm outline-none focus:ring-2 focus:ring-[#6366f1]/40 focus:border-[#6366f1] transition bg-white dark:bg-[#162030] dark:text-white border-gray-200 dark:border-[#2a3a50] placeholder-gray-400 dark:placeholder-gray-600');
-const labelCls = 'block text-xs font-medium mb-1.5 text-gray-500 dark:text-gray-400';
+function FieldLabel({ children, required }: { children: React.ReactNode; required?: boolean }) {
+  return (
+    <label className="block text-[12px] font-semibold text-[#374151] mb-1.5 tracking-wide uppercase">
+      {children}{required && <span className="text-red-400 ml-0.5">*</span>}
+    </label>
+  );
+}
+
+function Input({ value, onChange, placeholder, type = "text" }: {
+  value: string; onChange: (v: string) => void; placeholder?: string; type?: string;
+}) {
+  return (
+    <input
+      type={type}
+      value={value}
+      onChange={e => onChange(e.target.value)}
+      placeholder={placeholder}
+      className="w-full px-4 py-3 rounded-xl border border-[#E5E7EB] bg-white text-[14px] text-[#111] placeholder-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#111]/10 focus:border-[#111] transition-colors"
+    />
+  );
+}
+
+function Select({ value, onChange, options, placeholder }: {
+  value: string; onChange: (v: string) => void;
+  options: { value: string; label: string }[]; placeholder?: string;
+}) {
+  return (
+    <select
+      value={value}
+      onChange={e => onChange(e.target.value)}
+      className="w-full px-4 py-3 rounded-xl border border-[#E5E7EB] bg-white text-[14px] text-[#111] focus:outline-none focus:ring-2 focus:ring-[#111]/10 focus:border-[#111] transition-colors appearance-none"
+    >
+      {placeholder && <option value="" disabled>{placeholder}</option>}
+      {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+    </select>
+  );
+}
+
+function Textarea({ value, onChange, placeholder, rows = 4 }: {
+  value: string; onChange: (v: string) => void; placeholder?: string; rows?: number;
+}) {
+  return (
+    <textarea
+      value={value}
+      onChange={e => onChange(e.target.value)}
+      placeholder={placeholder}
+      rows={rows}
+      className="w-full px-4 py-3 rounded-xl border border-[#E5E7EB] bg-white text-[14px] text-[#111] placeholder-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#111]/10 focus:border-[#111] transition-colors resize-none"
+    />
+  );
+}
 
 export default function OnboardingPage() {
   const { user, accessToken, logout } = useAuth();
-  const { toast } = useToast();
-  const router = useRouter();
+  const { toast }                     = useToast();
+  const router                        = useRouter();
 
-  const [step, setStep] = useState(0);
+  const [step,       setStep]       = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [prefilling, setPrefilling] = useState(true);
-  const [rejectionReason, setRejectionReason] = useState<string | null>(null);
 
   // Form state
-  const [phone, setPhone] = useState('');
-  const [countryCode, setCountryCode] = useState('');
-  const [country, setCountry] = useState('');
-  const [divisionId, setDivisionId] = useState('');
-  const [unionId, setUnionId] = useState('');
-  const [conferenceId, setConferenceId] = useState('');
-  const [division, setDivision] = useState('');
-  const [union, setUnion] = useState('');
-  const [conference, setConference] = useState('');
-  const [divisions, setDivisions] = useState<EntityOption[]>([]);
-  const [unions, setUnions] = useState<EntityOption[]>([]);
-  const [conferences, setConferences] = useState<EntityOption[]>([]);
-  const [loadingDiv, setLoadingDiv] = useState(false);
-  const [loadingUni, setLoadingUni] = useState(false);
-  const [loadingConf, setLoadingConf] = useState(false);
-  const [localChurch, setLocalChurch] = useState('');
-  const [churchRole, setChurchRole] = useState('');
-  const [roleDescription, setRoleDescription] = useState('');
-  const [purposeStatement, setPurposeStatement] = useState('');
+  const [phone,            setPhone]            = useState("");
+  const [countryCode,      setCountryCode]      = useState("");   // ISO alpha-2
+  const [country,          setCountry]          = useState("");   // display name stored to backend
+  // Entity IDs (for backend ref)
+  const [divisionId,   setDivisionId]   = useState("");
+  const [unionId,      setUnionId]      = useState("");
+  const [conferenceId, setConferenceId] = useState("");
+  // Entity display names (stored to OnboardingProfile as strings)
+  const [division,     setDivision]     = useState("");
+  const [union,        setUnion]        = useState("");
+  const [conference,   setConference]   = useState("");
+  // Entity option lists
+  const [divisions,    setDivisions]    = useState<EntityOption[]>([]);
+  const [unions,       setUnions]       = useState<EntityOption[]>([]);
+  const [conferences,  setConferences]  = useState<EntityOption[]>([]);
+  const [loadingDiv,   setLoadingDiv]   = useState(false);
+  const [loadingUni,   setLoadingUni]   = useState(false);
+  const [loadingConf,  setLoadingConf]  = useState(false);
+  const [localChurch,      setLocalChurch]      = useState("");
+  const [churchRole,       setChurchRole]       = useState("");
+  const [roleDescription,  setRoleDescription]  = useState("");
+  const [purposeStatement, setPurposeStatement] = useState("");
+  const [rejectionReason,  setRejectionReason]  = useState<string | null>(null);
 
+  // Guard: must be logged in with verified email
   useEffect(() => {
-    if (!accessToken) { router.replace('/login'); return; }
+    if (!accessToken) { router.replace("/login"); return; }
   }, [accessToken, router]);
 
+  // Prefill if user has already submitted (re-application after rejection)
   useEffect(() => {
     if (!accessToken) return;
     getOnboardingStatus(accessToken)
       .then(status => {
-        if (status.accountStatus === 'approved') { router.replace('/'); return; }
-        if (status.accountStatus === 'pending_approval') { router.replace('/pending-approval'); return; }
+        if (status.accountStatus === "approved")         { router.replace("/"); return; }
+        if (status.accountStatus === "pending_approval") { router.replace("/pending-approval"); return; }
         if (status.rejectionReason) setRejectionReason(status.rejectionReason);
         const p = status.profile;
         if (p) {
-          setCountry(p.country ?? '');
+          // Step 0
+          setCountry(p.country ?? "");
           const match = COUNTRIES.find(c => c.name === p.country);
           if (match) setCountryCode(match.code);
-          setPhone(p.phone ?? '');
-          setDivision(p.division ?? '');
-          setUnion(p.union ?? '');
-          setConference(p.conference ?? '');
-          if (p.divisionId) setDivisionId(p.divisionId);
-          if (p.unionId) setUnionId(p.unionId);
+          setPhone(p.phone ?? "");
+          // Step 1 — restore display names; IDs restored via separate effects once lists load
+          setDivision(p.division ?? "");
+          setUnion(p.union ?? "");
+          setConference(p.conference ?? "");
+          if (p.divisionId)   setDivisionId(p.divisionId);
+          if (p.unionId)      setUnionId(p.unionId);
           if (p.conferenceId) setConferenceId(p.conferenceId);
-          setLocalChurch(p.localChurch ?? '');
-          setChurchRole(p.churchRole ?? '');
-          setRoleDescription(p.roleDescription ?? '');
-          setPurposeStatement(p.purposeStatement ?? '');
+          setLocalChurch(p.localChurch ?? "");
+          // Step 2
+          setChurchRole(p.churchRole ?? "");
+          setRoleDescription(p.roleDescription ?? "");
+          setPurposeStatement(p.purposeStatement ?? "");
         }
       })
       .catch(() => {})
       .finally(() => setPrefilling(false));
   }, [accessToken, router]);
 
+  // Load divisions on mount
   useEffect(() => {
     setLoadingDiv(true);
-    getDivisions().then(setDivisions).catch(() => {}).finally(() => setLoadingDiv(false));
+    getDivisions()
+      .then(setDivisions)
+      .catch(() => {})
+      .finally(() => setLoadingDiv(false));
   }, []);
 
+  // Load unions when division changes
   useEffect(() => {
-    if (!divisionId) { setUnions([]); setUnionId(''); setUnion(''); setConferences([]); setConferenceId(''); setConference(''); return; }
+    if (!divisionId) { setUnions([]); setUnionId(""); setUnion(""); setConferences([]); setConferenceId(""); setConference(""); return; }
     setLoadingUni(true);
     const div = divisions.find(d => d._id === divisionId);
-    if (div) getEntityChildren(div.code).then(setUnions).catch(() => {}).finally(() => setLoadingUni(false));
+    if (div) {
+      getEntityChildren(div.code)
+        .then(setUnions)
+        .catch(() => {})
+        .finally(() => setLoadingUni(false));
+    }
   }, [divisionId, divisions]);
 
+  // Load conferences when union changes — always reset conference selection
   useEffect(() => {
-    if (!unionId) { setConferences([]); setConferenceId(''); setConference(''); return; }
-    setConferenceId(''); setConference('');
+    if (!unionId) { setConferences([]); setConferenceId(""); setConference(""); return; }
+    setConferenceId(""); setConference("");
     setLoadingConf(true);
     const uni = unions.find(u => u._id === unionId);
-    if (uni) getEntityChildren(uni.code).then(setConferences).catch(() => {}).finally(() => setLoadingConf(false));
+    if (uni) {
+      getEntityChildren(uni.code)
+        .then(setConferences)
+        .catch(() => {})
+        .finally(() => setLoadingConf(false));
+    }
   }, [unionId, unions]);
 
   const stepValid = () => {
     if (step === 0) return countryCode.length > 0;
     if (step === 1) return !!(divisionId && unionId && conference.trim() && localChurch.trim());
-    if (step === 2) return !!(churchRole && purposeStatement.trim().length >= 20);
+    if (step === 2) return churchRole && purposeStatement.trim().length >= 20;
     return false;
   };
+
+  const handleNext = () => { if (stepValid()) setStep(s => s + 1); };
+  const handleBack = () => setStep(s => s - 1);
 
   const handleSubmit = async () => {
     if (!accessToken || !stepValid()) return;
     setSubmitting(true);
     const data: OnboardingProfileData = {
-      phone: phone.trim() || null,
-      country: country.trim(),
-      division: division.trim(),
-      union: union.trim(),
-      conference: conference.trim(),
-      divisionId: divisionId || null,
-      unionId: unionId || null,
-      conferenceId: conferenceId || null,
-      localChurch: localChurch.trim(),
+      phone:            phone.trim() || null,
+      country:          country.trim(),
+      division:         division.trim(),
+      union:            union.trim(),
+      conference:       conference.trim(),
+      divisionId:       divisionId || null,
+      unionId:          unionId    || null,
+      conferenceId:     conferenceId || null,
+      localChurch:      localChurch.trim(),
       churchRole,
-      roleDescription: roleDescription.trim() || null,
+      roleDescription:  roleDescription.trim() || null,
       purposeStatement: purposeStatement.trim(),
     };
     try {
       await submitOnboarding(accessToken, data);
-      router.replace('/pending-approval');
+      router.replace("/pending-approval");
     } catch (err) {
       if (err instanceof ApiError) {
-        toast.fromApiError(err, "Couldn't submit your application. Please try again.");
+        toast.fromApiError(err, "We couldn't submit your application. Please try again.");
       } else {
-        toast.error('Something went wrong. Please try again.');
+        toast.error("Something went wrong. Please try again.");
       }
     } finally {
       setSubmitting(false);
     }
   };
 
+  const handleSignOut = async () => { await logout(); router.replace("/login"); };
+
   if (prefilling) return null;
 
   return (
-    <div className={cn('min-h-screen flex items-center justify-center px-4 py-12', tokens.bg.page)}>
-      <div className="w-full max-w-lg">
+    <div className="min-h-screen flex items-center justify-center p-4" style={{ position: "relative" }}>
+      <WaterBackground />
+      <div className="relative z-10 w-full mx-auto" style={{ maxWidth: 560 }}>
+
+        {/* Header */}
+        <div className="flex flex-col items-center gap-2 mb-8">
+          <Image src="/adventist-logo.png" alt="Adventist Pulse" width={44} height={44} priority />
+          <span className="text-[22px] font-bold text-[#1a1a1a] tracking-tight">Adventist Pulse</span>
+        </div>
+
         {/* Rejection notice */}
         {rejectionReason && (
-          <div className="mb-5 rounded-xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 px-5 py-4">
-            <p className={cn('text-sm font-semibold mb-1', tokens.text.danger)}>Previous application not approved</p>
-            <p className="text-xs text-red-600 dark:text-red-400">{rejectionReason}</p>
-            <p className={cn('text-xs mt-1', tokens.text.muted)}>Please update your details and resubmit.</p>
+          <div className="bg-[#FEF2F2] border border-[#FECACA] rounded-2xl px-5 py-4 mb-5">
+            <p className="text-[13px] font-semibold text-[#991B1B] mb-1">Your previous application was not approved</p>
+            <p className="text-[12px] text-[#7F1D1D]">{rejectionReason}</p>
+            <p className="text-[12px] text-[#9CA3AF] mt-2">Please update your details and resubmit.</p>
           </div>
         )}
 
-        <div className={cn('rounded-2xl border p-8', tokens.bg.card, tokens.border.default)}>
+        {/* Card */}
+        <div
+          className="bg-white rounded-3xl px-8 py-8 flex flex-col gap-6 box-border"
+          style={{ boxShadow: "0 8px 40px rgba(0,0,0,0.08)" }}
+        >
           {/* Step indicator */}
-          <div className="mb-6">
-            <div className="flex items-center justify-between mb-2">
-              <h1 className={cn('text-xl font-bold', tokens.text.heading)}>{STEPS[step]}</h1>
-              <span className={cn('text-xs', tokens.text.muted)}>Step {step + 1} of {STEPS.length}</span>
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <h1 className="text-[20px] font-bold text-[#111]">{STEPS[step]}</h1>
+              <span className="text-[12px] text-[#9CA3AF]">Step {step + 1} of {STEPS.length}</span>
             </div>
-            <div className="flex gap-1.5">
+            <div className="flex gap-1.5 mt-2">
               {STEPS.map((_, i) => (
-                <div key={i} className={cn('h-1 flex-1 rounded-full transition-colors', i <= step ? 'bg-[#6366f1]' : 'bg-gray-200 dark:bg-gray-700')} />
+                <div key={i} className="h-1 flex-1 rounded-full transition-colors"
+                  style={{ background: i <= step ? "#111" : "#E5E7EB" }} />
               ))}
             </div>
           </div>
 
           {/* Step 0 — Personal & Location */}
           {step === 0 && (
-            <div className="space-y-4">
-              <p className={cn('text-sm mb-4', tokens.text.muted)}>Tell us a bit about yourself so we can verify your church affiliation.</p>
+            <div className="flex flex-col gap-4">
+              <p className="text-[13px] text-[#6B7280]">
+                Tell us a bit about yourself so we can verify your affiliation with the Seventh-day Adventist Church.
+              </p>
+
+              {/* Country first */}
+              <CountrySelect
+                value={countryCode}
+                required
+                onChange={(c) => {
+                  setCountryCode(c.code);
+                  setCountry(c.name);
+                  // Dial code is shown as a visual badge — clear any dial-code-only value from the input
+                  setPhone(prev => {
+                    const stripped = prev.trim();
+                    const wasDialCode = COUNTRIES.some(x => stripped === x.dialCode || stripped === x.dialCode + " " || stripped === "");
+                    return wasDialCode ? "" : prev;
+                  });
+                }}
+              />
+
+              {/* Phone with dial code prefix badge */}
               <div>
-                <label className={labelCls}>Country <span className="text-red-400">*</span></label>
-                <select
-                  value={countryCode}
-                  onChange={e => {
-                    const c = COUNTRIES.find(x => x.code === e.target.value);
-                    setCountryCode(e.target.value);
-                    setCountry(c?.name ?? '');
-                  }}
-                  required
-                  className={inputCls}
-                >
-                  <option value="">Select your country…</option>
-                  {COUNTRIES.map(c => <option key={c.code} value={c.code}>{c.flag} {c.name}</option>)}
-                </select>
-              </div>
-              <div>
-                <label className={labelCls}>Phone (optional)</label>
-                <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="Your phone number" className={inputCls} />
+                <FieldLabel>Phone <span className="text-[#9CA3AF] normal-case font-normal">(optional)</span></FieldLabel>
+                <div className="relative">
+                  {countryCode && (() => {
+                    const c = COUNTRIES.find(x => x.code === countryCode);
+                    return c ? (
+                      <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5 pointer-events-none">
+                        <span className="text-[15px]">{c.flag}</span>
+                        <span className="text-[13px] text-[#6B7280] font-medium">{c.dialCode}</span>
+                        <span className="text-[#E5E7EB] ml-0.5">|</span>
+                      </div>
+                    ) : null;
+                  })()}
+                  <input
+                    type="tel"
+                    value={phone}
+                    onChange={e => setPhone(e.target.value)}
+                    placeholder={countryCode ? "4XX XXX XXX" : "Select a country first"}
+                    className="w-full py-3 pr-4 rounded-xl border border-[#E5E7EB] bg-white text-[14px] text-[#111] placeholder-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#111]/10 focus:border-[#111] transition-colors"
+                    style={{ paddingLeft: countryCode ? (() => {
+                      const d = COUNTRIES.find(c => c.code === countryCode)?.dialCode ?? "";
+                      return `${48 + d.length * 7}px`;
+                    })() : "16px" }}
+                  />
+                </div>
               </div>
             </div>
           )}
 
           {/* Step 1 — Church Affiliation */}
           {step === 1 && (
-            <div className="space-y-4">
-              <p className={cn('text-sm mb-4', tokens.text.muted)}>Select your church organisational details as accurately as possible.</p>
+            <div className="flex flex-col gap-4">
+              <p className="text-[13px] text-[#6B7280]">
+                Select your church organisational details as accurately as possible.
+              </p>
+
+              {/* Division */}
               <div>
-                <label className={labelCls}>Division <span className="text-red-400">*</span></label>
-                <select value={divisionId} onChange={e => { const o = divisions.find(d => d._id === e.target.value); setDivisionId(e.target.value); setDivision(o?.name ?? ''); setUnionId(''); setUnion(''); setConferenceId(''); setConference(''); }} disabled={loadingDiv} className={inputCls}>
-                  <option value="">{loadingDiv ? 'Loading…' : 'Select a division…'}</option>
+                <FieldLabel required>Division</FieldLabel>
+                <select
+                  value={divisionId}
+                  onChange={e => {
+                    const opt = divisions.find(d => d._id === e.target.value);
+                    setDivisionId(e.target.value);
+                    setDivision(opt?.name ?? "");
+                    setUnionId(""); setUnion("");
+                    setConferenceId(""); setConference("");
+                  }}
+                  disabled={loadingDiv}
+                  className="w-full px-4 py-3 rounded-xl border border-[#E5E7EB] bg-white text-[14px] text-[#111] focus:outline-none focus:ring-2 focus:ring-[#111]/10 focus:border-[#111] transition-colors appearance-none disabled:opacity-50"
+                >
+                  <option value="">{loadingDiv ? "Loading…" : "Select a division…"}</option>
                   {divisions.map(d => <option key={d._id} value={d._id}>{d.name}</option>)}
                 </select>
               </div>
+
+              {/* Union */}
               <div>
-                <label className={labelCls}>Union / Union Mission <span className="text-red-400">*</span></label>
-                <select value={unionId} onChange={e => { const o = unions.find(u => u._id === e.target.value); setUnionId(e.target.value); setUnion(o?.name ?? ''); setConferenceId(''); setConference(''); }} disabled={!divisionId || loadingUni} className={inputCls}>
-                  <option value="">{!divisionId ? 'Select a division first' : loadingUni ? 'Loading…' : 'Select a union…'}</option>
+                <FieldLabel required>Union / Union Mission</FieldLabel>
+                <select
+                  value={unionId}
+                  onChange={e => {
+                    const opt = unions.find(u => u._id === e.target.value);
+                    setUnionId(e.target.value);
+                    setUnion(opt?.name ?? "");
+                    setConferenceId(""); setConference("");
+                  }}
+                  disabled={!divisionId || loadingUni}
+                  className="w-full px-4 py-3 rounded-xl border border-[#E5E7EB] bg-white text-[14px] text-[#111] focus:outline-none focus:ring-2 focus:ring-[#111]/10 focus:border-[#111] transition-colors appearance-none disabled:opacity-50"
+                >
+                  <option value="">
+                    {!divisionId ? "Select a division first" : loadingUni ? "Loading…" : unions.length === 0 ? "No unions found" : "Select a union…"}
+                  </option>
                   {unions.map(u => <option key={u._id} value={u._id}>{u.name}</option>)}
                 </select>
               </div>
+
+              {/* Conference / Mission — dropdown if data exists, free-text fallback if not */}
               <div>
-                <label className={labelCls}>Conference / Mission <span className="text-red-400">*</span></label>
-                {conferences.length > 0 ? (
-                  <select value={conferenceId} onChange={e => { const o = conferences.find(c => c._id === e.target.value); setConferenceId(e.target.value); setConference(o?.name ?? ''); }} className={inputCls}>
+                <FieldLabel required>Conference / Mission</FieldLabel>
+                {!unionId || loadingConf ? (
+                  <select
+                    disabled
+                    className="w-full px-4 py-3 rounded-xl border border-[#E5E7EB] bg-white text-[14px] text-[#9CA3AF] appearance-none opacity-50"
+                  >
+                    <option>{!unionId ? "Select a union first" : "Loading…"}</option>
+                  </select>
+                ) : conferences.length > 0 ? (
+                  <select
+                    value={conferenceId}
+                    onChange={e => {
+                      const opt = conferences.find(c => c._id === e.target.value);
+                      setConferenceId(e.target.value);
+                      setConference(opt?.name ?? "");
+                    }}
+                    className="w-full px-4 py-3 rounded-xl border border-[#E5E7EB] bg-white text-[14px] text-[#111] focus:outline-none focus:ring-2 focus:ring-[#111]/10 focus:border-[#111] transition-colors appearance-none"
+                  >
                     <option value="">Select a conference…</option>
                     {conferences.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
                   </select>
                 ) : (
-                  <input type="text" value={conference} onChange={e => { setConference(e.target.value); setConferenceId(''); }} placeholder={!unionId ? 'Select a union first' : 'Type your conference name…'} disabled={!unionId} className={inputCls} />
+                  /* No conference data for this union — free-text fallback */
+                  <div>
+                    <input
+                      type="text"
+                      value={conference}
+                      onChange={e => { setConference(e.target.value); setConferenceId(""); }}
+                      placeholder="Type your conference or mission name…"
+                      className="w-full px-4 py-3 rounded-xl border border-[#E5E7EB] bg-white text-[14px] text-[#111] placeholder-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#111]/10 focus:border-[#111] transition-colors"
+                    />
+                    <p className="text-[11px] text-[#9CA3AF] mt-1.5">
+                      We don't have a list for this region yet — please type it in.
+                    </p>
+                  </div>
                 )}
               </div>
+
+              {/* Local Church */}
               <div>
-                <label className={labelCls}>Local Church <span className="text-red-400">*</span></label>
-                <input type="text" value={localChurch} onChange={e => setLocalChurch(e.target.value)} placeholder="e.g. Wahroonga Seventh-day Adventist Church" className={inputCls} />
+                <FieldLabel required>Local Church</FieldLabel>
+                <Input value={localChurch} onChange={setLocalChurch} placeholder="e.g. Wahroonga Seventh-day Adventist Church" />
               </div>
             </div>
           )}
 
           {/* Step 2 — Role & Purpose */}
           {step === 2 && (
-            <div className="space-y-4">
-              <p className={cn('text-sm mb-4', tokens.text.muted)}>Tell us your role and why you need access to Adventist Pulse.</p>
+            <div className="flex flex-col gap-4">
+              <p className="text-[13px] text-[#6B7280]">
+                Let us know your role in the church and why you need access to Adventist Pulse.
+              </p>
               <div>
-                <label className={labelCls}>Church Role <span className="text-red-400">*</span></label>
-                <select value={churchRole} onChange={e => setChurchRole(e.target.value)} className={inputCls}>
-                  <option value="">Select your role…</option>
-                  {CHURCH_ROLES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
-                </select>
+                <FieldLabel required>Church Role</FieldLabel>
+                <Select value={churchRole} onChange={setChurchRole}
+                  options={CHURCH_ROLES} placeholder="Select your role…" />
               </div>
-              {['other', 'local_church_officer', 'conference_officer'].includes(churchRole) && (
+              {(churchRole === "other" || churchRole === "local_church_officer" || churchRole === "conference_officer") && (
                 <div>
-                  <label className={labelCls}>Role Description (optional)</label>
-                  <input type="text" value={roleDescription} onChange={e => setRoleDescription(e.target.value)} placeholder="Describe your specific role" className={inputCls} />
+                  <FieldLabel>Role Description <span className="text-[#9CA3AF] normal-case font-normal">(optional)</span></FieldLabel>
+                  <Input value={roleDescription} onChange={setRoleDescription} placeholder="Describe your specific role" />
                 </div>
               )}
               <div>
-                <label className={labelCls}>Why do you need access? <span className="text-red-400">*</span></label>
-                <textarea value={purposeStatement} onChange={e => setPurposeStatement(e.target.value)} rows={5} placeholder="Explain how you will use Adventist Pulse and why you need access to this data. Minimum 20 characters." className={cn(inputCls, 'resize-none')} />
-                <p className={cn('text-xs mt-1', tokens.text.muted)}>{purposeStatement.length}/1000 · minimum 20</p>
+                <FieldLabel required>Why do you need access?</FieldLabel>
+                <Textarea
+                  value={purposeStatement}
+                  onChange={setPurposeStatement}
+                  placeholder="Please explain how you will use Adventist Pulse and why you need access to this data. Minimum 20 characters."
+                  rows={5}
+                />
+                <p className="text-[11px] text-[#9CA3AF] mt-1.5">
+                  {purposeStatement.length}/1000 characters · minimum 20
+                </p>
               </div>
             </div>
           )}
 
           {/* Navigation */}
-          <div className="flex gap-3 mt-6">
+          <div className="flex gap-3 pt-2">
             {step > 0 && (
-              <button type="button" onClick={() => setStep(s => s - 1)} className={cn('flex-1 h-11 rounded-full border text-sm font-semibold transition-colors', tokens.border.default, tokens.text.body, 'hover:bg-gray-100 dark:hover:bg-[#253344]')}>
+              <button
+                type="button"
+                onClick={handleBack}
+                className="flex-1 h-12 rounded-2xl border border-[#E5E7EB] text-[14px] font-semibold text-[#374151] hover:bg-[#F9FAFB] transition-colors"
+              >
                 Back
               </button>
             )}
             {step < STEPS.length - 1 ? (
-              <button type="button" onClick={() => stepValid() && setStep(s => s + 1)} disabled={!stepValid()} className={cn('flex-1 h-11 rounded-full text-sm font-semibold text-white disabled:opacity-40', tokens.bg.accent)}>
+              <button
+                type="button"
+                onClick={handleNext}
+                disabled={!stepValid()}
+                className="flex-1 h-12 rounded-2xl text-[14px] font-semibold text-white transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
+                style={{ background: "#111" }}
+              >
                 Continue
               </button>
             ) : (
-              <button type="button" onClick={handleSubmit} disabled={!stepValid() || submitting} className={cn('flex-1 h-11 rounded-full text-sm font-semibold text-white disabled:opacity-40', tokens.bg.accent)}>
-                {submitting ? 'Submitting…' : 'Submit application'}
+              <button
+                type="button"
+                onClick={handleSubmit}
+                disabled={!stepValid() || submitting}
+                className="flex-1 h-12 rounded-2xl text-[14px] font-semibold text-white transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
+                style={{ background: "#111" }}
+              >
+                {submitting ? "Submitting…" : "Submit application"}
               </button>
             )}
           </div>
         </div>
 
-        <p className={cn('text-center text-xs mt-4', tokens.text.muted)}>
-          <button onClick={async () => { await logout(); router.replace('/'); }} className="hover:underline">Sign out</button>
+        <p className="text-[12px] text-[#9CA3AF] text-center mt-5">
+          <button onClick={handleSignOut} className="hover:underline text-[#6B7280]">
+            Sign out
+          </button>
         </p>
       </div>
     </div>
