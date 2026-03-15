@@ -3,8 +3,11 @@
  * No business logic. Just HTTP plumbing.
  */
 
-const API_BASE =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5001";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL;
+
+if (!API_BASE) {
+  throw new Error("NEXT_PUBLIC_API_URL is not set. Add it to your .env.local file.");
+}
 
 export class ApiError extends Error {
   constructor(
