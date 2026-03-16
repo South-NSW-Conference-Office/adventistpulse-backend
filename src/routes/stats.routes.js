@@ -9,14 +9,17 @@ import { importStatsSchema, rankingsQuerySchema, countryRankingsQuerySchema, map
 
 const router = Router()
 
-router.use(authMiddleware, requirePasswordChanged)
-
+// ─── Public routes (no auth required) ────────────────────────────────────────
+router.get ('/map',              validate(mapDataQuerySchema, 'query'),           statsController.getMapData)
 router.get ('/map-data',         validate(mapDataQuerySchema, 'query'),           statsController.getMapData)
-router.get ('/country-trend',    validate(countryTrendQuerySchema, 'query'),     statsController.getCountryTrend)
-router.get ('/country-summary',  validate(countrySummaryQuerySchema, 'query'),   statsController.getCountrySummary)
-router.get ('/rankings',         validate(rankingsQuerySchema, 'query'),         statsController.getRankings)
-router.get ('/country-rankings', validate(countryRankingsQuerySchema, 'query'),  statsController.getCountryRankings)
-router.get ('/entity/:code',                                                   statsController.getForEntity)
-router.post('/import',     requireVerified, requireRole('admin'), validate(importStatsSchema), statsController.importStats)
+router.get ('/country-trend',    validate(countryTrendQuerySchema, 'query'),      statsController.getCountryTrend)
+router.get ('/country-summary',  validate(countrySummaryQuerySchema, 'query'),    statsController.getCountrySummary)
+router.get ('/rankings',         validate(rankingsQuerySchema, 'query'),          statsController.getRankings)
+router.get ('/country-rankings', validate(countryRankingsQuerySchema, 'query'),   statsController.getCountryRankings)
+router.get ('/entity/:code',                                                      statsController.getForEntity)
+router.get ('/:code/projections',                                                 statsController.getProjections)
+
+// ─── Protected routes ─────────────────────────────────────────────────────────
+router.post('/import', authMiddleware, requirePasswordChanged, requireVerified, requireRole('admin'), validate(importStatsSchema), statsController.importStats)
 
 export default router

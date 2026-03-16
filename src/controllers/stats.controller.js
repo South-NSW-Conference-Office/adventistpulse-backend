@@ -33,6 +33,11 @@ export const statsController = {
     response.success(res, data)
   }),
 
+  getProjections: asyncHandler(async (req, res) => {
+    const data = await statsService.getProjections(req.params.code)
+    response.success(res, data)
+  }),
+
   importStats: asyncHandler(async (req, res) => {
     const result = await statsService.importStats(req.body)
     response.created(res, result)

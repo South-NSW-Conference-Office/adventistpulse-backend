@@ -19,6 +19,11 @@ const yearlyStatsSchema = new mongoose.Schema({
     totalLosses:      Number,
     netGrowth:        Number,
     growthRate:       Number,
+    retentionRate:    Number,
+    dropoutRate:      Number,
+    lossRate:         Number,
+    accessionRate:    Number,
+    totalAccessions:  Number,
   },
   workers: {
     ordainedMinisters:    Number,
@@ -31,6 +36,10 @@ const yearlyStatsSchema = new mongoose.Schema({
     tithe:         Number,
     titheCurrency: { type: String, default: 'USD' },
     offerings:     Number,
+  },
+  derived: {
+    membersPerWorker: Number,
+    tithePerCapita:   Number,
   },
   source: {
     type: String,

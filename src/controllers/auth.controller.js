@@ -75,4 +75,15 @@ export const authController = {
     await authService.confirmEmailChange(req.query.token)
     response.success(res, { message: 'Email address updated successfully. Please log in again.' })
   }),
+
+  betaSignup: asyncHandler(async (req, res) => {
+    const result = await authService.betaSignup(req.body)
+    response.success(res, result)
+  }),
+
+  pastorConfirm: asyncHandler(async (req, res) => {
+    const { token, decision } = req.query
+    const result = await authService.confirmPastor({ token, decision })
+    response.success(res, result)
+  }),
 }

@@ -66,6 +66,227 @@ class EntityService {
     return entityRepository.updateById(entity._id, data)
   }
 
+  async search(query, limit = 10) {
+    const regex = new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i')
+    const entities = await entityRepository.model
+      .find({ $or: [{ name: regex }, { code: regex }] })
+      .limit(Number(limit))
+      .lean()
+
+    const codes = entities.map(e => e.code)
+    const latestStats = await statsRepository.findLatestForEntities(codes)
+    const statsMap = Object.fromEntries(latestStats.map(s => [s.entityCode, s]))
+
+    return entities.map(entity => ({ ...entity, latestStats: statsMap[entity.code] ?? null }))
+  }
+
+  async getBreadcrumbs(code) {
+    const breadcrumbs = []
+    let current = await entityRepository.findByCodeOrFail(code)
+    breadcrumbs.unshift(current)
+
+    while (current.parentCode) {
+      const parent = await entityRepository.findByCode(current.parentCode)
+      if (!parent) break
+      breadcrumbs.unshift(parent)
+      current = parent
+    }
+
+    return breadcrumbs
+  }
+
+  async getSiblings(code) {
+    const entity = await entityRepository.findByCodeOrFail(code)
+    if (!entity.parentCode) return []
+
+    const siblings = await entityRepository.findChildren(entity.parentCode)
+    const filtered = siblings.filter(s => s.code !== entity.code)
+    const codes = filtered.map(s => s.code)
+    const latestStats = await statsRepository.findLatestForEntities(codes)
+    const statsMap = Object.fromEntries(latestStats.map(s => [s.entityCode, s]))
+
+    return filtered.map(s => ({ ...s, latestStats: statsMap[s.code] ?? null }))
+  }
+
+  async getBenchmarks(code) {
+    const entity = await entityRepository.findByCodeOrFail(code)
+    const stats = await statsRepository.findLatestForEntity(code)
+    if (!stats) return []
+
+    const membership = stats.membership?.ending ?? 0
+    const growthRate = stats.membership?.growthRate != null ? stats.membership.growthRate * 100 : null
+    const suggestions = []
+
+    // 1. PEER: same level, ±30% size
+    if (membership > 0) {
+      const peers = await this.#findWithStats({
+        level: entity.level,
+        code: { $ne: entity.code },
+      }, stats, 3, (s) => {
+        const m = s.membership?.ending ?? 0
+        return m >= membership * 0.7 && m <= membership * 1.3
+      })
+      for (const p of peers) {
+        const pm = p.latestStats.membership?.ending ?? 0
+        suggestions.push({
+          entity: p.entity, latestStats: p.latestStats,
+          reason: `Similar size peer (${Math.round(pm / 1000)}K members)`,
+          similarity: 1 - Math.abs(membership - pm) / membership,
+          category: 'peer',
+        })
+      }
+    }
+
+    // 2. ASPIRATION: same level, 1.5x+ size, positive growth
+    if (membership > 0) {
+      const aspirational = await this.#findWithStats({
+        level: entity.level,
+        code: { $ne: entity.code },
+      }, stats, 2, (s) => {
+        const m = s.membership?.ending ?? 0
+        const gr = s.membership?.growthRate ?? 0
+        return m > membership * 1.5 && gr > 0
+      })
+      for (const a of aspirational) {
+        suggestions.push({
+          entity: a.entity, latestStats: a.latestStats,
+          reason: `Aspirational target (+${((a.latestStats.membership?.growthRate ?? 0) * 100).toFixed(1)}% growth)`,
+          similarity: 0.8,
+          category: 'aspiration',
+        })
+      }
+    }
+
+    // 3. TRAJECTORY: ±2% growth rate, same level
+    if (growthRate != null) {
+      const trajectory = await this.#findWithStats({
+        level: entity.level,
+        code: { $ne: entity.code },
+      }, stats, 2, (s) => {
+        const gr = s.membership?.growthRate != null ? s.membership.growthRate * 100 : null
+        return gr != null && gr >= growthRate - 2 && gr <= growthRate + 2
+      })
+      for (const t of trajectory) {
+        const gr = (t.latestStats.membership?.growthRate ?? 0) * 100
+        suggestions.push({
+          entity: t.entity, latestStats: t.latestStats,
+          reason: `Similar growth pattern (${gr > 0 ? '+' : ''}${gr.toFixed(1)}%)`,
+          similarity: 1 - Math.abs(growthRate - gr) / 10,
+          category: 'trajectory',
+        })
+      }
+    }
+
+    // 4. GEOGRAPHIC: same parent
+    if (entity.parentCode) {
+      const parent = await entityRepository.findByCode(entity.parentCode)
+      const siblings = await entityRepository.findChildren(entity.parentCode, { limit: 4 })
+      const filtered = siblings.filter(s => s.code !== entity.code).slice(0, 3)
+      const sibCodes = filtered.map(s => s.code)
+      const sibStats = await statsRepository.findLatestForEntities(sibCodes)
+      const sibMap = Object.fromEntries(sibStats.map(s => [s.entityCode, s]))
+
+      for (const s of filtered) {
+        if (sibMap[s.code]) {
+          suggestions.push({
+            entity: s, latestStats: sibMap[s.code],
+            reason: `Geographic neighbor in ${parent?.name ?? 'same region'}`,
+            similarity: 0.7,
+            category: 'geographic',
+          })
+        }
+      }
+    }
+
+    // 5. SIMILAR SIZE: 1.1-5x, different level
+    if (membership > 0) {
+      const sizeCohort = await this.#findWithStats({
+        level: { $ne: entity.level },
+        code: { $ne: entity.code },
+      }, stats, 2, (s) => {
+        const m = s.membership?.ending ?? 0
+        return m >= membership * 1.1 && m <= membership * 5
+      })
+      for (const sc of sizeCohort) {
+        const m = sc.latestStats.membership?.ending ?? 0
+        suggestions.push({
+          entity: sc.entity, latestStats: sc.latestStats,
+          reason: `Similar scale (${sc.entity.level}, ${Math.round(m / 1000)}K members)`,
+          similarity: 1 - Math.abs(membership - m) / Math.max(membership, m),
+          category: 'similar-size',
+        })
+      }
+    }
+
+    // Deduplicate, sort by category priority + similarity, return top 6
+    const categoryPriority = { peer: 4, aspiration: 3, trajectory: 2, geographic: 1, 'similar-size': 0 }
+    const seen = new Set()
+    return suggestions
+      .filter(s => {
+        if (seen.has(s.entity.code)) return false
+        seen.add(s.entity.code)
+        return true
+      })
+      .sort((a, b) => {
+        const ap = categoryPriority[a.category] ?? 0
+        const bp = categoryPriority[b.category] ?? 0
+        if (ap !== bp) return bp - ap
+        return b.similarity - a.similarity
+      })
+      .slice(0, 6)
+  }
+
+  async getNearby(code, limit = 3) {
+    const entity = await entityRepository.findByCodeOrFail(code)
+    if (!entity.location?.coordinates?.length) {
+      return []
+    }
+
+    const [lng, lat] = entity.location.coordinates
+    const nearby = await entityRepository.model.find({
+      code: { $ne: entity.code },
+      location: {
+        $near: {
+          $geometry: { type: 'Point', coordinates: [lng, lat] },
+          $maxDistance: 500000, // 500km
+        },
+      },
+    }).limit(Number(limit)).lean()
+
+    return nearby.map(n => {
+      const [nLng, nLat] = n.location.coordinates
+      const distanceKm = this.#haversine(lat, lng, nLat, nLng)
+      return { entity: n, distanceKm: Math.round(distanceKm * 10) / 10 }
+    })
+  }
+
+  #haversine(lat1, lon1, lat2, lon2) {
+    const R = 6371
+    const toRad = d => d * Math.PI / 180
+    const dLat = toRad(lat2 - lat1)
+    const dLon = toRad(lon2 - lon1)
+    const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+  }
+
+  async #findWithStats(filter, refStats, limit, filterFn) {
+    // Get entities matching filter, then join with latest stats and apply filterFn
+    const entities = await entityRepository.model.find(filter).limit(200).lean()
+    const codes = entities.map(e => e.code)
+    const latestStats = await statsRepository.findLatestForEntities(codes)
+    const statsMap = Object.fromEntries(latestStats.map(s => [s.entityCode, s]))
+
+    const results = []
+    for (const e of entities) {
+      const s = statsMap[e.code]
+      if (s && filterFn(s)) {
+        results.push({ entity: e, latestStats: s })
+        if (results.length >= limit) break
+      }
+    }
+    return results
+  }
+
   async delete(code) {
     const entity = await entityRepository.findByCodeOrFail(code)
 

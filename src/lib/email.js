@@ -95,7 +95,82 @@ const URL_STYLE = 'font-family:"Courier New",Courier,monospace;font-size:12px;co
 
 // ─── Email templates ──────────────────────────────────────────────────────────
 
+// ─── Brevo HTTP helpers ────────────────────────────────────────────────────
+
+async function brevoFetch(path, body) {
+  const key = env.BREVO_API_KEY
+  if (!key) {
+    logger.debug('Brevo skipped (BREVO_API_KEY not configured)', { path })
+    return null
+  }
+  const res = await fetch(`https://api.brevo.com/v3${path}`, {
+    method: 'POST',
+    headers: { 'api-key': key, 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+  if (!res.ok && res.status !== 204) {
+    const text = await res.text()
+    logger.error(`Brevo API error: ${path}`, { status: res.status, body: text })
+  }
+  return res
+}
+
 export const email = {
+
+  async sendBrevoContact({ email: contactEmail, firstName, lastName, church, conference, role, pastorEmail }) {
+    return brevoFetch('/contacts', {
+      email: contactEmail,
+      attributes: {
+        FIRSTNAME: firstName,
+        LASTNAME: lastName ?? '',
+        CHURCH: church,
+        CONFERENCE: conference ?? '',
+        ROLE: role,
+        PASTOR_EMAIL: pastorEmail ?? '',
+        APPROVAL_STATUS: 'pending',
+      },
+      listIds: [4],
+      updateEnabled: true,
+    })
+  },
+
+  async sendAdminNotification({ to, subject, htmlContent }) {
+    return brevoFetch('/smtp/email', {
+      to: [{ email: to }],
+      sender: { name: 'Adventist Pulse Signups', email: 'pulse@adventist.org.au' },
+      subject,
+      htmlContent,
+    })
+  },
+
+  async sendPastorConfirmation({ to, firstName, lastName, church, token }) {
+    const dashUrl = env.ADMIN_DASHBOARD_URL ?? 'https://adventistpulse.org'
+    const yesUrl = `${env.FRONTEND_URL}/api/auth/pastor-confirm?token=${encodeURIComponent(token)}&decision=yes`
+    const noUrl = `${env.FRONTEND_URL}/api/auth/pastor-confirm?token=${encodeURIComponent(token)}&decision=no`
+    return brevoFetch('/smtp/email', {
+      to: [{ email: to }],
+      sender: { name: 'Adventist Pulse', email: 'pulse@adventist.org.au' },
+      subject: `Quick question about ${firstName} ${lastName ?? ''} — Adventist Pulse`,
+      htmlContent: `
+        <div style="font-family:sans-serif;max-width:600px;padding:32px">
+          <p>Hello,</p>
+          <p><strong>${firstName} ${lastName ?? ''}</strong> has requested beta access to Adventist Pulse, listing their church as <strong>${church}</strong>.</p>
+          <p style="margin-top:16px">As their pastor, please confirm:</p>
+          <p style="font-size:18px;font-weight:600;color:#1a1a1a;margin:16px 0">Is ${firstName} a member in good and regular standing at ${church}?</p>
+          <div style="margin:24px 0">
+            <a href="${yesUrl}" style="background:#10b981;color:white;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:700;font-size:16px;margin-right:12px">
+              ✓ Yes, confirm membership
+            </a>
+            <a href="${noUrl}" style="background:#ef4444;color:white;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:700;font-size:16px">
+              ✗ Not at this time
+            </a>
+          </div>
+          <p style="color:#888;font-size:12px">This single click is all that's needed. You will not be asked again for this person.<br>Adventist Pulse · pulse@adventist.org.au</p>
+        </div>
+      `,
+    })
+  },
+
 
   async sendVerification(to, rawToken) {
     const url = `${env.FRONTEND_URL}/verify-email?token=${rawToken}`
