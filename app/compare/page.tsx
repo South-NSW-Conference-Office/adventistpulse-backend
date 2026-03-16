@@ -29,7 +29,7 @@ const PRESETS: { id: string; label: string; codes: string[]; description: string
 
 export default async function ComparePage({ searchParams }: Props) {
   const params = await searchParams;
-  const allEntities = getAllEntities();
+  const allEntities = await getAllEntities();
 
   // Get entity codes from params
   let codes: string[] = [];
@@ -41,15 +41,18 @@ export default async function ComparePage({ searchParams }: Props) {
   }
 
   // Filter to entities that exist
-  const validEntities = codes
-    .map(code => {
-      const entity = getEntity(code);
+  const validEntitiesRaw = await Promise.all(
+    codes.map(async (code) => {
+      const entity = await getEntity(code);
       if (!entity) return null;
-      const stats = getQuickStats(code);
-      const yearlyStats = getEntityStats(code);
+      const [stats, yearlyStats] = await Promise.all([
+        getQuickStats(code),
+        getEntityStats(code),
+      ]);
       return { entity, stats, yearlyStats };
     })
-    .filter((e): e is NonNullable<typeof e> => e !== null);
+  );
+  const validEntities = validEntitiesRaw.filter((e): e is NonNullable<typeof e> => e !== null);
 
   // No entities selected — show picker
   if (validEntities.length === 0) {
