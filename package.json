@@ -9,7 +9,8 @@
     "dev": "nodemon src/index.js",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "migrate": "node --experimental-vm-modules scripts/migrate-json-to-mongo.js"
   },
   "keywords": [],
   "author": "",
