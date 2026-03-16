@@ -44,7 +44,7 @@ export interface ProjectionResult {
 }
 
 export async function getProjections(code: string): Promise<ProjectionResult> {
-  return apiFetch<ProjectionResult>(`/api/stats/${code}/projections`);
+  return apiFetch<ProjectionResult>(`/stats/${code}/projections`);
 }
 
 /** @deprecated Use getProjections instead — fetches pre-computed projections from the API */

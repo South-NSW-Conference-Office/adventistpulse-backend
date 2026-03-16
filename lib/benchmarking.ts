@@ -14,7 +14,7 @@ export interface BenchmarkSuggestion {
 }
 
 export async function getBenchmarks(code: string): Promise<BenchmarkSuggestion[]> {
-  return apiFetch<BenchmarkSuggestion[]>(`/api/entities/${code}/benchmarks`);
+  return apiFetch<BenchmarkSuggestion[]>(`/entities/${code}/benchmarks`);
 }
 
 /** @deprecated Use getBenchmarks instead */

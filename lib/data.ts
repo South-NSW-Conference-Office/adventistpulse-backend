@@ -3,7 +3,7 @@
 // =============================================
 // All data fetched from Express backend.
 
-import { apiFetch } from './api';
+import { apiFetch, apiFetchList } from './api';
 import type {
   OrgUnit,
   EntityLevel,
@@ -17,12 +17,12 @@ import type {
 // ---- Public API ----
 
 export async function getAllEntities(): Promise<EntityWithStats[]> {
-  return apiFetch<EntityWithStats[]>('/api/entities');
+  return apiFetchList<EntityWithStats>('/entities');
 }
 
 export async function getEntity(code: string): Promise<OrgUnit | null> {
   try {
-    return await apiFetch<OrgUnit>(`/api/entities/${code}`);
+    return await apiFetch<OrgUnit>(`/entities/${code}`);
   } catch {
     return null;
   }
@@ -32,28 +32,28 @@ export async function getEntityStats(code: string, from?: number, to?: number): 
   const params = new URLSearchParams({ entityCode: code });
   if (from) params.set('from', String(from));
   if (to) params.set('to', String(to));
-  return apiFetch<YearlyStats[]>(`/api/stats?${params}`);
+  return apiFetchList<YearlyStats>(`/stats?${params}`);
 }
 
 export async function getEntityChildren(code: string): Promise<EntityWithStats[]> {
-  return apiFetch<EntityWithStats[]>(`/api/entities/${code}/children`);
+  return apiFetchList<EntityWithStats>(`/entities/${code}/children`);
 }
 
 export async function getEntitySiblings(code: string): Promise<EntityWithStats[]> {
-  return apiFetch<EntityWithStats[]>(`/api/entities/${code}/siblings`);
+  return apiFetchList<EntityWithStats>(`/entities/${code}/siblings`);
 }
 
 export async function searchEntities(query: string, limit = 10): Promise<EntityWithStats[]> {
-  return apiFetch<EntityWithStats[]>(`/api/entities/search?q=${encodeURIComponent(query)}&limit=${limit}`);
+  return apiFetchList<EntityWithStats>(`/entities/search?q=${encodeURIComponent(query)}&limit=${limit}`);
 }
 
 export async function getBreadcrumbs(code: string): Promise<OrgUnit[]> {
-  return apiFetch<OrgUnit[]>(`/api/entities/${code}/breadcrumbs`);
+  return apiFetch<OrgUnit[]>(`/entities/${code}/breadcrumbs`);
 }
 
 export async function getQuickStats(code: string): Promise<QuickStats | null> {
   try {
-    const entity = await apiFetch<EntityWithStats>(`/api/entities/${code}`);
+    const entity = await apiFetch<EntityWithStats>(`/entities/${code}`);
     if (!entity.latestYear) return null;
     const latest = entity.latestYear;
     return {
@@ -77,29 +77,29 @@ export async function getRankings(
 ): Promise<RankedEntity[]> {
   const params = new URLSearchParams({ level, metric });
   if (year) params.set('year', String(year));
-  return apiFetch<RankedEntity[]>(`/api/stats/rankings?${params}`);
+  return apiFetchList<RankedEntity>(`/stats/rankings?${params}`);
 }
 
 export async function getEntitiesByLevel(level: string): Promise<EntityWithStats[]> {
   const params = new URLSearchParams({ level });
-  return apiFetch<EntityWithStats[]>(`/api/entities?${params}`);
+  return apiFetchList<EntityWithStats>(`/entities?${params}`);
 }
 
 export async function getMapData(year?: number): Promise<unknown> {
   const params = year ? `?year=${year}` : '';
-  return apiFetch(`/api/stats/map${params}`);
+  return apiFetch(`/stats/map${params}`);
 }
 
 export async function getCountryTrend(country: string, metric: string, lookback?: number): Promise<unknown> {
   const params = new URLSearchParams({ country, metric });
   if (lookback) params.set('lookback', String(lookback));
-  return apiFetch(`/api/stats/country-trend?${params}`);
+  return apiFetch(`/stats/country-trend?${params}`);
 }
 
 export async function getCountrySummary(country: string, year?: number): Promise<unknown> {
   const params = new URLSearchParams({ country });
   if (year) params.set('year', String(year));
-  return apiFetch(`/api/stats/country-summary?${params}`);
+  return apiFetch(`/stats/country-summary?${params}`);
 }
 
 // ---- Church types and helpers ----
@@ -134,7 +134,7 @@ export interface LocalChurch {
 
 export async function getLocalChurches(conferenceCode: string): Promise<LocalChurch[]> {
   try {
-    return await apiFetch<LocalChurch[]>(`/api/entities/${conferenceCode}/churches`);
+    return await apiFetch<LocalChurch[]>(`/entities/${conferenceCode}/churches`);
   } catch {
     return [];
   }
