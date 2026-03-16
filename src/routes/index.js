@@ -7,6 +7,7 @@ import onboardingRoutes  from './onboarding.routes.js'
 import riskRoutes        from './risk.routes.js'
 import pulseRoutes       from './pulse.routes.js'
 import reportRoutes      from './report.routes.js'
+import researchRoutes    from './research.routes.js'
 
 const router = Router()
 
@@ -18,5 +19,6 @@ router.use('/v1/onboarding',  onboardingRoutes)
 router.use('/v1/risk',        riskRoutes)
 router.use('/v1/pulse',       pulseRoutes)
 router.use('/v1/reports',     reportRoutes)
+router.use('/v1/research',    researchRoutes)
 
 export default router
