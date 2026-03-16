@@ -14,11 +14,14 @@ function fmt(n: number | null | undefined): string {
   return n.toLocaleString();
 }
 
-export default function Home() {
-  const allEntities = getAllEntities();
-  const gc = getEntity('G10001');
-  const gcStats = getQuickStats('G10001');
-  const divisions = getEntitiesByLevel('division')
+export default async function Home() {
+  const [allEntities, gc, gcStats, divisionsUnsorted] = await Promise.all([
+    getAllEntities(),
+    getEntity('G10001'),
+    getQuickStats('G10001'),
+    getEntitiesByLevel('division'),
+  ]);
+  const divisions = divisionsUnsorted
     .sort((a, b) => (b.latestYear?.membership?.ending ?? 0) - (a.latestYear?.membership?.ending ?? 0));
 
   return (

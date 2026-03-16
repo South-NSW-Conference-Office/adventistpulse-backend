@@ -163,7 +163,7 @@ function getMinistryStatuses(church: GeocodedChurch): MinistryStatus[] {
 
 export default async function ChurchPage({ params }: Props) {
   const { code } = await params;
-  const church = getChurchBySlug(code);
+  const church = await getChurchBySlug(code);
   if (!church) notFound();
 
   const score = computeScore(church);
@@ -172,7 +172,7 @@ export default async function ChurchPage({ params }: Props) {
   const quickWins = missing.slice(0, 3);
 
   const ministries = getMinistryStatuses(church);
-  const nearby = getNearbyChurches(code);
+  const nearby = await getNearbyChurches(code);
 
   const displayName = church.name
     .replace(/\s+(Seventh-day Adventist Church|Adventist Church|Church|SDA)$/i, '');
@@ -814,7 +814,7 @@ export default async function ChurchPage({ params }: Props) {
 
 export async function generateMetadata({ params }: Props) {
   const { code } = await params;
-  const church = getChurchBySlug(code);
+  const church = await getChurchBySlug(code);
   if (!church) return { title: 'Church Not Found' };
 
   const displayName = church.name
@@ -841,7 +841,7 @@ export async function generateMetadata({ params }: Props) {
 // ── Static params ──────────────────────────────────────────────────────────────
 
 export async function generateStaticParams() {
-  const churches = getAllChurches();
+  const churches = await getAllChurches();
   const slugs = new Map<string, boolean>();
   const params: { code: string }[] = [];
 

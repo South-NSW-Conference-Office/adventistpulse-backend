@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Users, Target, TrendingUp, Map, Scale, type LucideIcon } from 'lucide-react';
-import { getBenchmarkSuggestions } from '@/lib/benchmarking';
+import { getBenchmarks } from '@/lib/benchmarking';
 import { LevelBadge } from './LevelBadge';
 
 interface BenchmarkSuggestionsProps {
@@ -31,8 +31,8 @@ const categoryLabels = {
   'similar-size': 'Similar Scale',
 };
 
-export function BenchmarkSuggestions({ entityCode, entityName }: BenchmarkSuggestionsProps) {
-  const suggestions = getBenchmarkSuggestions(entityCode);
+export async function BenchmarkSuggestions({ entityCode, entityName }: BenchmarkSuggestionsProps) {
+  const suggestions = await getBenchmarks(entityCode);
 
   if (suggestions.length === 0) {
     return null;

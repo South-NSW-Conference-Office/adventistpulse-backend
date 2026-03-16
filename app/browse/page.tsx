@@ -17,10 +17,12 @@ const LEVELS = [
 export default async function BrowsePage({ searchParams }: Props) {
   const params = await searchParams;
   const activeLevel = params.level || 'division';
-  const entities = getEntitiesByLevel(activeLevel as any)
+  const [entitiesUnsorted, allEntities] = await Promise.all([
+    getEntitiesByLevel(activeLevel as any),
+    getAllEntities(),
+  ]);
+  const entities = entitiesUnsorted
     .sort((a, b) => (b.latestYear?.membership?.ending ?? 0) - (a.latestYear?.membership?.ending ?? 0));
-
-  const allEntities = getAllEntities();
   const counts = {
     division: allEntities.filter(e => e.level === 'division').length,
     union: allEntities.filter(e => e.level === 'union').length,

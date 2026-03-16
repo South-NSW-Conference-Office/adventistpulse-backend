@@ -25,8 +25,8 @@ import { LevelBadge } from '@/components/LevelBadge';
 import { Scorecard } from '@/components/Scorecard';
 import { RetentionChart } from '@/components/RetentionChart';
 import { PulseScoreCard } from '@/components/PulseScoreCard';
-import { calculateDerived } from '@/lib/derived';
-import { calculatePulseScore } from '@/lib/pulse-score';
+import { getDerivedStats } from '@/lib/derived';
+import { getPulseScore } from '@/lib/pulse-score';
 import { getEntityInsights } from '@/lib/insights';
 import { InsightsPanel } from '@/components/InsightsPanel';
 import { getTitheFlowForDivision } from '@/lib/tithe-flow';
@@ -36,7 +36,7 @@ import { EntityHeader } from '@/components/EntityHeader';
 import { SectionNav } from '@/components/SectionNav';
 import { QuickActions } from '@/components/QuickActions';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
-import { generateProjections } from '@/lib/projections';
+import { getProjections } from '@/lib/projections';
 import { ProjectionsChart } from '@/components/ProjectionsChart';
 import { ShareButtons } from '@/components/ShareButtons';
 import { BenchmarkSuggestions } from '@/components/BenchmarkSuggestions';
@@ -49,37 +49,27 @@ interface Props {
 
 export default async function EntityPage({ params }: Props) {
   const { code } = await params;
-  const entity = getEntity(code);
+  const entity = await getEntity(code);
   if (!entity) notFound();
 
-  const stats = getEntityStats(code);
-  const quick = getQuickStats(code);
-  const children = getEntityChildren(code);
-  const breadcrumbs = getBreadcrumbs(code);
-  const siblings = getEntitySiblings(code);
+  const [stats, quick, children, breadcrumbs, siblings, localChurches, projections] = await Promise.all([
+    getEntityStats(code),
+    getQuickStats(code),
+    getEntityChildren(code),
+    getBreadcrumbs(code),
+    getEntitySiblings(code),
+    getLocalChurches(code),
+    getProjections(code),
+  ]);
 
-  // Derived metrics (scorecard)
+  // Derived metrics (scorecard) — pre-computed by the backend
   const latestStats = stats[stats.length - 1];
-  const prevStats = stats.length > 1 ? stats[stats.length - 2] : undefined;
-  const derived = latestStats ? calculateDerived(latestStats, prevStats) : null;
-  const pulseScore = derived ? calculatePulseScore(derived) : null;
+  const derived = latestStats ? getDerivedStats(latestStats as any) : null;
+  const pulseScore = await getPulseScore(code).catch(() => null);
   const insights = getEntityInsights(code);
   const titheFlow = entity.level === 'division' ? getTitheFlowForDivision(code) : null;
   const yearbook = getYearbookEntity(code);
 
-  // Load local churches for conference-level entities
-  const localChurches = getLocalChurches(code);
-
-  // Projections
-  const projectionStats: Record<string, { membership?: number; baptisms?: number; churches?: number }> = {};
-  for (const s of stats) {
-    projectionStats[String(s.year)] = {
-      membership: s.membership?.ending ?? undefined,
-      baptisms: s.membership?.baptisms ?? undefined,
-      churches: s.churches ?? undefined,
-    };
-  }
-  const projections = generateProjections(projectionStats);
   const latestMembership = latestStats?.membership?.ending ?? 0;
   const latestYear = latestStats?.year ?? 2024;
 
@@ -160,10 +150,10 @@ export default async function EntityPage({ params }: Props) {
               code={code}
               level={entity.level}
               parentCode={entity.parentCode || undefined}
-              parentName={entity.parentCode ? (getEntity(entity.parentCode)?.name || entity.parentCode) : undefined}
+              parentName={entity.parentCode ? (breadcrumbs[breadcrumbs.length - 2]?.name || entity.parentCode) : undefined}
               yearbook={yearbook}
               quickStats={{ membership: quick?.membership, churches: quick?.churches, year: quick?.year }}
-              allEntities={getAllEntities().map(e => ({ code: e.code, name: e.name, level: e.level }))}
+              allEntities={(await getAllEntities()).map(e => ({ code: e.code, name: e.name, level: e.level }))}
               children={children.map(c => ({ code: c.code, name: c.name }))}
             />
           </div>
@@ -456,9 +446,9 @@ export default async function EntityPage({ params }: Props) {
 // Generate metadata for SEO
 export async function generateMetadata({ params }: Props) {
   const { code } = await params;
-  const entity = getEntity(code);
+  const entity = await getEntity(code);
   if (!entity) return { title: 'Not Found' };
-  const quick = getQuickStats(code);
+  const quick = await getQuickStats(code);
   const memberStr = quick?.membership
     ? ` · ${quick.membership.toLocaleString()} members`
     : '';
@@ -481,7 +471,7 @@ export async function generateMetadata({ params }: Props) {
 
 // Generate static params for all 116 entity pages at build time
 export async function generateStaticParams() {
-  const entities = getAllEntities();
+  const entities = await getAllEntities();
   return entities.map(entity => ({
     code: entity.code,
   }));
