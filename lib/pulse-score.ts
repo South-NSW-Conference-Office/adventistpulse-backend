@@ -24,12 +24,12 @@ export interface PulseScore {
 
 export async function getPulseScore(code: string, year?: number): Promise<PulseScore> {
   const qs = year ? `?year=${year}` : '';
-  return apiFetch<PulseScore>(`/api/pulse/${code}${qs}`);
+  return apiFetch<PulseScore>(`/pulse/${code}${qs}`);
 }
 
 export async function getPulseScoreBulk(params: { level?: string; parentCode?: string; year?: number }): Promise<PulseScore[]> {
   const qs = new URLSearchParams(params as Record<string, string>).toString();
-  return apiFetch<PulseScore[]>(`/api/pulse?${qs}`);
+  return apiFetch<PulseScore[]>(`/pulse?${qs}`);
 }
 
 /** @deprecated Use getPulseScore instead — fetches pre-computed score from the API */

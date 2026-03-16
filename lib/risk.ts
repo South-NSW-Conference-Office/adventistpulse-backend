@@ -27,10 +27,10 @@ export interface RiskAssessment {
 }
 
 export async function assessRisk(code: string): Promise<RiskAssessment> {
-  return apiFetch<RiskAssessment>(`/api/risk/${code}`);
+  return apiFetch<RiskAssessment>(`/risk/${code}`);
 }
 
 export async function assessRiskBulk(params: { level?: string; parentCode?: string }): Promise<RiskAssessment[]> {
   const qs = new URLSearchParams(params as Record<string, string>).toString();
-  return apiFetch<RiskAssessment[]>(`/api/risk?${qs}`);
+  return apiFetch<RiskAssessment[]>(`/risk?${qs}`);
 }
