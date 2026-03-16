@@ -6,6 +6,7 @@ import adminRoutes       from './admin.routes.js'
 import onboardingRoutes  from './onboarding.routes.js'
 import riskRoutes        from './risk.routes.js'
 import pulseRoutes       from './pulse.routes.js'
+import reportRoutes      from './report.routes.js'
 
 const router = Router()
 
@@ -16,5 +17,6 @@ router.use('/v1/admin',       adminRoutes)
 router.use('/v1/onboarding',  onboardingRoutes)
 router.use('/v1/risk',        riskRoutes)
 router.use('/v1/pulse',       pulseRoutes)
+router.use('/v1/reports',     reportRoutes)
 
 export default router

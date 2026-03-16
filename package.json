@@ -10,7 +10,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "migrate": "node --experimental-vm-modules scripts/migrate-json-to-mongo.js"
+    "migrate": "node --experimental-vm-modules scripts/migrate-json-to-mongo.js",
+    "migrate-reports": "node --experimental-vm-modules scripts/migrate-reports.js"
   },
   "keywords": [],
   "author": "",
