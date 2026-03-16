@@ -39,6 +39,13 @@ router.get('/divisions', async (req, res, next) => {
   }
 })
 
+// ─── List all entities ───────────────────────────────────────────────────────
+
+router.get('/', asyncHandler(async (req, res) => {
+  const data = await entityService.list(req.query)
+  response.success(res, data)
+}))
+
 // ─── :code sub-routes ────────────────────────────────────────────────────────
 
 router.get('/:code/breadcrumbs', asyncHandler(async (req, res) => {
@@ -87,5 +94,12 @@ router.get('/:code/children', async (req, res, next) => {
     next(err)
   }
 })
+
+// ─── Get single entity by code (must be LAST to avoid shadowing sub-routes) ──
+
+router.get('/:code', asyncHandler(async (req, res) => {
+  const data = await entityService.getByCode(req.params.code)
+  response.success(res, data)
+}))
 
 export default router
