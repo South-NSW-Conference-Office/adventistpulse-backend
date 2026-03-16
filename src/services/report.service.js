@@ -1,10 +1,9 @@
 import { reportRepository } from '../repositories/report.repository.js'
-import { Report } from '../models/Report.js'
 import { getPaginationParams } from '../lib/paginate.js'
 
 class ReportService {
   async list(query) {
-    const { page, limit, skip } = getPaginationParams(query)
+    const { page, limit } = getPaginationParams(query)
     const filter = {}
     if (query.type)       filter.type = query.type
     if (query.year)       filter.year = Number(query.year)
@@ -20,11 +19,7 @@ class ReportService {
   }
 
   async create(data) {
-    return Report.findOneAndUpdate(
-      { slug: data.slug },
-      data,
-      { upsert: true, new: true, runValidators: true },
-    ).lean()
+    return reportRepository.upsertBySlug(data.slug, data)
   }
 }
 

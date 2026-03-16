@@ -1,5 +1,6 @@
 import { randomBytes } from 'crypto'
 import { userRepository } from '../repositories/user.repository.js'
+import { onboardingRepository } from '../repositories/onboarding.repository.js'
 import { crypto } from '../lib/crypto.js'
 import { email } from '../lib/email.js'
 import { logger } from '../core/logger.js'
@@ -93,7 +94,6 @@ class AdminService {
     ])
 
     // Attach onboarding profile summary to each user
-    const { onboardingRepository } = await import('../repositories/onboarding.repository.js')
     const profiles = await onboardingRepository.model
       .find({ userId: { $in: users.map(u => u._id) } }).lean()
     const profileMap = Object.fromEntries(profiles.map(p => [p.userId.toString(), p]))

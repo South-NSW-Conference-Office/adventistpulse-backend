@@ -89,18 +89,10 @@ class EntityService {
   }
 
   async getBreadcrumbs(code) {
-    const breadcrumbs = []
-    let current = await entityRepository.findByCodeOrFail(code)
-    breadcrumbs.unshift(current)
-
-    while (current.parentCode) {
-      const parent = await entityRepository.findByCode(current.parentCode)
-      if (!parent) break
-      breadcrumbs.unshift(parent)
-      current = parent
-    }
-
-    return breadcrumbs
+    // Single DB round-trip via $graphLookup instead of N sequential queries
+    const chain = await entityRepository.findAncestorChain(code)
+    if (!chain.length) throw new NotFoundError(`Entity '${code}'`)
+    return chain
   }
 
   async getSiblings(code) {

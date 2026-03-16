@@ -1,9 +1,36 @@
 import { entityRepository } from '../repositories/entity.repository.js'
 import { statsRepository } from '../repositories/stats.repository.js'
 
+// ── Score normalisation benchmarks ───────────────────────────────────────────
+// Each range defines [min, max] used to normalise raw values to 0–100.
+// Based on global Adventist church averages and healthy-church research.
+const BENCHMARKS = {
+  accessionRate:        { min: 0,   max: 10  },   // % of beginning membership baptised/POF
+  accessionEfficiency:  { min: 0,   max: 5   },   // accessions per worker
+  netGrowthRate:        { min: -5,  max: 10  },   // % net annual growth
+  organicGrowthRate:    { min: 0,   max: 10  },   // % organic (non-transfer) growth
+  retentionRate:        { min: 80,  max: 100 },   // % retained year-over-year
+  dropoutRate:          { min: 0,   max: 20  },   // % dropped/missing
+  tithePerCapita:       { min: 0,   max: 3000},   // USD per member
+  titheGrowthRate:      { min: -10, max: 20  },   // % annual tithe change
+  membersPerWorker:     { min: 50,  max: 600 },   // members per employed worker (inverted)
+}
+
 class PulseService {
   #cache = new Map()
   #TTL = 60 * 60 * 1000 // 1 hour
+
+  constructor() {
+    // Evict expired cache entries every 30 minutes to prevent unbounded growth
+    const evict = setInterval(() => {
+      const now = Date.now()
+      for (const [key, entry] of this.#cache.entries()) {
+        if (now - entry.ts >= this.#TTL) this.#cache.delete(key)
+      }
+    }, 30 * 60 * 1000)
+    // Allow the process to exit even if this timer is still active
+    if (evict.unref) evict.unref()
+  }
 
   async getScore(code, year) {
     const entity = await entityRepository.findByCodeOrFail(code)
@@ -91,8 +118,8 @@ class PulseService {
     }
 
     // 1. Kingdom Growth (15%)
-    const accessionScore = norm(accessionRate, 0, 10)
-    const efficiencyScore = norm(accessionEfficiency, 0, 5)
+    const accessionScore = norm(accessionRate, BENCHMARKS.accessionRate.min, BENCHMARKS.accessionRate.max)
+    const efficiencyScore = norm(accessionEfficiency, BENCHMARKS.accessionEfficiency.min, BENCHMARKS.accessionEfficiency.max)
     const formationScore = accessionScore != null && efficiencyScore != null
       ? (accessionScore * 0.6 + efficiencyScore * 0.4)
       : accessionScore ?? efficiencyScore
@@ -100,8 +127,8 @@ class PulseService {
     if (formationScore == null) missingData.push('Baptism and profession of faith data')
 
     // 2. Mission Engagement (15%)
-    const growthScore = norm(netGrowthRate, -5, 10)
-    const organicScore = norm(organicGrowthRate, 0, 10)
+    const growthScore = norm(netGrowthRate, BENCHMARKS.netGrowthRate.min, BENCHMARKS.netGrowthRate.max)
+    const organicScore = norm(organicGrowthRate, BENCHMARKS.organicGrowthRate.min, BENCHMARKS.organicGrowthRate.max)
     const missionScore = growthScore != null && organicScore != null
       ? (growthScore * 0.5 + organicScore * 0.5)
       : growthScore ?? organicScore
@@ -109,15 +136,15 @@ class PulseService {
     if (missionScore == null) missingData.push('Growth and accession data')
 
     // 3. Community Connection (15%)
-    const retScore = norm(retentionRate, 80, 100)
-    const dropScore = norm(dropoutRate, 0, 20, true)
+    const retScore = norm(retentionRate, BENCHMARKS.retentionRate.min, BENCHMARKS.retentionRate.max)
+    const dropScore = norm(dropoutRate, BENCHMARKS.dropoutRate.min, BENCHMARKS.dropoutRate.max, true)
     const connectionScore = retScore ?? dropScore
     components.push({ category: 'Community Connection', weight: 0.15, score: connectionScore, grade: toGrade(connectionScore), available: connectionScore != null })
     if (connectionScore == null) missingData.push('Membership gain/loss data')
 
     // 4. Financial Stewardship (10%)
-    const titheCapScore = norm(tithePerCapita, 0, 3000)
-    const titheGrowScore = norm(titheGrowthRate, -10, 20)
+    const titheCapScore = norm(tithePerCapita, BENCHMARKS.tithePerCapita.min, BENCHMARKS.tithePerCapita.max)
+    const titheGrowScore = norm(titheGrowthRate, BENCHMARKS.titheGrowthRate.min, BENCHMARKS.titheGrowthRate.max)
     const finScore = titheCapScore != null && titheGrowScore != null
       ? (titheCapScore * 0.6 + titheGrowScore * 0.4)
       : titheCapScore ?? titheGrowScore
@@ -125,7 +152,7 @@ class PulseService {
     if (finScore == null) missingData.push('Tithe and financial data')
 
     // 5. Organizational Health (10%)
-    const workerScore = norm(membersPerWorker, 50, 600, true)
+    const workerScore = norm(membersPerWorker, BENCHMARKS.membersPerWorker.min, BENCHMARKS.membersPerWorker.max, true)
     components.push({ category: 'Organizational Health', weight: 0.10, score: workerScore, grade: toGrade(workerScore), available: workerScore != null })
     if (workerScore == null) missingData.push('Worker and staffing data')
 

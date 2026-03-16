@@ -237,11 +237,20 @@ class StatsRepository extends BaseRepository {
   }
 
   async countRankings({ level, metric, year, parentCode }) {
+    // Must mirror getRankings exactly — same metricMap and null-filter — so pagination totals match
+    const metricMap = {
+      baptisms:        '$membership.baptisms',
+      growth_rate:     '$membership.growthRate',
+      tithe_per_member: { $cond: [{ $gt: ['$membership.ending', 0] }, { $divide: ['$finance.tithe', '$membership.ending'] }, null] },
+      retention:       { $cond: [{ $gt: ['$membership.beginning', 0] }, { $subtract: [1, { $divide: [{ $add: ['$membership.dropped', '$membership.missing'] }, '$membership.beginning'] }] }, null] },
+    }
     const result = await this.model.aggregate([
       { $match: { year } },
       { $lookup: { from: 'orgunits', localField: 'entityCode', foreignField: 'code', as: 'entity' } },
       { $unwind: '$entity' },
       { $match: { 'entity.level': level, ...(parentCode ? { 'entity.parentCode': parentCode.toUpperCase() } : {}) } },
+      { $addFields: { metricValue: metricMap[metric] ?? `$membership.${metric}` } },
+      { $match: { metricValue: { $ne: null } } },
       { $count: 'total' },
     ])
     return result[0]?.total ?? 0

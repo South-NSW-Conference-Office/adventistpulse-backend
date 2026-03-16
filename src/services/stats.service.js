@@ -2,6 +2,20 @@ import { statsRepository } from '../repositories/stats.repository.js'
 import { entityRepository } from '../repositories/entity.repository.js'
 import { getPaginationParams } from '../lib/paginate.js'
 
+// ── Projection constants ──────────────────────────────────────────────────────
+// Historical average annual growth rate for a typical division (conservative baseline)
+const DIVISION_AVG_GROWTH_RATE = 0.005
+// Maximum annual growth rate assumed for the revival scenario (capped at 5%)
+const MAX_REVIVAL_GROWTH_RATE  = 0.05
+// Years of CAGR history used for the "current trend" scenario
+const CAGR_LOOKBACK_YEARS      = 5
+// Years of history scanned when looking for the entity's best 5-year growth run
+const RECENT_BEST_LOOKBACK_YEARS = 20
+// Projection extinction threshold — below this membership, entity is considered gone
+const EXTINCTION_THRESHOLD     = 10
+// Longest projection horizon considered meaningful (years)
+const MAX_PROJECTION_HORIZON   = 150
+
 class StatsService {
   async getForEntity(code, query) {
     await entityRepository.findByCodeOrFail(code)
@@ -89,26 +103,25 @@ class StatsService {
     const latestYear = membership[membership.length - 1][0]
     const latestMem = membership[membership.length - 1][1]
 
-    // CAGR over last 5 years
-    const recentYears = Math.min(5, membership.length - 1)
+    // CAGR over last N years
+    const recentYears = Math.min(CAGR_LOOKBACK_YEARS, membership.length - 1)
     const recentStart = membership[membership.length - 1 - recentYears]
     const currentRate = this.#cagr(recentStart[1], latestMem, recentYears)
 
-    // Recent best 5-year rate (last 20 years)
+    // Recent best 5-year rate (last RECENT_BEST_LOOKBACK_YEARS years)
     const recentBest = this.#recentBestRate(membership)
 
     // Moderate: median of [halfDecline, divisionAvg, recentBest]
-    const divAvg = 0.005
     const halfDecline = currentRate < 0 ? currentRate / 2 : currentRate + 0.01
-    const candidates = [halfDecline, divAvg, recentBest ?? halfDecline].sort((a, b) => a - b)
+    const candidates = [halfDecline, DIVISION_AVG_GROWTH_RATE, recentBest ?? halfDecline].sort((a, b) => a - b)
     let moderateRate = candidates[1]
     if (moderateRate <= currentRate) moderateRate = currentRate + 0.015
 
-    // Revival: max of candidates, ensure > moderate, cap at 5%
+    // Revival: max of candidates, ensure > moderate, cap at MAX_REVIVAL_GROWTH_RATE
     const revivalCandidates = [moderateRate + 0.02, recentBest ?? moderateRate + 0.02, moderateRate + 0.02]
     let revivalRate = Math.max(...revivalCandidates)
     if (revivalRate <= moderateRate) revivalRate = moderateRate + 0.015
-    revivalRate = Math.min(revivalRate, 0.05)
+    revivalRate = Math.min(revivalRate, MAX_REVIVAL_GROWTH_RATE)
 
     const project = (base, rate, years) => Math.max(0, Math.round(base * Math.pow(1 + rate, years)))
     const generate = (years) => {
@@ -124,10 +137,10 @@ class StatsService {
       return points
     }
 
-    // Extinction year
+    // Extinction year — when projected membership falls below EXTINCTION_THRESHOLD
     let extinctionYear = null
     if (currentRate < 0 && latestMem > 0) {
-      const n = Math.log(1 / latestMem) / Math.log(1 + currentRate)
+      const n = Math.log(EXTINCTION_THRESHOLD / latestMem) / Math.log(1 + currentRate)
       extinctionYear = Math.round(latestYear + n)
     }
 
@@ -158,7 +171,7 @@ class StatsService {
         const n = Math.log(t.value / latestMem) / Math.log(1 + currentRate)
         const year = Math.round(latestYear + n)
         const yearsFromNow = year - latestYear
-        if (yearsFromNow > 0 && yearsFromNow <= 150) {
+        if (yearsFromNow > 0 && yearsFromNow <= MAX_PROJECTION_HORIZON) {
           milestones.push({ threshold: t.value, year, label: t.label, yearsFromNow })
         }
       }
@@ -199,7 +212,7 @@ class StatsService {
   }
 
   #recentBestRate(membership) {
-    const cutoff = (membership[membership.length - 1]?.[0] ?? 2024) - 20
+    const cutoff = (membership[membership.length - 1]?.[0] ?? 2024) - RECENT_BEST_LOOKBACK_YEARS
     const recent = membership.filter(([y]) => y >= cutoff)
     let best = -Infinity
     for (let i = 0; i < recent.length - 5; i++) {

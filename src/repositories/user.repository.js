@@ -84,6 +84,22 @@ class UserRepository extends BaseRepository {
     ).lean()
   }
 
+  // For changeEmail — fetches password + sensitive fields directly by id
+  async findByIdWithSensitiveFields(id) {
+    return this.model
+      .findById(id)
+      .select('+password +loginAttempts +lockUntil')
+      .lean()
+  }
+
+  // For resendVerification when we already have userId (avoids double lookup)
+  async findEmailRateLimitFieldsById(id) {
+    return this.model
+      .findById(id)
+      .select('+resetEmailSentAt +verificationEmailSentAt')
+      .lean()
+  }
+
   async linkOAuthProvider(userId, { provider, providerAccountId }) {
     return this.model.findByIdAndUpdate(
       userId,

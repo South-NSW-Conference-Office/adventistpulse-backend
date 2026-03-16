@@ -18,12 +18,13 @@ const mockLean = vi.fn()
 
 vi.mock('../src/repositories/entity.repository.js', () => ({
   entityRepository: {
-    findByCodeOrFail: vi.fn(),
-    findByCode:       vi.fn(),
-    findChildren:     vi.fn(),
-    find:             vi.fn(),
-    existsByCode:     vi.fn(),
-    paginate:         vi.fn(),
+    findByCodeOrFail:   vi.fn(),
+    findByCode:         vi.fn(),
+    findChildren:       vi.fn(),
+    find:               vi.fn(),
+    existsByCode:       vi.fn(),
+    paginate:           vi.fn(),
+    findAncestorChain:  vi.fn(),
     model: {
       find: vi.fn(() => ({
         limit: vi.fn(() => ({
@@ -112,31 +113,36 @@ describe('entityService.search', () => {
 describe('entityService.getBreadcrumbs', () => {
   beforeEach(() => vi.clearAllMocks())
 
-  it('returns [root, ..., entity] from root to current', async () => {
-    const church = makeEntity({ code: 'CHURCH1', name: 'Local Church', parentCode: 'CONF1' })
-    const conf = makeEntity({ code: 'CONF1', name: 'Conference', parentCode: 'UNION1' })
-    const union = makeEntity({ code: 'UNION1', name: 'Union', parentCode: null })
+  it('returns [root, ..., entity] from root to current via findAncestorChain', async () => {
+    const union  = makeEntity({ code: 'UNION1',  name: 'Union',       parentCode: null })
+    const conf   = makeEntity({ code: 'CONF1',   name: 'Conference',  parentCode: 'UNION1' })
+    const church = makeEntity({ code: 'CHURCH1', name: 'Local Church',parentCode: 'CONF1' })
 
-    entityRepository.findByCodeOrFail.mockResolvedValue(church)
-    entityRepository.findByCode
-      .mockResolvedValueOnce(conf)   // first parent lookup
-      .mockResolvedValueOnce(union)  // second parent lookup
-      .mockResolvedValueOnce(null)   // union has no parent
+    // findAncestorChain returns root → entity already sorted
+    entityRepository.findAncestorChain.mockResolvedValue([union, conf, church])
 
     const crumbs = await entityService.getBreadcrumbs('CHURCH1')
     expect(crumbs).toHaveLength(3)
     expect(crumbs[0].code).toBe('UNION1')
     expect(crumbs[1].code).toBe('CONF1')
     expect(crumbs[2].code).toBe('CHURCH1')
+    // Should use the new single-query method, not the old N+1 approach
+    expect(entityRepository.findAncestorChain).toHaveBeenCalledWith('CHURCH1')
+    expect(entityRepository.findByCode).not.toHaveBeenCalled()
   })
 
   it('returns [entity] when no parent', async () => {
     const root = makeEntity({ code: 'GC', parentCode: null })
-    entityRepository.findByCodeOrFail.mockResolvedValue(root)
+    entityRepository.findAncestorChain.mockResolvedValue([root])
 
     const crumbs = await entityService.getBreadcrumbs('GC')
     expect(crumbs).toHaveLength(1)
     expect(crumbs[0].code).toBe('GC')
+  })
+
+  it('throws NotFoundError when entity does not exist', async () => {
+    entityRepository.findAncestorChain.mockResolvedValue([])
+    await expect(entityService.getBreadcrumbs('UNKNOWN')).rejects.toThrow()
   })
 })
 

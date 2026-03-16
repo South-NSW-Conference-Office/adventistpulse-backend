@@ -3,7 +3,7 @@ import { getPaginationParams } from '../lib/paginate.js'
 
 class ResearchService {
   async list(query) {
-    const { page, limit, skip } = getPaginationParams(query)
+    const { page, limit } = getPaginationParams(query)
     const filter = {}
     if (query.status)   filter.status = query.status
     if (query.tag)      filter.tags = query.tag

@@ -129,9 +129,8 @@ class AuthService {
   }
 
   async resendVerification(userId) {
-    const user = await userRepository.findEmailRateLimitFields(
-      (await userRepository.findByIdOrFail(userId, 'User')).email
-    )
+    const user = await userRepository.findEmailRateLimitFieldsById(userId)
+    if (!user) throw new AppError('User not found', { code: 'NOT_FOUND', statusCode: 404 })
 
     if (user.emailVerified) {
       throw new AppError('Email is already verified', { code: 'ALREADY_VERIFIED', statusCode: 400 })
@@ -271,10 +270,9 @@ class AuthService {
   }
 
   async changeEmail(userId, newEmail, password) {
-    // Verify password before allowing email change
-    const user = await userRepository.findByEmailWithSensitiveFields(
-      (await userRepository.findByIdOrFail(userId, 'User')).email
-    )
+    // Verify password before allowing email change — single query by id
+    const user = await userRepository.findByIdWithSensitiveFields(userId)
+    if (!user) throw new AppError('User not found', { code: 'NOT_FOUND', statusCode: 404 })
     if (!user.password) throw new AppError('Cannot change email on OAuth-only accounts', { code: 'OAUTH_ONLY', statusCode: 400 })
 
     const valid = await crypto.compare(password, user.password)

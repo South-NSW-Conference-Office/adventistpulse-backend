@@ -12,11 +12,9 @@ class OnboardingService {
     const user    = await userRepository.findByIdOrFail(userId, 'User')
     const profile = await onboardingRepository.findByUserId(userId)
     return {
-      accountStatus: user.accountStatus ?? 'approved',
-      rejectionReason: user.accountStatus === 'rejected'
-        ? (await userRepository.findById(userId, '+rejectionReason'))?.rejectionReason ?? null
-        : null,
-      profile: profile ?? null,
+      accountStatus:   user.accountStatus ?? 'approved',
+      rejectionReason: user.accountStatus === 'rejected' ? user.rejectionReason ?? null : null,
+      profile:         profile ?? null,
     }
   }
 

@@ -24,6 +24,14 @@ class ReportRepository extends BaseRepository {
   async findFeatured() {
     return this.find({ featured: true }, { sort: { date: -1 } })
   }
+
+  async upsertBySlug(slug, data) {
+    return this.model.findOneAndUpdate(
+      { slug },
+      data,
+      { upsert: true, new: true, runValidators: true },
+    ).lean()
+  }
 }
 
 export const reportRepository = new ReportRepository()
