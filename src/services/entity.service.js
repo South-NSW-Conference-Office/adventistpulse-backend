@@ -12,11 +12,19 @@ class EntityService {
 
     const { data, total } = await entityRepository.paginate(filter, { page, limit })
     const codes      = data.map(e => e.code)
-    const latestStats = await statsRepository.findLatestForEntities(codes)
-    const statsMap   = Object.fromEntries(latestStats.map(s => [s.entityCode, s]))
+    const [latestStats, yearRanges] = await Promise.all([
+      statsRepository.findLatestForEntities(codes),
+      statsRepository.findYearRangesForEntities(codes),
+    ])
+    const statsMap    = Object.fromEntries(latestStats.map(s => [s.entityCode, s]))
+    const yearRangeMap = Object.fromEntries(yearRanges.map(r => [r._id, { from: r.minYear, to: r.maxYear }]))
 
     return {
-      data: data.map(entity => ({ ...entity, latestStats: statsMap[entity.code] ?? null })),
+      data: data.map(entity => ({
+        ...entity,
+        latestYear: statsMap[entity.code] ?? null,
+        yearRange:  yearRangeMap[entity.code] ?? null,
+      })),
       total, page, limit,
     }
   }
@@ -24,7 +32,7 @@ class EntityService {
   async getByCode(code) {
     const entity     = await entityRepository.findByCodeOrFail(code)
     const latestStats = await statsRepository.findLatestForEntity(code)
-    return { ...entity, latestStats: latestStats ?? null }
+    return { ...entity, latestYear: latestStats ?? null }
   }
 
   async getChildren(code) {
@@ -33,7 +41,7 @@ class EntityService {
     const codes      = children.map(c => c.code)
     const latestStats = await statsRepository.findLatestForEntities(codes)
     const statsMap   = Object.fromEntries(latestStats.map(s => [s.entityCode, s]))
-    return children.map(c => ({ ...c, latestStats: statsMap[c.code] ?? null }))
+    return children.map(c => ({ ...c, latestYear: statsMap[c.code] ?? null }))
   }
 
   async create(data) {
@@ -77,7 +85,7 @@ class EntityService {
     const latestStats = await statsRepository.findLatestForEntities(codes)
     const statsMap = Object.fromEntries(latestStats.map(s => [s.entityCode, s]))
 
-    return entities.map(entity => ({ ...entity, latestStats: statsMap[entity.code] ?? null }))
+    return entities.map(entity => ({ ...entity, latestYear: statsMap[entity.code] ?? null }))
   }
 
   async getBreadcrumbs(code) {

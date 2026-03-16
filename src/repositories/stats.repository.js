@@ -33,6 +33,13 @@ class StatsRepository extends BaseRepository {
     ])
   }
 
+  async findYearRangesForEntities(entityCodes) {
+    return this.model.aggregate([
+      { $match: { entityCode: { $in: entityCodes.map(c => c.toUpperCase()) } } },
+      { $group: { _id: '$entityCode', minYear: { $min: '$year' }, maxYear: { $max: '$year' } } },
+    ])
+  }
+
   async getCountryRankings({ year, metric = 'membership', level, limit = 5 }) {
     const metricField = {
       membership: '$membership.ending',

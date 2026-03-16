@@ -22,30 +22,30 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ENTITIES_PATH = path.resolve(__dirname, '../../frontend/public/data/entities.json')
 const CHURCHES_PATH = path.resolve(__dirname, '../../frontend/public/data/au-churches-geocoded.json')
 
-// ── Level mapping: JSON level → Entity schema enum ────────────────────────
+// ── Level mapping: JSON level → OrgUnit schema enum (gc|division|union|conference|church) ──
 const LEVEL_MAP = {
-  gc:            'general_conference',
-  general_conference: 'general_conference',
-  division:      'division',
-  union:         'union',
-  union_conference: 'union_conference',
-  union_mission: 'union_mission',
-  conference:    'conference',
-  mission:       'mission',
-  field:         'field',
-  field_station: 'field_station',
-  section:       'section',
-  attached_conference: 'attached_conference',
-  attached_mission:    'attached_mission',
-  attached_field:      'attached_field',
-  attached_section:    'attached_section',
-  gc_attached_union:   'gc_attached_union',
-  gc_attached_field:   'gc_attached_field',
-  union_of_churches_conference: 'union_of_churches_conference',
-  union_of_churches_mission:    'union_of_churches_mission',
-  union_section: 'union_section',
-  region:        'region',
-  mission_field: 'mission_field',
+  gc:                           'gc',
+  general_conference:           'gc',
+  division:                     'division',
+  union:                        'union',
+  union_conference:             'union',
+  union_mission:                'union',
+  union_section:                'union',
+  gc_attached_union:            'union',
+  union_of_churches_conference: 'union',
+  union_of_churches_mission:    'union',
+  conference:                   'conference',
+  mission:                      'conference',
+  field:                        'conference',
+  field_station:                'conference',
+  section:                      'conference',
+  attached_conference:          'conference',
+  attached_mission:             'conference',
+  attached_field:               'conference',
+  attached_section:             'conference',
+  gc_attached_field:            'conference',
+  region:                       'conference',
+  mission_field:                'conference',
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -146,15 +146,13 @@ async function migrateEntities(entityMap) {
     const entityPath = buildPath(code, entityMap)
 
     try {
-      await Entity.findOneAndUpdate(
+      await OrgUnit.findOneAndUpdate(
         { code },
         {
           code,
           name:       raw.name,
           level,
           parentCode: raw.parent || null,
-          path:       entityPath,
-          isActive:   true,
         },
         { upsert: true, new: true },
       )
@@ -164,20 +162,6 @@ async function migrateEntities(entityMap) {
       }
     } catch (err) {
       console.error(`  ✗ Error migrating entity ${code}:`, err.message)
-    }
-  }
-
-  // Second pass: set parentId ObjectId references
-  console.log('  Setting parentId references…')
-  const allEntities = await Entity.find({}, 'code _id').lean()
-  const idByCode = Object.fromEntries(allEntities.map(e => [e.code, e._id]))
-
-  for (const code of codes) {
-    const parentCode = entityMap[code].parent
-    if (!parentCode) continue
-    const parentId = idByCode[parentCode]
-    if (parentId) {
-      await Entity.updateOne({ code }, { parentId })
     }
   }
 
@@ -200,6 +184,7 @@ async function migrateYearlyStats(entityMap) {
   console.log(`\n── Migrating ${totalStats} yearly stats records ──`)
 
   let count = 0
+  let ops = []
   for (const code of codes) {
     const years = entityMap[code].years ?? []
 
@@ -282,21 +267,35 @@ async function migrateYearlyStats(entityMap) {
       // Compute derived fields using the same logic as stats.service.js
       const enriched = computeDerivedFields(stat)
 
-      try {
-        await YearlyStats.findOneAndUpdate(
-          { entityCode: code, year },
-          { entityCode: code, ...enriched },
-          { upsert: true, new: true },
-        )
-        migrated++
-      } catch (err) {
-        console.error(`  ✗ Error migrating stats ${code}/${year}:`, err.message)
-        skipped++
-      }
+      ops.push({
+        updateOne: {
+          filter: { entityCode: code, year },
+          update: { $set: { entityCode: code, ...enriched } },
+          upsert: true,
+        },
+      })
 
-      if (count % 5000 === 0) {
+      // Flush every 500 ops
+      if (ops.length >= 500) {
+        try {
+          const res = await YearlyStats.bulkWrite(ops, { ordered: false })
+          migrated += res.upsertedCount + res.modifiedCount
+        } catch (err) {
+          console.error(`  ✗ Bulk write error:`, err.message)
+        }
+        ops = []
         console.log(`  Progress: ${count} of ${totalStats} stats processed…`)
       }
+    }
+  }
+
+  // Flush remainder
+  if (ops.length > 0) {
+    try {
+      const res = await YearlyStats.bulkWrite(ops, { ordered: false })
+      migrated += res.upsertedCount + res.modifiedCount
+    } catch (err) {
+      console.error(`  ✗ Bulk write error (final):`, err.message)
     }
   }
 

@@ -8,6 +8,7 @@ import riskRoutes        from './risk.routes.js'
 import pulseRoutes       from './pulse.routes.js'
 import reportRoutes      from './report.routes.js'
 import researchRoutes    from './research.routes.js'
+import churchRoutes      from './church.routes.js'
 
 const router = Router()
 
@@ -20,5 +21,6 @@ router.use('/v1/risk',        riskRoutes)
 router.use('/v1/pulse',       pulseRoutes)
 router.use('/v1/reports',     reportRoutes)
 router.use('/v1/research',    researchRoutes)
+router.use('/v1/churches',    churchRoutes)
 
 export default router

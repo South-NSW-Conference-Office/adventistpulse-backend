@@ -95,6 +95,15 @@ router.get('/:code/children', async (req, res, next) => {
   }
 })
 
+router.get('/:code/churches', asyncHandler(async (req, res) => {
+  const { OrgUnit } = await import('../models/OrgUnit.js')
+  const churches = await OrgUnit.find({
+    level: 'church',
+    parentCode: req.params.code.toUpperCase(),
+  }).lean()
+  response.success(res, churches)
+}))
+
 // ─── Get single entity by code (must be LAST to avoid shadowing sub-routes) ──
 
 router.get('/:code', asyncHandler(async (req, res) => {
