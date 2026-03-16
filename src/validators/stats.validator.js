@@ -57,7 +57,7 @@ export const countryRankingsQuerySchema = z.object({
 })
 
 export const mapDataQuerySchema = z.object({
-  year: z.string().transform(Number),
+  year: z.string().transform(Number).optional(),
 })
 
 export const countryTrendQuerySchema = z.object({
