@@ -17,6 +17,7 @@ router.get ('/country-summary',  validate(countrySummaryQuerySchema, 'query'),  
 router.get ('/rankings',         validate(rankingsQuerySchema, 'query'),         statsController.getRankings)
 router.get ('/country-rankings', validate(countryRankingsQuerySchema, 'query'),  statsController.getCountryRankings)
 router.get ('/entity/:code',                                                   statsController.getForEntity)
+router.get ('/entity/:code/projections',                                       statsController.getProjections)
 router.post('/import',     requireVerified, requireRole('admin'), validate(importStatsSchema), statsController.importStats)
 
 export default router

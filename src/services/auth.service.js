@@ -11,6 +11,9 @@ import {
   RESET_EMAIL_COOLDOWN_MS,
   RESEND_VERIFY_COOLDOWN_MS,
 } from '../models/User.js'
+import { BetaSignup } from '../models/BetaSignup.js'
+import { createHmac } from 'crypto'
+import { env } from '../config/env.js'
 import {
   InvalidCredentialsError,
   EmailTakenError,
@@ -310,6 +313,89 @@ class AuthService {
       emailVerified:      true,       // new email is verified by clicking the link
       passwordChangedAt:  new Date(), // invalidate all existing sessions
     })
+  }
+
+  async betaSignup({ firstName, lastName, email: emailAddr, church, conference, role, pastorEmail }) {
+    if (!emailAddr || !firstName || !church || !role) {
+      throw new AppError('Missing required fields: firstName, email, church, role', { code: 'VALIDATION_ERROR', statusCode: 400 })
+    }
+
+    // Upsert signup record
+    const signup = await BetaSignup.findOneAndUpdate(
+      { email: emailAddr.toLowerCase() },
+      { firstName, lastName, email: emailAddr.toLowerCase(), church, conference, role, pastorEmail },
+      { upsert: true, new: true, runValidators: true }
+    ).lean()
+
+    // Create/update Brevo contact
+    await email.sendBrevoContact({ email: emailAddr, firstName, lastName, church, conference, role, pastorEmail })
+
+    // Notify admin
+    const dashUrl = env.ADMIN_DASHBOARD_URL ?? 'https://adventistpulse.org/admin'
+    await email.sendAdminNotification({
+      to: 'pulse@adventist.org.au',
+      subject: `New beta request — ${firstName} ${lastName ?? ''} (${church})`,
+      htmlContent: `
+        <div style="font-family:sans-serif;max-width:600px;padding:24px">
+          <h3 style="color:#14b8a6">New Pulse Beta Request</h3>
+          <table style="width:100%;border-collapse:collapse;margin-top:16px">
+            <tr><td style="padding:8px;color:#888;width:140px">Name</td><td style="padding:8px;font-weight:600">${firstName} ${lastName ?? ''}</td></tr>
+            <tr style="background:#f8f9fa"><td style="padding:8px;color:#888">Email</td><td style="padding:8px">${emailAddr}</td></tr>
+            <tr><td style="padding:8px;color:#888">Church</td><td style="padding:8px">${church}</td></tr>
+            <tr style="background:#f8f9fa"><td style="padding:8px;color:#888">Conference</td><td style="padding:8px">${conference ?? ''}</td></tr>
+            <tr><td style="padding:8px;color:#888">Role</td><td style="padding:8px">${role}</td></tr>
+            ${pastorEmail ? `<tr style="background:#f8f9fa"><td style="padding:8px;color:#888">Pastor email</td><td style="padding:8px">${pastorEmail}</td></tr>` : ''}
+          </table>
+          <p style="margin-top:24px">
+            <a href="${dashUrl}" style="background:#14b8a6;color:white;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:600">
+              Open Approval Dashboard →
+            </a>
+          </p>
+        </div>
+      `,
+    })
+
+    // Send pastor confirmation if provided
+    if (pastorEmail) {
+      const token = this.#signPastorToken(emailAddr)
+      await email.sendPastorConfirmation({ to: pastorEmail, firstName, lastName, church, token })
+    }
+
+    return { ok: true }
+  }
+
+  async confirmPastor({ token, decision }) {
+    const emailAddr = this.#verifyPastorToken(token)
+    if (!emailAddr) {
+      throw new AppError('Invalid or expired token', { code: 'INVALID_TOKEN', statusCode: 400 })
+    }
+
+    const confirmed = decision === 'yes'
+    await BetaSignup.findOneAndUpdate(
+      { email: emailAddr.toLowerCase() },
+      { pastorConfirmed: confirmed }
+    )
+
+    return { email: emailAddr, confirmed }
+  }
+
+  #signPastorToken(emailAddr) {
+    const payload = `${emailAddr}:${Date.now()}`
+    const hmac = createHmac('sha256', env.JWT_SECRET.split(',')[0]).update(payload).digest('hex')
+    return `${Buffer.from(payload).toString('base64url')}.${hmac}`
+  }
+
+  #verifyPastorToken(token) {
+    if (!token || !token.includes('.')) return null
+    const [payloadB64, sig] = token.split('.')
+    const payload = Buffer.from(payloadB64, 'base64url').toString()
+    const expectedSig = createHmac('sha256', env.JWT_SECRET.split(',')[0]).update(payload).digest('hex')
+    if (sig !== expectedSig) return null
+
+    const [emailAddr, ts] = payload.split(':')
+    // Token valid for 7 days
+    if (Date.now() - Number(ts) > 7 * 24 * 60 * 60 * 1000) return null
+    return emailAddr
   }
 
   async #handleFailedAttempt(user) {

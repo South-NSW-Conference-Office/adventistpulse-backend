@@ -39,4 +39,8 @@ router.post('/resend-verification-by-email', validate(resendVerificationByEmailS
 // Authenticated + verified routes
 router.post('/change-email', authMiddleware, validate(changeEmailSchema), authController.changeEmail)
 
+// Beta signup (public)
+router.post('/beta-signup', authController.betaSignup)
+router.get ('/pastor-confirm', authController.pastorConfirm)
+
 export default router

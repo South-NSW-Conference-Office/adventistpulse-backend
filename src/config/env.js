@@ -23,6 +23,10 @@ const envSchema = z.object({
   SMTP_USER: z.string().optional(),
   SMTP_PASS: z.string().optional(),
   SMTP_FROM: z.string().optional().default('noreply@adventistpulse.com'),
+
+  // Brevo — optional, beta signup flow
+  BREVO_API_KEY: z.string().optional(),
+  ADMIN_DASHBOARD_URL: z.string().optional().default('https://adventistpulse.org/admin'),
 })
 
 const parsed = envSchema.safeParse(process.env)

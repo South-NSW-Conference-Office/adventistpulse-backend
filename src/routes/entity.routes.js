@@ -1,10 +1,25 @@
 import { Router } from 'express'
 import mongoose from 'mongoose'
+import { entityService } from '../services/entity.service.js'
+import { authMiddleware } from '../middleware/auth.middleware.js'
+import { requireApproved } from '../middleware/requireApproved.middleware.js'
+import { requirePasswordChanged } from '../middleware/requirePasswordChanged.middleware.js'
+import { response } from '../core/response.js'
+import { asyncHandler } from '../controllers/base.controller.js'
 
 const router = Router()
 
 // Lazy-load Entity to avoid circular import issues at startup
 const getEntity = () => mongoose.model('Entity')
+
+// ─── Public search — registered BEFORE :code to avoid route shadowing ────────
+
+router.get('/search', asyncHandler(async (req, res) => {
+  const { q, limit } = req.query
+  if (!q) return response.success(res, [])
+  const data = await entityService.search(q, limit)
+  response.success(res, data)
+}))
 
 /**
  * GET /api/v1/entities/divisions
@@ -23,6 +38,28 @@ router.get('/divisions', async (req, res, next) => {
     next(err)
   }
 })
+
+// ─── :code sub-routes ────────────────────────────────────────────────────────
+
+router.get('/:code/breadcrumbs', asyncHandler(async (req, res) => {
+  const data = await entityService.getBreadcrumbs(req.params.code)
+  response.success(res, data)
+}))
+
+router.get('/:code/siblings', asyncHandler(async (req, res) => {
+  const data = await entityService.getSiblings(req.params.code)
+  response.success(res, data)
+}))
+
+router.get('/:code/nearby', asyncHandler(async (req, res) => {
+  const data = await entityService.getNearby(req.params.code, req.query.limit)
+  response.success(res, data)
+}))
+
+router.get('/:code/benchmarks', authMiddleware, requirePasswordChanged, requireApproved, asyncHandler(async (req, res) => {
+  const data = await entityService.getBenchmarks(req.params.code)
+  response.success(res, data)
+}))
 
 /**
  * GET /api/v1/entities/:code/children
