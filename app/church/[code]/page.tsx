@@ -1,13 +1,14 @@
+export const dynamic = 'force-dynamic';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { GatedSection } from '@/components/GatedSection';
 import Script from 'next/script';
-import dynamic from 'next/dynamic';
+import nextDynamic from 'next/dynamic';
 
-const AttendanceTrendChart = dynamic(() => import('@/components/church/ChurchCharts').then(m => m.AttendanceTrendChart));
-const AgeDemographicsChart  = dynamic(() => import('@/components/church/ChurchCharts').then(m => m.AgeDemographicsChart));
-const MinistryActivityChart = dynamic(() => import('@/components/church/ChurchCharts').then(m => m.MinistryActivityChart));
-const VisitorRetentionChart = dynamic(() => import('@/components/church/ChurchCharts').then(m => m.VisitorRetentionChart));
+const AttendanceTrendChart = nextDynamic(() => import('@/components/church/ChurchCharts').then(m => m.AttendanceTrendChart));
+const AgeDemographicsChart  = nextDynamic(() => import('@/components/church/ChurchCharts').then(m => m.AgeDemographicsChart));
+const MinistryActivityChart = nextDynamic(() => import('@/components/church/ChurchCharts').then(m => m.MinistryActivityChart));
+const VisitorRetentionChart = nextDynamic(() => import('@/components/church/ChurchCharts').then(m => m.VisitorRetentionChart));
 import {
   getChurchBySlug,
   getAllChurches,
@@ -839,5 +840,3 @@ export async function generateMetadata({ params }: Props) {
 }
 
 // Dynamic rendering — no static prebuilding; pages are server-rendered on demand
-export const dynamicRendering = 'force-dynamic';
-export const revalidate = 0;

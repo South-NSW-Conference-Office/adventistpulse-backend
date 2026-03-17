@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import Link from 'next/link';
 import { tokens, cn } from '@/lib/theme';
 import { ClipboardCheck, BarChart3, Microscope, Sparkles, Target, BookOpen, Globe2, Users, Heart, Scale, RefreshCw, ArrowRight } from 'lucide-react';

@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { getAllEntities, getEntity } from '@/lib/data';
 import { tokens, cn } from '@/lib/theme';
 import { RankingsClient } from '@/components/RankingsClient';

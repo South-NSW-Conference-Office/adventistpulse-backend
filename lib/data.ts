@@ -17,7 +17,8 @@ import type {
 // ---- Public API ----
 
 export async function getAllEntities(): Promise<EntityWithStats[]> {
-  return apiFetchList<EntityWithStats>('/entities');
+  // Fetch all org-unit levels (not churches) with a generous limit
+  return apiFetchList<EntityWithStats>('/entities?limit=500');
 }
 
 export async function getEntity(code: string): Promise<OrgUnit | null> {
@@ -98,7 +99,7 @@ export async function getRankings(
 }
 
 export async function getEntitiesByLevel(level: string): Promise<EntityWithStats[]> {
-  const params = new URLSearchParams({ level });
+  const params = new URLSearchParams({ level, limit: '500' });
   return apiFetchList<EntityWithStats>(`/entities?${params}`);
 }
 
