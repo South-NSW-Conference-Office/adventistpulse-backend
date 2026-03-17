@@ -62,8 +62,8 @@ export function NavBar() {
       <div className="px-6 md:px-10 flex items-center justify-between h-14">
         {/* Logo - Left */}
         <Link href="/" className="flex items-center hover:opacity-80 transition-opacity flex-shrink-0">
-          <Logo size="sm" className="md:hidden text-gray-900 dark:text-white" />
-          <Logo size="md" className="hidden md:inline-flex text-gray-900 dark:text-white" />
+          <span className="md:hidden"><Logo size="sm" className="text-gray-900 dark:text-white" /></span>
+          <span className="hidden md:inline-flex"><Logo size="md" className="text-gray-900 dark:text-white" /></span>
         </Link>
 
         {/* Navigation Menu - Center */}
