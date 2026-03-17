@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { tokens, cn } from '@/lib/theme';
 import { CheckCircle, Loader2 } from 'lucide-react';
+import { Logo } from '@/components/Logo';
 
 const ROLES = [
   { value: 'pastor', label: 'Pastor' },
@@ -69,7 +70,7 @@ export default function BetaPage() {
       <div className="max-w-lg w-full space-y-8">
         {/* Header */}
         <div className="text-center space-y-2">
-          <div className="text-3xl font-bold text-[#6366F1]">⚡ Adventist Pulse</div>
+          <div className="flex justify-center mb-1"><Logo size="md" /></div>
           <h1 className={cn('text-2xl font-bold', tokens.text.heading)}>Request Beta Access</h1>
           <p className={cn('text-sm', tokens.text.muted)}>
             Pulse is launching to a select group of pastors and conference leaders first.

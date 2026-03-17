@@ -209,7 +209,7 @@ export default async function EntityPage({ params }: Props) {
           { id: 'metrics', label: 'Key Metrics', available: stats.length > 0 },
           { id: 'peers', label: 'Peers', available: siblings.length > 0 },
           { id: 'youth-pipeline', label: 'Youth Pipeline', available: entity.level === 'conference' },
-          { id: 'local-churches', label: '⛪ Churches', available: entity.level === 'conference' },
+          { id: 'local-churches', label: 'Churches', available: entity.level === 'conference' },
         ]} />
 
         {/* Pulse Score — Composite Health Index */}
@@ -412,7 +412,7 @@ export default async function EntityPage({ params }: Props) {
                   { label: 'Adventurers', sublabel: 'Ages 4–9', icon: '🌟', color: 'bg-pink-500/10 border-pink-500/30 text-pink-500', value: null },
                   { label: 'Pathfinders', sublabel: 'Ages 10–15', icon: '⛺', color: 'bg-amber-500/10 border-amber-500/30 text-amber-600', value: null },
                   { label: 'Youth Group', sublabel: 'Ages 16–30', icon: '🎓', color: 'bg-indigo-500/10 border-indigo-500/30 text-indigo-500', value: null },
-                  { label: 'Total Members', sublabel: `${latestMembership.toLocaleString()} confirmed`, icon: '👥', color: 'bg-indigo-500/10 border-indigo-500/30 text-indigo-500', value: latestMembership },
+                  { label: 'Total Members', sublabel: `${latestMembership.toLocaleString()} confirmed`, icon: 'users', color: 'bg-indigo-500/10 border-indigo-500/30 text-indigo-500', value: latestMembership },
                 ].map(card => (
                   <div key={card.label} className={cn('rounded-lg border p-4 text-center', card.color)}>
                     <div className="text-2xl mb-1">{card.icon}</div>
@@ -443,7 +443,7 @@ export default async function EntityPage({ params }: Props) {
 
               {/* Health benchmark */}
               <p className={cn('text-xs', tokens.text.muted)}>
-                📊 Healthy benchmark: Youth-to-membership ratio of 15–25%.
+                Healthy benchmark: Youth-to-membership ratio of 15–25%.
                 Below 10% is an early warning sign. Above 25% signals strong intergenerational health.
               </p>
             </div>

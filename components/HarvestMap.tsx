@@ -233,7 +233,7 @@ export default function HarvestMap({ fill = false }: { fill?: boolean }) {
         {(['where-we-are', 'where-we-are-not'] as ViewMode[]).map(mode => (
           <button key={mode} onClick={() => setViewMode(mode)}
             className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${viewMode === mode ? 'bg-[#6366F1] text-white shadow' : 'text-gray-400 hover:text-white'}`}>
-            {mode === 'where-we-are' ? '🌿 Where We Are' : '🔥 Where We Are Not'}
+            {mode === 'where-we-are' ? 'Where We Are' : 'Where We Are Not'}
           </button>
         ))}
       </div>
