@@ -45,8 +45,10 @@ const PILLARS = [
     icon: Wrench,
     href: '/vitality-check',
     children: [
-      { href: '/vitality-check', label: 'Vitality Check', desc: 'Diagnose your church across 7 mission dimensions' },
-      { href: '/tithe-flow', label: 'Tithe Flow', desc: 'See how your tithe dollar flows through the church' },
+      { href: '/vitality-check',  label: 'Vitality Check',        desc: 'Diagnose your church across 7 mission dimensions' },
+      { href: '/tithe-flow',      label: 'Tithe Flow',             desc: 'See how your tithe dollar flows through the church' },
+      { href: '/dashboard',       label: 'Pastor Dashboard',       desc: 'Multi-church district view for pastors' },
+      { href: '/conference',      label: 'Conference Dashboard',   desc: 'Manage staffing, history, and access for your territory' },
     ],
   },
 ];
