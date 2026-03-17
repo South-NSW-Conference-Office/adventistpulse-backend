@@ -109,7 +109,7 @@ export function RankingsClient({ data, level, levelLabel, highlightCode, highlig
         sortFn: (a: RankedEntity, b: RankedEntity) => (rankMap.get(a.code) ?? 0) - (rankMap.get(b.code) ?? 0),
         render: (e: RankedEntity) => {
           const r = rankMap.get(e.code) ?? 0;
-          return <span className={cn('font-mono text-xs', r <= 3 ? 'text-[#14b8a6] font-bold' : 'text-gray-400 dark:text-slate-600')}>{r}</span>;
+          return <span className={cn('font-mono text-xs', r <= 3 ? 'text-[#6366F1] font-bold' : 'text-gray-400 dark:text-slate-600')}>{r}</span>;
         },
       },
       {
@@ -118,8 +118,8 @@ export function RankingsClient({ data, level, levelLabel, highlightCode, highlig
         align: 'left' as const,
         sortFn: (a: RankedEntity, b: RankedEntity) => a.name.localeCompare(b.name),
         render: (e: RankedEntity) => (
-          <span className={cn('font-medium', e.code === highlightCode ? 'text-[#14b8a6]' : tokens.text.heading)}>
-            {e.code === highlightCode && <Trophy className="w-3.5 h-3.5 inline mr-1.5 text-[#14b8a6]" />}
+          <span className={cn('font-medium', e.code === highlightCode ? 'text-[#6366F1]' : tokens.text.heading)}>
+            {e.code === highlightCode && <Trophy className="w-3.5 h-3.5 inline mr-1.5 text-[#6366F1]" />}
             {e.name}
           </span>
         ),
@@ -155,7 +155,7 @@ export function RankingsClient({ data, level, levelLabel, highlightCode, highlig
           const pct = maxV > 0 ? (v / maxV) * 100 : 0;
           return (
             <div className="w-full bg-gray-100 dark:bg-[#2a3a50] rounded-full h-2 overflow-hidden">
-              <div className={cn('h-full rounded-full', e.code === highlightCode ? 'bg-[#14b8a6]' : 'bg-gray-300 dark:bg-slate-600')} style={{ width: `${pct}%` }} />
+              <div className={cn('h-full rounded-full', e.code === highlightCode ? 'bg-[#6366F1]' : 'bg-gray-300 dark:bg-slate-600')} style={{ width: `${pct}%` }} />
             </div>
           );
         },
@@ -175,7 +175,7 @@ export function RankingsClient({ data, level, levelLabel, highlightCode, highlig
     <div>
       {/* Back button */}
       {highlightCode && (
-        <Link href={`/entity/${highlightCode}`} className="inline-flex items-center gap-1.5 text-sm text-[#14b8a6] hover:underline mb-4">
+        <Link href={`/entity/${highlightCode}`} className="inline-flex items-center gap-1.5 text-sm text-[#6366F1] hover:underline mb-4">
           <ArrowLeft className="w-4 h-4" /> Back to {highlightName}
         </Link>
       )}
@@ -201,7 +201,7 @@ export function RankingsClient({ data, level, levelLabel, highlightCode, highlig
             className={cn(
               'text-xs px-4 py-2 rounded-lg font-medium transition-colors border',
               scope === 'siblings'
-                ? 'bg-[#14b8a6]/10 text-[#14b8a6] border-[#14b8a6]/30'
+                ? 'bg-[#6366F1]/10 text-[#6366F1] border-[#6366F1]/30'
                 : cn(tokens.bg.card, tokens.border.default, 'text-gray-500 dark:text-slate-400'),
             )}
           >
@@ -212,7 +212,7 @@ export function RankingsClient({ data, level, levelLabel, highlightCode, highlig
             className={cn(
               'text-xs px-4 py-2 rounded-lg font-medium transition-colors border',
               scope === 'all'
-                ? 'bg-[#14b8a6]/10 text-[#14b8a6] border-[#14b8a6]/30'
+                ? 'bg-[#6366F1]/10 text-[#6366F1] border-[#6366F1]/30'
                 : cn(tokens.bg.card, tokens.border.default, 'text-gray-500 dark:text-slate-400'),
             )}
           >
@@ -234,18 +234,18 @@ export function RankingsClient({ data, level, levelLabel, highlightCode, highlig
                 className={cn(
                   'rounded-xl p-3 border text-left transition-all',
                   activeMetric === r.key
-                    ? 'border-[#14b8a6] bg-[#14b8a6]/5 dark:bg-[#14b8a6]/10'
-                    : cn(tokens.bg.card, tokens.border.default, 'hover:border-[#14b8a6]/30'),
+                    ? 'border-[#6366F1] bg-[#6366F1]/5 dark:bg-[#6366F1]/10'
+                    : cn(tokens.bg.card, tokens.border.default, 'hover:border-[#6366F1]/30'),
                 )}
               >
                 <div className="flex items-center gap-1.5 mb-1">
-                  <Icon className="w-3.5 h-3.5 text-[#14b8a6]" />
+                  <Icon className="w-3.5 h-3.5 text-[#6366F1]" />
                   <span className="text-[10px] text-gray-500 dark:text-slate-500">{r.label}</span>
                 </div>
                 <div className={cn('text-lg font-extrabold', tokens.text.heading)}>
                   {r.fmt(r.value)}
                 </div>
-                <div className={cn('text-xs mt-0.5', isTop3 ? 'text-[#14b8a6] font-semibold' : 'text-gray-400 dark:text-slate-500')}>
+                <div className={cn('text-xs mt-0.5', isTop3 ? 'text-[#6366F1] font-semibold' : 'text-gray-400 dark:text-slate-500')}>
                   {isTop3 && <Trophy className="w-4 h-4 inline-block mr-1 text-amber-400" />}#{r.rank} of {r.total}
                 </div>
                 {r.rank > 1 && (
@@ -269,7 +269,7 @@ export function RankingsClient({ data, level, levelLabel, highlightCode, highlig
               className={cn(
                 'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
                 level === l.key
-                  ? 'bg-[#14b8a6]/10 text-[#14b8a6] border border-[#14b8a6]/30'
+                  ? 'bg-[#6366F1]/10 text-[#6366F1] border border-[#6366F1]/30'
                   : cn(tokens.bg.card, tokens.border.default, 'border text-gray-500 dark:text-slate-400'),
               )}
             >
@@ -290,8 +290,8 @@ export function RankingsClient({ data, level, levelLabel, highlightCode, highlig
               className={cn(
                 'text-xs px-3 py-1.5 rounded-full border transition-colors flex items-center gap-1.5',
                 activeMetric === m.key
-                  ? 'bg-[#14b8a6] text-white border-[#14b8a6]'
-                  : cn(tokens.bg.card, tokens.border.default, 'text-gray-500 dark:text-slate-400 hover:border-[#14b8a6]/50'),
+                  ? 'bg-[#6366F1] text-white border-[#6366F1]'
+                  : cn(tokens.bg.card, tokens.border.default, 'text-gray-500 dark:text-slate-400 hover:border-[#6366F1]/50'),
               )}
             >
               <Icon className="w-3 h-3" /> {m.label}

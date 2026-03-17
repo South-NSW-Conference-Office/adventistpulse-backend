@@ -46,7 +46,7 @@ export async function BenchmarkSuggestions({ entityCode, entityName }: Benchmark
         </h2>
         <Link
           href={`/compare?entities=${entityCode},${suggestions.slice(0, 3).map(s => s.entity.code).join(',')}`}
-          className="text-sm text-[#14b8a6] hover:text-[#8b5cf6]"
+          className="text-sm text-[#6366F1] hover:text-[#8b5cf6]"
         >
           Compare All →
         </Link>
@@ -64,7 +64,7 @@ export async function BenchmarkSuggestions({ entityCode, entityName }: Benchmark
             <Link
               key={entity.code}
               href={`/compare?entities=${entityCode},${entity.code}`}
-              className="bg-white dark:bg-[#1f2b3d] border border-gray-200 dark:border-[#2a3a50] rounded-lg p-4 hover:border-[#14b8a6]/50 transition-colors group"
+              className="bg-white dark:bg-[#1f2b3d] border border-gray-200 dark:border-[#2a3a50] rounded-lg p-4 hover:border-[#6366F1]/50 transition-colors group"
             >
               <div className="flex items-start justify-between mb-2">
                 <div className="flex items-center gap-2">
@@ -105,7 +105,7 @@ export async function BenchmarkSuggestions({ entityCode, entityName }: Benchmark
               <div className="mt-3 flex items-center gap-2">
                 <div className="flex-1 bg-gray-200 dark:bg-slate-800 rounded-full h-1">
                   <div 
-                    className="bg-[#14b8a6] h-1 rounded-full transition-all"
+                    className="bg-[#6366F1] h-1 rounded-full transition-all"
                     style={{ width: `${suggestion.similarity * 100}%` }}
                   />
                 </div>
@@ -125,7 +125,7 @@ export async function BenchmarkSuggestions({ entityCode, entityName }: Benchmark
           <Link
             key={suggestion.entity.code}
             href={`/compare?entities=${entityCode},${suggestion.entity.code}`}
-            className="text-[#14b8a6] hover:text-[#8b5cf6]"
+            className="text-[#6366F1] hover:text-[#8b5cf6]"
           >
             vs {suggestion.entity.name.split(' ').slice(-1)[0]}
             {index < 2 && index < suggestions.slice(0, 3).length - 1 && <span className="text-slate-600 ml-1">•</span>}

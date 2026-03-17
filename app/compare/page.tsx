@@ -78,7 +78,7 @@ export default async function ComparePage({ searchParams }: Props) {
                 <Link
                   key={preset.id}
                   href={`/compare?preset=${preset.id}`}
-                  className="bg-gray-50 dark:bg-[#1f2b3d] border border-gray-200 dark:border-[#2a3a50] rounded-lg px-4 py-3 hover:border-[#14b8a6]/50 transition-colors"
+                  className="bg-gray-50 dark:bg-[#1f2b3d] border border-gray-200 dark:border-[#2a3a50] rounded-lg px-4 py-3 hover:border-[#6366F1]/50 transition-colors"
                 >
                   <h3 className="text-sm font-medium text-gray-900 dark:text-white">{preset.label}</h3>
                   <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">{preset.description}</p>
@@ -151,7 +151,7 @@ export default async function ComparePage({ searchParams }: Props) {
                 {e.entity.name}
               </Link>
             ))}
-            <Link href="/compare" className="text-xs text-[#14b8a6] hover:text-[#8b5cf6] px-2 py-1">
+            <Link href="/compare" className="text-xs text-[#6366F1] hover:text-[#8b5cf6] px-2 py-1">
               + Change
             </Link>
           </div>

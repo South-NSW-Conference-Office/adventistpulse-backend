@@ -19,14 +19,14 @@ export function Logo({ className = '', size = 'md' }: LogoProps) {
       <svg viewBox="0 0 32 24" fill="none" className={`${s.ecg} self-center mx-[1px]`} aria-hidden="true">
         <polyline
           points="0,14 4,14 8,8 12,20 16,2 20,16 24,10 32,10"
-          stroke="#14b8a6"
+          stroke="#6366F1"
           strokeWidth="2.5"
           fill="none"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
       </svg>
-      <span className="text-[#14b8a6]">Pulse</span>
+      <span className="text-[#6366F1]">Pulse</span>
     </span>
   );
 }

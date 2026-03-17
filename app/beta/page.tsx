@@ -69,7 +69,7 @@ export default function BetaPage() {
       <div className="max-w-lg w-full space-y-8">
         {/* Header */}
         <div className="text-center space-y-2">
-          <div className="text-3xl font-bold text-[#14b8a6]">⚡ Adventist Pulse</div>
+          <div className="text-3xl font-bold text-[#6366F1]">⚡ Adventist Pulse</div>
           <h1 className={cn('text-2xl font-bold', tokens.text.heading)}>Request Beta Access</h1>
           <p className={cn('text-sm', tokens.text.muted)}>
             Pulse is launching to a select group of pastors and conference leaders first.
@@ -103,7 +103,7 @@ export default function BetaPage() {
               type="text"
               value={form.name}
               onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-              className={cn('w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#14b8a6]', tokens.bg.card, tokens.border.default, tokens.text.body)}
+              className={cn('w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#6366F1]', tokens.bg.card, tokens.border.default, tokens.text.body)}
               placeholder="Pastor James White"
             />
           </div>
@@ -114,7 +114,7 @@ export default function BetaPage() {
               type="email"
               value={form.email}
               onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
-              className={cn('w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#14b8a6]', tokens.bg.card, tokens.border.default, tokens.text.body)}
+              className={cn('w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#6366F1]', tokens.bg.card, tokens.border.default, tokens.text.body)}
               placeholder="you@adventist.org.au"
             />
           </div>
@@ -124,7 +124,7 @@ export default function BetaPage() {
               required
               value={form.role}
               onChange={e => setForm(f => ({ ...f, role: e.target.value }))}
-              className={cn('w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#14b8a6]', tokens.bg.card, tokens.border.default, tokens.text.body)}
+              className={cn('w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#6366F1]', tokens.bg.card, tokens.border.default, tokens.text.body)}
             >
               <option value="">Select your role…</option>
               {ROLES.map(r => (
@@ -140,7 +140,7 @@ export default function BetaPage() {
               type="text"
               value={form.church}
               onChange={e => setForm(f => ({ ...f, church: e.target.value }))}
-              className={cn('w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#14b8a6]', tokens.bg.card, tokens.border.default, tokens.text.body)}
+              className={cn('w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#6366F1]', tokens.bg.card, tokens.border.default, tokens.text.body)}
               placeholder="Canberra National Church"
             />
           </div>
@@ -152,7 +152,7 @@ export default function BetaPage() {
           <button
             type="submit"
             disabled={status === 'loading'}
-            className="w-full py-3 rounded-lg font-semibold text-white bg-[#14b8a6] hover:bg-[#0d9488] transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+            className="w-full py-3 rounded-lg font-semibold text-white bg-[#6366F1] hover:bg-[#4f46e5] transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
           >
             {status === 'loading' && <Loader2 className="w-4 h-4 animate-spin" />}
             {status === 'loading' ? 'Submitting…' : 'Request Beta Access'}

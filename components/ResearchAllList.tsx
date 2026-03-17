@@ -46,7 +46,7 @@ function getUnsplashUrl(id: string, w = 400, h = 280): string {
 
 function getGradeColor(grade: string) {
   if (grade.startsWith('A')) return 'text-emerald-500';
-  if (grade.startsWith('B')) return 'text-teal-400';
+  if (grade.startsWith('B')) return 'text-indigo-400';
   if (grade.startsWith('C')) return 'text-amber-400';
   if (grade.startsWith('D')) return 'text-red-400';
   return 'text-slate-400';
@@ -77,12 +77,12 @@ export default function ResearchAllList({ papers }: { papers: ResearchPaper[] })
 
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-[11px] font-mono text-teal-400">{paper.id}</span>
+                <span className="text-[11px] font-mono text-indigo-400">{paper.id}</span>
                 {paper.id.startsWith('LRP-') && (
                   <span className="text-[10px] bg-emerald-500/10 text-emerald-500 px-1.5 py-0.5 rounded border border-emerald-500/20">LRP</span>
                 )}
               </div>
-              <h3 className="font-semibold text-gray-800 dark:text-slate-200 group-hover:text-teal-500 transition-colors line-clamp-1 mb-1">
+              <h3 className="font-semibold text-gray-800 dark:text-slate-200 group-hover:text-indigo-500 transition-colors line-clamp-1 mb-1">
                 {paper.title}
               </h3>
               <p className="text-xs text-gray-400 dark:text-slate-500 line-clamp-1">
@@ -103,7 +103,7 @@ export default function ResearchAllList({ papers }: { papers: ResearchPaper[] })
         <div className="text-center mt-8">
           <button
             onClick={() => setVisible(v => v + PAGE_SIZE)}
-            className="px-6 py-2.5 rounded-full border border-gray-200 dark:border-[#2a3a50] text-sm font-medium text-gray-600 dark:text-slate-400 hover:border-teal-400/50 hover:text-teal-500 transition-colors"
+            className="px-6 py-2.5 rounded-full border border-gray-200 dark:border-[#2a3a50] text-sm font-medium text-gray-600 dark:text-slate-400 hover:border-indigo-400/50 hover:text-indigo-500 transition-colors"
           >
             View more ({papers.length - visible} remaining)
           </button>

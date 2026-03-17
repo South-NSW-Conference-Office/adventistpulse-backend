@@ -56,14 +56,14 @@ function getTopicForLRP(lrp: LRP): string {
 
 function getGradeColor(grade: string): string {
   if (grade.startsWith('A')) return 'text-emerald-400';
-  if (grade.startsWith('B')) return 'text-[#14b8a6]';
+  if (grade.startsWith('B')) return 'text-[#6366F1]';
   if (grade.startsWith('C')) return 'text-yellow-400';
   return 'text-slate-400';
 }
 
 function getGradeBg(grade: string): string {
   if (grade.startsWith('A')) return 'bg-emerald-500/10 border-emerald-500/30';
-  if (grade.startsWith('B')) return 'bg-[#14b8a6]/10 border-[#14b8a6]/30';
+  if (grade.startsWith('B')) return 'bg-[#6366F1]/10 border-[#6366F1]/30';
   if (grade.startsWith('C')) return 'bg-yellow-500/10 border-yellow-500/30';
   return 'bg-slate-500/10 border-slate-500/30';
 }
@@ -143,7 +143,7 @@ export function ResearchExplorer({ lrps, tags }: { lrps: LRP[]; tags: Tag[] }) {
           {/* Stats */}
           <div className="flex flex-wrap items-center gap-6 mt-5">
             <div className="text-center">
-              <div className="text-2xl font-bold text-[#14b8a6]">{lrps.length}</div>
+              <div className="text-2xl font-bold text-[#6366F1]">{lrps.length}</div>
               <div className="text-[10px] uppercase tracking-wider text-slate-500">Projects</div>
             </div>
             <div className="text-center">
@@ -179,7 +179,7 @@ export function ResearchExplorer({ lrps, tags }: { lrps: LRP[]; tags: Tag[] }) {
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Search LRPs — title, question, tag, or keyword..."
-              className="w-full bg-white dark:bg-[#1f2b3d] border border-gray-200 dark:border-[#2a3a50] rounded-lg px-4 py-2.5 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:border-[#14b8a6]/50"
+              className="w-full bg-white dark:bg-[#1f2b3d] border border-gray-200 dark:border-[#2a3a50] rounded-lg px-4 py-2.5 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:border-[#6366F1]/50"
             />
             {search && (
               <button onClick={() => setSearch('')} className="absolute right-3 top-2.5 text-slate-500 hover:text-white text-sm">✕</button>
@@ -202,7 +202,7 @@ export function ResearchExplorer({ lrps, tags }: { lrps: LRP[]; tags: Tag[] }) {
                 <button
                   key={v}
                   onClick={() => setView(v)}
-                  className={`px-3 py-2 text-xs ${view === v ? 'bg-[#14b8a6]/20 text-[#14b8a6]' : 'text-slate-500 hover:text-slate-300'} transition-colors`}
+                  className={`px-3 py-2 text-xs ${view === v ? 'bg-[#6366F1]/20 text-[#6366F1]' : 'text-slate-500 hover:text-slate-300'} transition-colors`}
                 >
                   {v === 'list' ? '☰' : v === 'grid' ? '⊞' : '≡'}
                 </button>
@@ -219,7 +219,7 @@ export function ResearchExplorer({ lrps, tags }: { lrps: LRP[]; tags: Tag[] }) {
               <h3 className="text-[10px] uppercase tracking-wider text-slate-500 mb-2">Topics</h3>
               <button
                 onClick={() => setSelectedTopic(null)}
-                className={`w-full text-left text-xs px-2 py-1.5 rounded transition-colors ${!selectedTopic ? 'bg-[#14b8a6]/15 text-[#14b8a6]' : 'text-slate-400 hover:text-white'}`}
+                className={`w-full text-left text-xs px-2 py-1.5 rounded transition-colors ${!selectedTopic ? 'bg-[#6366F1]/15 text-[#6366F1]' : 'text-slate-400 hover:text-white'}`}
               >
                 All Topics <span className="text-slate-600">({lrps.length})</span>
               </button>
@@ -227,7 +227,7 @@ export function ResearchExplorer({ lrps, tags }: { lrps: LRP[]; tags: Tag[] }) {
                 <button
                   key={key}
                   onClick={() => setSelectedTopic(selectedTopic === key ? null : key)}
-                  className={`w-full text-left text-xs px-2 py-1.5 rounded transition-colors ${selectedTopic === key ? 'bg-[#14b8a6]/15 text-[#14b8a6]' : 'text-slate-400 hover:text-white'}`}
+                  className={`w-full text-left text-xs px-2 py-1.5 rounded transition-colors ${selectedTopic === key ? 'bg-[#6366F1]/15 text-[#6366F1]' : 'text-slate-400 hover:text-white'}`}
                 >
                   <Icon className="w-3.5 h-3.5 inline-block mr-1.5 align-text-bottom" />{label} <span className="text-slate-600">({topicCounts[key] || 0})</span>
                 </button>
@@ -244,7 +244,7 @@ export function ResearchExplorer({ lrps, tags }: { lrps: LRP[]; tags: Tag[] }) {
                     onClick={() => setSelectedTag(selectedTag === tag ? null : tag)}
                     className={`px-1.5 py-0.5 text-[10px] rounded transition-colors ${
                       selectedTag === tag
-                        ? 'bg-[#14b8a6]/20 text-[#14b8a6] border border-[#14b8a6]/30'
+                        ? 'bg-[#6366F1]/20 text-[#6366F1] border border-[#6366F1]/30'
                         : 'bg-gray-100 dark:bg-slate-800/50 text-gray-500 dark:text-slate-500 hover:text-slate-300 border border-transparent'
                     }`}
                   >
@@ -262,17 +262,17 @@ export function ResearchExplorer({ lrps, tags }: { lrps: LRP[]; tags: Tag[] }) {
               <div className="flex items-center gap-2 mb-3 text-xs">
                 <span className="text-slate-500">Showing {filtered.length} of {lrps.length}:</span>
                 {selectedTopic && (
-                  <button onClick={() => setSelectedTopic(null)} className="px-2 py-0.5 bg-[#14b8a6]/15 text-[#14b8a6] rounded flex items-center gap-1">
+                  <button onClick={() => setSelectedTopic(null)} className="px-2 py-0.5 bg-[#6366F1]/15 text-[#6366F1] rounded flex items-center gap-1">
                     {selectedTopic && (() => { const I = TOPIC_MAP[selectedTopic]?.icon; return I ? <I className="w-3 h-3" /> : null })()} {TOPIC_MAP[selectedTopic]?.label} ✕
                   </button>
                 )}
                 {selectedTag && (
-                  <button onClick={() => setSelectedTag(null)} className="px-2 py-0.5 bg-[#14b8a6]/15 text-[#14b8a6] rounded flex items-center gap-1">
+                  <button onClick={() => setSelectedTag(null)} className="px-2 py-0.5 bg-[#6366F1]/15 text-[#6366F1] rounded flex items-center gap-1">
                     #{selectedTag} ✕
                   </button>
                 )}
                 {search && (
-                  <button onClick={() => setSearch('')} className="px-2 py-0.5 bg-[#14b8a6]/15 text-[#14b8a6] rounded flex items-center gap-1">
+                  <button onClick={() => setSearch('')} className="px-2 py-0.5 bg-[#6366F1]/15 text-[#6366F1] rounded flex items-center gap-1">
                     &ldquo;{search}&rdquo; ✕
                   </button>
                 )}
@@ -290,7 +290,7 @@ export function ResearchExplorer({ lrps, tags }: { lrps: LRP[]; tags: Tag[] }) {
                 {filtered.map(lrp => (
                   <Link key={lrp.id} href={`/research/${lrp.id}`} className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100/50 dark:hover:bg-slate-800/30 transition-colors">
                     <span className={`text-xs font-bold w-8 ${getGradeColor(lrp.grade)}`}>{lrp.grade || '—'}</span>
-                    <span className="text-xs font-mono text-[#14b8a6] w-16">{lrp.id}</span>
+                    <span className="text-xs font-mono text-[#6366F1] w-16">{lrp.id}</span>
                     <span className="text-sm text-slate-300 truncate flex-1">{lrp.title}</span>
                     <span className="text-[10px] text-slate-600 hidden md:inline">{lrp.sourceCount} src</span>
                     <span className="text-[10px] text-slate-600 hidden md:inline">{lrp.score}/100</span>
@@ -301,10 +301,10 @@ export function ResearchExplorer({ lrps, tags }: { lrps: LRP[]; tags: Tag[] }) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {filtered.map(lrp => (
                   <Link key={lrp.id} href={`/research/${lrp.id}`}
-                    className="bg-white dark:bg-[#1f2b3d] border border-gray-200 dark:border-[#2a3a50] rounded-lg p-4 hover:border-[#14b8a6]/40 transition-colors group">
+                    className="bg-white dark:bg-[#1f2b3d] border border-gray-200 dark:border-[#2a3a50] rounded-lg p-4 hover:border-[#6366F1]/40 transition-colors group">
                     <div className="flex items-center gap-2 mb-2">
                       <span className={`text-sm font-bold ${getGradeColor(lrp.grade)}`}>{lrp.grade}</span>
-                      <span className="text-xs font-mono text-[#14b8a6]">{lrp.id}</span>
+                      <span className="text-xs font-mono text-[#6366F1]">{lrp.id}</span>
                       <span className="text-[10px] text-slate-600 ml-auto">{lrp.score}/100</span>
                     </div>
                     <h3 className="text-sm font-semibold text-slate-200 group-hover:text-white line-clamp-2">{lrp.title}</h3>
@@ -322,7 +322,7 @@ export function ResearchExplorer({ lrps, tags }: { lrps: LRP[]; tags: Tag[] }) {
               <div className="space-y-2">
                 {filtered.map(lrp => (
                   <Link key={lrp.id} href={`/research/${lrp.id}`}
-                    className="block bg-white dark:bg-[#1f2b3d] border border-gray-200 dark:border-[#2a3a50] rounded-lg p-4 hover:border-[#14b8a6]/40 transition-colors group">
+                    className="block bg-white dark:bg-[#1f2b3d] border border-gray-200 dark:border-[#2a3a50] rounded-lg p-4 hover:border-[#6366F1]/40 transition-colors group">
                     <div className="flex items-start gap-4">
                       <div className={`flex-shrink-0 w-14 h-14 rounded-lg border flex flex-col items-center justify-center ${getGradeBg(lrp.grade)}`}>
                         <span className={`text-lg font-bold ${getGradeColor(lrp.grade)}`}>{lrp.grade || '—'}</span>
@@ -330,7 +330,7 @@ export function ResearchExplorer({ lrps, tags }: { lrps: LRP[]; tags: Tag[] }) {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="text-xs font-mono text-[#14b8a6]">{lrp.id}</span>
+                          <span className="text-xs font-mono text-[#6366F1]">{lrp.id}</span>
                           {lrp.lastUpdated && <span className="text-[10px] text-slate-600">{lrp.lastUpdated}</span>}
                         </div>
                         <h3 className="text-sm font-semibold text-slate-200 group-hover:text-white truncate">{lrp.title}</h3>
@@ -377,7 +377,7 @@ function HighlightCard({ title, lrps, metric }: { title: string; lrps: LRP[]; me
           <Link key={lrp.id} href={`/research/${lrp.id}`} className="flex items-center gap-2 hover:bg-gray-100/50 dark:hover:bg-slate-800/30 rounded px-1 py-0.5 transition-colors">
             <span className="text-[10px] text-slate-600 w-3">{i + 1}.</span>
             <span className="text-xs text-slate-300 truncate flex-1">{lrp.title.slice(0, 35)}{lrp.title.length > 35 ? '...' : ''}</span>
-            <span className="text-[10px] text-[#14b8a6] flex-shrink-0">{metric(lrp)}</span>
+            <span className="text-[10px] text-[#6366F1] flex-shrink-0">{metric(lrp)}</span>
           </Link>
         ))}
       </div>

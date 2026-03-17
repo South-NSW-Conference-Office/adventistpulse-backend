@@ -169,7 +169,7 @@ export default function HarvestMap({ fill = false }: { fill?: boolean }) {
           const d = name ? dataMap.get(name) : null;
 
           layer.on('mouseover', function (this: any, e: any) {
-            this.setStyle({ weight: 2, color: '#14b8a6', fillOpacity: 0.95 });
+            this.setStyle({ weight: 2, color: '#6366F1', fillOpacity: 0.95 });
             e.target.bringToFront?.();
           });
           layer.on('mouseout', function (this: any) {
@@ -232,7 +232,7 @@ export default function HarvestMap({ fill = false }: { fill?: boolean }) {
         className="flex bg-[#1f2b3d]/95 backdrop-blur rounded-full p-1 border border-[#2a3a50] shadow-lg">
         {(['where-we-are', 'where-we-are-not'] as ViewMode[]).map(mode => (
           <button key={mode} onClick={() => setViewMode(mode)}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${viewMode === mode ? 'bg-[#14b8a6] text-white shadow' : 'text-gray-400 hover:text-white'}`}>
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${viewMode === mode ? 'bg-[#6366F1] text-white shadow' : 'text-gray-400 hover:text-white'}`}>
             {mode === 'where-we-are' ? '🌿 Where We Are' : '🔥 Where We Are Not'}
           </button>
         ))}

@@ -105,7 +105,7 @@ export function ProjectionsChart({ projections, entityName, entityCode, currentM
               key={h}
               onClick={() => setHorizon(h)}
               className={`px-3 py-1.5 text-xs transition-colors ${
-                horizon === h ? 'bg-[#14b8a6]/20 text-[#14b8a6]' : 'text-slate-500 hover:text-gray-700 dark:hover:text-slate-300'
+                horizon === h ? 'bg-[#6366F1]/20 text-[#6366F1]' : 'text-slate-500 hover:text-gray-700 dark:hover:text-slate-300'
               }`}
             >
               {h}yr
@@ -142,7 +142,7 @@ export function ProjectionsChart({ projections, entityName, entityCode, currentM
         <path d={makePath(p => p.revival)} fill="none" stroke="#10b981" strokeWidth="1.5" strokeDasharray="4,2" />
 
         {/* Today dot */}
-        <circle cx={PL} cy={y(currentMembership)} r="4" fill="#14b8a6" />
+        <circle cx={PL} cy={y(currentMembership)} r="4" fill="#6366F1" />
 
         {/* End labels */}
         <text x={W - PR + 3} y={y(endCurrent) + 3} fill="#ef4444" fontSize="8" fontWeight="600">{formatNum(endCurrent)}</text>
@@ -185,7 +185,7 @@ export function ProjectionsChart({ projections, entityName, entityCode, currentM
         </div>
         <Link
           href={`/vital-signs/${entityCode}`}
-          className="text-xs text-[#14b8a6] hover:text-[#8b5cf6] transition-colors whitespace-nowrap flex items-center gap-1"
+          className="text-xs text-[#6366F1] hover:text-[#8b5cf6] transition-colors whitespace-nowrap flex items-center gap-1"
         >
           Read full analysis in Vital Signs <span>→</span>
         </Link>

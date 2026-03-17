@@ -76,7 +76,7 @@ export function GrowthComposition({ stats, height = 280 }: GrowthCompositionProp
             <span className="text-xs text-gray-400 dark:text-slate-400">Kingdom Growth (Baptisms + POF)</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <div className="w-3 h-2 rounded-sm bg-[#14b8a6]" />
+            <div className="w-3 h-2 rounded-sm bg-[#6366F1]" />
             <span className="text-xs text-gray-400 dark:text-slate-400">Transfer Balance</span>
           </div>
           <div className="flex items-center gap-1.5">

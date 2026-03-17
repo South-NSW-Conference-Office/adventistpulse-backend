@@ -41,7 +41,7 @@ function HeatLayer({ churches }: { churches: RawChurch[] }) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const heat = (L as any).heatLayer(points, {
       radius: 35, blur: 28, maxZoom: 12,
-      gradient: { 0.2: '#1e3a5f', 0.4: '#312e81', 0.7: '#0d9488', 0.9: '#818cf8', 1.0: '#e0e7ff' },
+      gradient: { 0.2: '#1e3a5f', 0.4: '#312e81', 0.7: '#4f46e5', 0.9: '#818cf8', 1.0: '#e0e7ff' },
     }).addTo(map)
     return () => { map.removeLayer(heat) }
   }, [map, churches])
@@ -94,13 +94,13 @@ export default function ChurchHeatMap({ className }: Props) {
             key={i}
             center={[c.lat, c.lng]}
             radius={4}
-            pathOptions={{ color: '#14b8a6', fillColor: '#818cf8', fillOpacity: 0.85, weight: 1 }}
+            pathOptions={{ color: '#6366F1', fillColor: '#818cf8', fillOpacity: 0.85, weight: 1 }}
             eventHandlers={{ click: () => router.push(`/church/${nameToSlug(c.name)}`) }}
           >
             <Popup>
               <div className="text-sm font-semibold">{c.name}</div>
               {c.conferenceName && <div className="text-xs text-gray-500">{c.conferenceName}</div>}
-              <div className="text-xs text-teal-500 mt-1 cursor-pointer"
+              <div className="text-xs text-indigo-500 mt-1 cursor-pointer"
                 onClick={() => router.push(`/church/${nameToSlug(c.name)}`)}>
                 View profile →
               </div>

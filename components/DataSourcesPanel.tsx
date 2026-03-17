@@ -84,7 +84,7 @@ export function DataSourcesPanel() {
                     href={source.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm font-medium text-white hover:text-[#14b8a6] transition-colors"
+                    className="text-sm font-medium text-white hover:text-[#6366F1] transition-colors"
                   >
                     {source.name}
                   </a>

@@ -43,13 +43,13 @@ export function StateOfAdventism({ divisions, gcStats }: Props) {
 
       {/* Centered headline */}
       <h2 className="text-4xl md:text-6xl font-extrabold text-gray-900 text-center tracking-tight mb-4">
-        The pulse of the <span className="text-teal-500">global church.</span>
+        The pulse of the <span className="text-indigo-500">global church.</span>
       </h2>
       <p className="text-base text-gray-400 text-center max-w-xl mx-auto leading-relaxed mb-4">
         A live snapshot of Adventist growth, health, and momentum across every world division — updated with the latest available data.
       </p>
       <div className="text-center mb-16">
-        <Link href="/at-risk" className="inline-flex items-center gap-1 text-sm font-semibold text-[#14b8a6] hover:underline">
+        <Link href="/at-risk" className="inline-flex items-center gap-1 text-sm font-semibold text-[#6366F1] hover:underline">
           View all at-risk entities →
         </Link>
       </div>
@@ -87,10 +87,10 @@ export function StateOfAdventism({ divisions, gcStats }: Props) {
                 <Link key={div.code} href={`/entity/${div.code}`}>
                   <div className="flex items-center gap-4 py-3 border-b border-gray-100 group">
                     <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-[2px_2px_8px_rgba(0,0,0,0.08),-2px_-2px_8px_rgba(255,255,255,0.9)]">
-                      <span className={`text-lg font-black ${i === 0 ? 'text-[#14b8a6]' : 'text-gray-300'}`}>{i + 1}</span>
+                      <span className={`text-lg font-black ${i === 0 ? 'text-[#6366F1]' : 'text-gray-300'}`}>{i + 1}</span>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-gray-800 group-hover:text-[#14b8a6] transition-colors truncate">{shortName(div.name)}</p>
+                      <p className="text-sm font-semibold text-gray-800 group-hover:text-[#6366F1] transition-colors truncate">{shortName(div.name)}</p>
                       <p className="text-xs text-gray-400 tabular-nums mt-0.5">{fmt(membership)} members</p>
                     </div>
                     <span className="text-sm font-bold text-green-500 tabular-nums shrink-0">+{rate.toFixed(1)}%</span>

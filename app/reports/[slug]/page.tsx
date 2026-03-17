@@ -60,7 +60,7 @@ export default async function ReportPage({ params }: Props) {
 
 function BackLink() {
   return (
-    <Link href="/reports" className="inline-flex items-center gap-1.5 text-sm text-[#14b8a6] hover:underline mb-6">
+    <Link href="/reports" className="inline-flex items-center gap-1.5 text-sm text-[#6366F1] hover:underline mb-6">
       <ArrowLeft className="w-4 h-4" /> Back to Reports
     </Link>
   );
@@ -107,7 +107,7 @@ async function VitalSignsPage({ report }: { report: any }) {
             <div className={cn('flex items-center gap-3 text-sm', tokens.text.muted)}>
               <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /> {report.year}</span>
               <span>&middot;</span>
-              <Link href={`/entity/${report.entityCode}`} className="text-[#14b8a6] hover:underline flex items-center gap-1">
+              <Link href={`/entity/${report.entityCode}`} className="text-[#6366F1] hover:underline flex items-center gap-1">
                 View Entity Page <ExternalLink className="w-3 h-3" />
               </Link>
             </div>
