@@ -50,10 +50,24 @@ export default async function ReportPage({ params }: Props) {
     return <VitalSignsPage report={vs} />;
   }
 
-  // Check Briefs
-  const brief = data.briefs?.find((b: any) => b.slug === slug);
-  if (brief) {
-    return <BriefPage report={brief} />;
+  // Check Briefs — merge index data with full content from public/data/briefs.json
+  const briefIndex = data.briefs?.find((b: any) => b.slug === slug);
+  if (briefIndex) {
+    // Try to load full content
+    let fullBrief = briefIndex;
+    try {
+      const fullData = JSON.parse(
+        await fs.readFile(path.join(process.cwd(), 'public/data/briefs.json'), 'utf-8')
+      );
+      const match = fullData.find((b: any) =>
+        b.id?.toLowerCase() === slug.toUpperCase().replace('-','') ||
+        b.id?.toLowerCase() === slug ||
+        `pb-${b.id?.replace('PB-','')}`.toLowerCase() === slug ||
+        b.id === slug.toUpperCase()
+      );
+      if (match) fullBrief = { ...briefIndex, ...match };
+    } catch { /* use index data only */ }
+    return <BriefPage report={fullBrief} />;
   }
 
   notFound();
@@ -246,14 +260,66 @@ function BriefPage({ report }: { report: any }) {
 
         <hr className={cn('my-8', tokens.border.default)} />
 
-        <Card className={cn('p-8 text-center border-dashed', tokens.border.default)}>
-          <Newspaper className={cn('h-12 w-12 mx-auto mb-4', tokens.text.muted)} />
-          <h2 className={cn('text-xl font-semibold mb-2', tokens.text.heading)}>Article In Progress</h2>
-          <p className={cn('text-sm max-w-lg mx-auto', tokens.text.muted)}>
-            This Pulse Brief is being researched and written. All briefs follow our editorial standards:
-            data over framing, neutral language, and balanced sourcing across the Adventist spectrum.
-          </p>
-        </Card>
+        {report.heroStat && (
+          <div className={cn('rounded-2xl border p-8 text-center mb-8', tokens.bg.card, tokens.border.default)}>
+            <div className="text-5xl font-extrabold text-[#6366F1] mb-2" style={{ letterSpacing: '-0.03em' }}>
+              {report.heroStat}
+            </div>
+            {report.heroStatLabel && (
+              <p className={cn('text-sm max-w-sm mx-auto', tokens.text.muted)}>{report.heroStatLabel}</p>
+            )}
+          </div>
+        )}
+
+        {report.body ? (
+          <article className={cn('prose prose-sm dark:prose-invert max-w-none', tokens.text.body)}>
+            {report.body.split('\n\n').map((para: string, i: number) => {
+              if (!para.trim()) return null;
+              // Bold markdown
+              const rendered = para.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+              return (
+                <p key={i} className="mb-4 leading-relaxed"
+                  dangerouslySetInnerHTML={{ __html: rendered }} />
+              );
+            })}
+          </article>
+        ) : (
+          <Card className={cn('p-8 text-center border-dashed', tokens.border.default)}>
+            <Newspaper className={cn('h-12 w-12 mx-auto mb-4', tokens.text.muted)} />
+            <h2 className={cn('text-xl font-semibold mb-2', tokens.text.heading)}>Article In Progress</h2>
+            <p className={cn('text-sm max-w-lg mx-auto', tokens.text.muted)}>
+              This Pulse Brief is being researched and written. All briefs follow our editorial standards:
+              data over framing, neutral language, and balanced sourcing across the Adventist spectrum.
+            </p>
+          </Card>
+        )}
+
+        {report.pullQuote && (
+          <blockquote className={cn('border-l-4 border-[#6366F1] pl-6 py-2 my-8 italic text-lg', tokens.text.heading)}>
+            &ldquo;{report.pullQuote}&rdquo;
+          </blockquote>
+        )}
+
+        {report.discussionPrompt && (
+          <div className={cn('rounded-xl border p-6 mt-8', tokens.bg.card, tokens.border.default)}>
+            <p className={cn('text-xs font-bold uppercase tracking-widest mb-2', tokens.text.accent)}>For Discussion</p>
+            <p className={cn('text-sm', tokens.text.body)}>{report.discussionPrompt}</p>
+          </div>
+        )}
+
+        {report.lrpSource && (
+          <div className={cn('rounded-xl border p-5 mt-6 flex items-center gap-3', tokens.bg.card, tokens.border.default)}>
+            <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-[#6366F1]/10 flex items-center justify-center">
+              <FileText className="w-5 h-5 text-[#6366F1]" />
+            </div>
+            <div>
+              <p className={cn('text-xs font-semibold', tokens.text.heading)}>Research Source</p>
+              <Link href={`/research/${report.lrpSource}`} className="text-sm text-[#6366F1] hover:underline">
+                {report.lrpSource} — Read the full Living Research Project →
+              </Link>
+            </div>
+          </div>
+        )}
       </div>
     </main>
   );
