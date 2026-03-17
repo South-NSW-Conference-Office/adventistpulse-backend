@@ -253,6 +253,86 @@ export default function ConferenceDashboardPage() {
           </div>
         </div>
 
+        {/* Invite Flow Panel */}
+        <div className={cn('rounded-2xl border p-6 mb-8', tokens.bg.card, tokens.border.default)}>
+          <div className="flex items-center gap-3 mb-5">
+            <div className="w-8 h-8 rounded-lg bg-[#6366F1]/10 flex items-center justify-center">
+              <UserCheck className="w-4 h-4 text-[#6366F1]" />
+            </div>
+            <div>
+              <h3 className={cn('text-sm font-bold', tokens.text.heading)}>Add a Pastor or Worker</h3>
+              <p className={cn('text-xs', tokens.text.muted)}>Nominating them creates their account and sends the invite</p>
+            </div>
+          </div>
+
+          {/* How it works */}
+          <div className="grid sm:grid-cols-4 gap-3 mb-5">
+            {[
+              { step: '1', label: 'Enter their email',    desc: 'Use their church-approved address' },
+              { step: '2', label: 'Assign churches',      desc: 'Choose which churches they pastor' },
+              { step: '3', label: 'Choose who pays',      desc: 'Conference seat or they subscribe' },
+              { step: '4', label: 'Invite sent',          desc: 'They click, set password, done' },
+            ].map(({ step, label, desc }) => (
+              <div key={step} className={cn('rounded-xl p-3 text-center', 'bg-gray-50 dark:bg-[#1a2a3a]')}>
+                <div className="w-6 h-6 rounded-full bg-[#6366F1] text-white text-xs font-bold flex items-center justify-center mx-auto mb-2">
+                  {step}
+                </div>
+                <p className={cn('text-xs font-semibold', tokens.text.heading)}>{label}</p>
+                <p className={cn('text-[10px] mt-0.5', tokens.text.muted)}>{desc}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Sample form */}
+          <div className={cn('rounded-xl border p-4', tokens.bg.page, tokens.border.default)}>
+            <p className={cn('text-xs font-semibold mb-3', tokens.text.muted)}>Nomination form — preview</p>
+            <div className="grid sm:grid-cols-2 gap-3 mb-3">
+              <div>
+                <label className={cn('block text-[10px] font-semibold uppercase tracking-wider mb-1', tokens.text.muted)}>Full Name</label>
+                <div className={cn('rounded-lg border px-3 py-2 text-sm', tokens.bg.card, tokens.border.default, tokens.text.body)}>
+                  Morgan Vincent
+                </div>
+              </div>
+              <div>
+                <label className={cn('block text-[10px] font-semibold uppercase tracking-wider mb-1', tokens.text.muted)}>Church-approved email</label>
+                <div className={cn('rounded-lg border px-3 py-2 text-sm flex items-center gap-2', tokens.bg.card, tokens.border.default, tokens.text.body)}>
+                  mvincentor@adventist.org.au
+                  <span className="ml-auto text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 font-semibold">✓ Verified domain</span>
+                </div>
+              </div>
+            </div>
+            <div className="mb-3">
+              <label className={cn('block text-[10px] font-semibold uppercase tracking-wider mb-1', tokens.text.muted)}>Assigned Churches</label>
+              <div className={cn('rounded-lg border px-3 py-2 text-sm flex flex-wrap gap-1.5', tokens.bg.card, tokens.border.default)}>
+                {['Canberra National', 'South Canberra', 'Tuggeranong'].map(c => (
+                  <span key={c} className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#6366F1]/10 text-[#6366F1]">
+                    {c} ×
+                  </span>
+                ))}
+                <span className={cn('text-[10px] px-2 py-0.5', tokens.text.muted)}>+ Add church…</span>
+              </div>
+            </div>
+            <div className="mb-4">
+              <label className={cn('block text-[10px] font-semibold uppercase tracking-wider mb-1', tokens.text.muted)}>Seat</label>
+              <div className="grid grid-cols-2 gap-2">
+                <div className={cn('rounded-lg border-2 border-[#6366F1] px-3 py-2 text-xs font-semibold', tokens.bg.card, tokens.text.heading)}>
+                  ● Conference pays — include in our plan
+                </div>
+                <div className={cn('rounded-lg border px-3 py-2 text-xs', tokens.bg.card, tokens.border.default, tokens.text.muted)}>
+                  ○ Pastor subscribes themselves
+                </div>
+              </div>
+            </div>
+            <div className={cn('rounded-lg border border-[#6366F1]/30 bg-[#6366F1]/5 p-3 mb-4 text-xs', tokens.text.body)}>
+              <span className="font-semibold text-[#6366F1]">Auto-granted on invitation:</span>{' '}
+              verified member status · Pulse Notes · church profile visibility · pastor dashboard access
+            </div>
+            <button className="w-full py-2.5 rounded-xl text-sm font-semibold bg-[#6366F1] text-white hover:bg-[#4f46e5] transition-colors opacity-80 cursor-default">
+              Send Invitation →
+            </button>
+          </div>
+        </div>
+
         {/* History Import & Delegation side by side */}
         <div className="grid sm:grid-cols-2 gap-5 mb-8">
 
