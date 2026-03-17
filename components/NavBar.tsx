@@ -17,8 +17,9 @@ const PILLARS = [
     children: [
       { href: '/browse', label: 'Browse Entities', desc: 'Explore every Adventist entity' },
       { href: '/rankings', label: 'Rankings', desc: 'Compare by membership, growth, baptisms' },
-      { href: '/compare', label: 'Compare', desc: 'Side-by-side entity comparison' },
-      { href: '/tithe-flow', label: 'Tithe Flow', desc: 'See how your tithe dollar flows through the church' },
+      { href: '/compare',  label: 'Compare',          desc: 'Side-by-side entity comparison' },
+      { href: '/at-risk',  label: 'Entities at Risk',  desc: 'Conferences with declining or stalling growth' },
+      { href: '/tithe-flow', label: 'Tithe Flow',      desc: 'See how your tithe dollar flows through the church' },
     ],
   },
   {
