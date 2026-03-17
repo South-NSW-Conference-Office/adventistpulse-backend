@@ -12,7 +12,7 @@ const LEVELS = [
   { key: 'division', label: 'Divisions', description: 'The 13 world divisions' },
   { key: 'union', label: 'Unions', description: 'Union conferences and union missions' },
   { key: 'conference', label: 'Conferences', description: 'Local conferences and missions' },
-  { key: 'field', label: 'Fields & Sections', description: 'Attached fields, sections, and field stations' },
+  { key: 'church', label: 'Churches', description: 'Individual local churches' },
 ];
 
 export default async function BrowsePage({ searchParams }: Props) {
@@ -28,7 +28,7 @@ export default async function BrowsePage({ searchParams }: Props) {
     division: allEntities.filter(e => e.level === 'division').length,
     union: allEntities.filter(e => e.level === 'union').length,
     conference: allEntities.filter(e => e.level === 'conference' || e.level === 'mission').length,
-    field: allEntities.filter(e => e.level === 'field' || e.level === 'section' || e.level === 'field_station').length,
+    church: allEntities.filter(e => e.level === 'church').length,
   };
 
   return (
