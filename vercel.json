@@ -1,4 +1,9 @@
 {
+  "build": {
+    "env": {
+      "NEXT_PUBLIC_API_URL": "https://backend.adventistpulse.org"
+    }
+  },
   "env": {
     "NEXT_PUBLIC_API_URL": "https://backend.adventistpulse.org"
   }
