@@ -1,0 +1,223 @@
+/**
+ * Invitation Service
+ *
+ * Handles conference-admin-initiated invitations for pastors and workers.
+ * Key principle: conference nomination = verification.
+ * When an admin nominates a pastor, the account is pre-configured before
+ * the user ever clicks the invite link.
+ */
+
+import { randomBytes } from 'crypto'
+import { User } from '../models/User.js'
+import { PersonnelAssignment } from '../models/PersonnelAssignment.js'
+import { crypto as cryptoLib } from '../lib/crypto.js'
+import { email } from '../lib/email.js'
+import { env } from '../config/env.js'
+import { logger } from '../core/logger.js'
+
+// Load the denominational domain map (advisory, not a blocker)
+import emailDomains from '../../data/email-domains.json' assert { type: 'json' }
+const TRUSTED_DOMAINS = new Set(emailDomains.known_trusted_domains ?? [])
+
+export const invitationService = {
+
+  /**
+   * Check whether an email domain matches a known denominational domain.
+   * Returns { trusted: bool, matchedEntity: string|null }
+   * Advisory only — never used to block an invitation.
+   */
+  checkDomain(emailAddress) {
+    const domain = emailAddress.split('@')[1]?.toLowerCase()
+    if (!domain) return { trusted: false, matchedEntity: null }
+
+    if (TRUSTED_DOMAINS.has(domain)) return { trusted: true, matchedEntity: domain }
+
+    // Also check division/union/conference domain maps
+    for (const [code, domains] of Object.entries({
+      ...emailDomains.divisions,
+      ...emailDomains.unions,
+      ...emailDomains.conferences,
+    })) {
+      if (domains.includes(domain)) return { trusted: true, matchedEntity: code }
+    }
+
+    return { trusted: false, matchedEntity: null }
+  },
+
+  /**
+   * Nominate a pastor or worker.
+   * Creates the User account (pre-configured), sends invite email.
+   *
+   * @param {object} params
+   * @param {string} params.name
+   * @param {string} params.email
+   * @param {string} params.role          - 'pastor'|'elder'|'editor'|'admin'
+   * @param {string} params.memberChurch  - church code where they're a member
+   * @param {string[]} params.assignedChurches - churches they pastor (for pastors)
+   * @param {string} params.conferenceCode
+   * @param {'conference'|'self'} params.paidBy
+   * @param {object} params.invitedByUser - the admin User document
+   */
+  async nominate({
+    name, email: emailAddress, role, memberChurch,
+    assignedChurches = [], conferenceCode, paidBy = 'conference',
+    invitedByUser,
+  }) {
+    // Check if user already exists
+    const existing = await User.findOne({ email: emailAddress.toLowerCase() })
+    if (existing) {
+      // If already invited/pending, resend
+      if (existing.subscription?.status === 'invited') {
+        return invitationService.resendInvite(existing, invitedByUser)
+      }
+      throw new Error(`An account with email ${emailAddress} already exists.`)
+    }
+
+    // Generate invite token (raw for email link, hashed for storage)
+    const rawToken = randomBytes(32).toString('hex')
+    const hashedToken = cryptoLib.hashToken(rawToken)
+
+    // Create the pre-configured user account
+    const user = await User.create({
+      name,
+      email: emailAddress.toLowerCase(),
+      password: null, // set when invite is accepted
+      role,
+      memberChurch: memberChurch?.toUpperCase() || null,
+      verifiedMember: true, // conference nomination = verified
+      assignedChurches: assignedChurches.map(c => c.toUpperCase()),
+      subscription: {
+        tier: role === 'admin' ? 'admin' : role === 'pastor' || role === 'elder' ? 'pastor' : 'member',
+        paidBy,
+        conferenceCode: conferenceCode?.toUpperCase() || null,
+        status: 'invited',
+      },
+      inviteToken: hashedToken,
+      inviteExpires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+      invitedAt: new Date(),
+      invitedBy: invitedByUser._id,
+      emailVerified: true, // conference vouches for the email address
+      accountStatus: 'approved',
+    })
+
+    // Send invite email
+    await invitationService._sendInviteEmail({
+      to: emailAddress,
+      name,
+      role,
+      rawToken,
+      conferenceCode,
+      invitedByName: invitedByUser.name,
+    })
+
+    logger.info('Pastor nominated', {
+      nominatedEmail: emailAddress,
+      role,
+      conferenceCode,
+      assignedChurches,
+      invitedBy: invitedByUser.email,
+    })
+
+    return {
+      userId: user._id,
+      email: user.email,
+      role: user.role,
+      assignedChurches: user.assignedChurches,
+      domainCheck: invitationService.checkDomain(emailAddress),
+    }
+  },
+
+  /**
+   * Accept an invitation — set password, activate account.
+   */
+  async acceptInvite({ token, password }) {
+    const hashedToken = cryptoLib.hashToken(token)
+
+    const user = await User.findOne({
+      inviteToken: hashedToken,
+      inviteExpires: { $gt: new Date() },
+      'subscription.status': 'invited',
+    }).select('+inviteToken +inviteExpires')
+
+    if (!user) throw new Error('Invite link is invalid or has expired.')
+
+    // Set password and activate
+    const hashedPassword = await cryptoLib.hashPassword(password)
+    user.password = hashedPassword
+    user.inviteToken = null
+    user.inviteExpires = null
+    user.subscription.status = 'active'
+    await user.save()
+
+    logger.info('Invite accepted', { email: user.email, role: user.role })
+    return user
+  },
+
+  /**
+   * Resend invite to a pending user.
+   */
+  async resendInvite(user, invitedByUser) {
+    const rawToken = randomBytes(32).toString('hex')
+    const hashedToken = cryptoLib.hashToken(rawToken)
+
+    user.inviteToken = hashedToken
+    user.inviteExpires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+    await user.save()
+
+    await invitationService._sendInviteEmail({
+      to: user.email,
+      name: user.name,
+      role: user.role,
+      rawToken,
+      conferenceCode: user.subscription?.conferenceCode,
+      invitedByName: invitedByUser?.name ?? 'Conference Admin',
+    })
+
+    return { resent: true, email: user.email }
+  },
+
+  async _sendInviteEmail({ to, name, role, rawToken, conferenceCode, invitedByName }) {
+    const roleLabel = {
+      pastor: 'Pastor',
+      elder:  'Church Elder',
+      editor: 'Conference Editor',
+      admin:  'Conference Administrator',
+      member: 'Member',
+    }[role] ?? role
+
+    const inviteUrl = `${env.FRONTEND_URL}/accept-invite?token=${rawToken}`
+
+    await email.send({
+      to,
+      subject: `You've been added to Adventist Pulse — ${roleLabel}`,
+      html: `
+        <div style="font-family: sans-serif; max-width: 560px; margin: 0 auto; padding: 32px 24px;">
+          <div style="font-size: 22px; font-weight: 800; color: #6366F1; margin-bottom: 4px;">Adventist Pulse</div>
+          <p style="color: #64748b; font-size: 13px; margin-top: 0;">Mission intelligence for the Adventist Church</p>
+          <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 24px 0;" />
+          <p style="color: #1e293b;">Hi ${name},</p>
+          <p style="color: #475569;">
+            <strong>${invitedByName}</strong>${conferenceCode ? ` from the ${conferenceCode} Conference` : ''} has added you to 
+            <strong>Adventist Pulse</strong> as a <strong>${roleLabel}</strong>.
+          </p>
+          <p style="color: #475569;">
+            Your account is ready — click below to set your password and access your dashboard.
+          </p>
+          <div style="text-align: center; margin: 32px 0;">
+            <a href="${inviteUrl}"
+               style="display: inline-block; background: #6366F1; color: white; text-decoration: none;
+                      padding: 14px 32px; border-radius: 10px; font-weight: 700; font-size: 15px;">
+              Accept Invitation →
+            </a>
+          </div>
+          <p style="color: #94a3b8; font-size: 12px;">This link expires in 7 days. If you weren't expecting this email, you can safely ignore it.</p>
+          <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 24px 0;" />
+          <p style="color: #cbd5e1; font-size: 11px; text-align: center;">
+            Adventist Pulse · South New South Wales Conference · <a href="mailto:pulse@adventist.org.au" style="color: #6366F1;">pulse@adventist.org.au</a>
+          </p>
+        </div>
+      `,
+      text: `Hi ${name},\n\n${invitedByName} has added you to Adventist Pulse as ${roleLabel}.\n\nAccept your invitation here: ${inviteUrl}\n\nThis link expires in 7 days.`,
+    })
+  },
+}

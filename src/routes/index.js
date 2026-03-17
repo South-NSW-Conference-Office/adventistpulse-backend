@@ -1,4 +1,5 @@
 import { Router } from 'express'
+import invitationRoutes  from './invitation.routes.js'
 import authRoutes        from './auth.routes.js'
 import entityRoutes      from './entity.routes.js'
 import statsRoutes       from './stats.routes.js'
@@ -12,6 +13,8 @@ import churchRoutes      from './church.routes.js'
 
 const router = Router()
 
+// Invitation & personnel routes — flat mount (routes self-prefix /auth/* and /admin/*)
+router.use('/v1', invitationRoutes)
 router.use('/v1/auth',        authRoutes)
 router.use('/v1/entities',    entityRoutes)
 router.use('/v1/stats',       statsRoutes)
