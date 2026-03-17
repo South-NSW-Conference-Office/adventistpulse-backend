@@ -204,7 +204,7 @@ export default async function EntityPage({ params }: Props) {
           { id: 'sub-entities', label: children.length > 0 ? (entity.level === 'gc' ? 'Divisions' : 'Sub-entities') : '', available: children.length > 0 },
           { id: 'baptisms', label: 'Baptisms', available: trendData.some(d => d.baptisms !== null) },
           { id: 'retention', label: 'Retention', available: stats.length > 2 },
-          { id: 'projections', label: 'Projections', available: projections.points5.length > 0 },
+          { id: 'projections', label: 'Projections', available: (projections?.points5?.length ?? 0) > 0 },
           { id: 'tithe-flow', label: 'Tithe Flow', available: !!titheFlow },
           { id: 'metrics', label: 'Key Metrics', available: stats.length > 0 },
           { id: 'peers', label: 'Peers', available: siblings.length > 0 },
@@ -323,11 +323,11 @@ export default async function EntityPage({ params }: Props) {
         )}
 
         {/* Projections */}
-        {projections.points5.length > 0 && (
+        {(projections?.points5?.length ?? 0) > 0 && (
           <section id="projections">
             <ErrorBoundary>
               <ProjectionsChart
-                projections={projections}
+                projections={projections!}
                 entityName={entity.name}
                 entityCode={code}
                 currentMembership={latestMembership}

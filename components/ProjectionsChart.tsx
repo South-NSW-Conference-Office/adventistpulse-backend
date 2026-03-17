@@ -168,11 +168,13 @@ export function ProjectionsChart({ projections, entityName, entityCode, currentM
       )}
 
       {/* Scenario cards — the "somewhere to go" */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-5">
-        <ScenarioCard scenario={scenarios.current} color="border-red-500/30 bg-red-500/5" dotClass="bg-red-500" />
-        <ScenarioCard scenario={scenarios.moderate} color="border-yellow-500/30 bg-yellow-500/5" dotClass="bg-yellow-500" />
-        <ScenarioCard scenario={scenarios.revival} color="border-emerald-500/30 bg-emerald-500/5" dotClass="bg-emerald-500" />
-      </div>
+      {scenarios && (
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-5">
+          <ScenarioCard scenario={scenarios.current} color="border-red-500/30 bg-red-500/5" dotClass="bg-red-500" />
+          <ScenarioCard scenario={scenarios.moderate} color="border-yellow-500/30 bg-yellow-500/5" dotClass="bg-yellow-500" />
+          <ScenarioCard scenario={scenarios.revival} color="border-emerald-500/30 bg-emerald-500/5" dotClass="bg-emerald-500" />
+        </div>
+      )}
 
       {/* Deep-link to Vital Signs */}
       <div className="mt-4 pt-3 border-t border-gray-200 dark:border-[#2a3a50] flex items-center justify-between flex-wrap gap-2">

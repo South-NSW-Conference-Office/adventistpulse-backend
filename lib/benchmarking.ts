@@ -14,7 +14,12 @@ export interface BenchmarkSuggestion {
 }
 
 export async function getBenchmarks(code: string): Promise<BenchmarkSuggestion[]> {
-  return apiFetch<BenchmarkSuggestion[]>(`/entities/${code}/benchmarks`);
+  // Auth-gated endpoint — returns empty for unauthenticated users
+  try {
+    return await apiFetch<BenchmarkSuggestion[]>(`/entities/${code}/benchmarks`);
+  } catch {
+    return [];
+  }
 }
 
 /** @deprecated Use getBenchmarks instead */
