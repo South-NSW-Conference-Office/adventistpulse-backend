@@ -265,12 +265,36 @@ function TrajectoryPill({ dir }: { dir: PersonData['trajectoryDirection'] }) {
 }
 
 // ── Page ──────────────────────────────────────────────────────────────────────
+async function getLiveStats(entityCode: string, startYear: number): Promise<YearStat[]> {
+  try {
+    const apiBase = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5002';
+    const res = await fetch(`${apiBase}/api/v1/stats/entity/${entityCode}`, { cache: 'no-store' });
+    if (!res.ok) return [];
+    const json = await res.json();
+    const records: any[] = json?.data ?? [];
+    return records
+      .filter((r: any) => r.year >= startYear)
+      .sort((a: any, b: any) => a.year - b.year)
+      .map((r: any) => ({
+        year: r.year,
+        membership: r.membership?.ending ?? 0,
+        baptisms: r.membership?.baptisms ?? 0,
+        net_gain: r.membership?.netGrowth ?? 0,
+        isCovid: r.year === 2020 || r.year === 2021,
+      }));
+  } catch {
+    return [];
+  }
+}
+
 export default async function PersonPage({ params }: { params: Promise<{ personId: string }> }) {
   const { personId } = await params
   const person = PERSONS[personId]
   if (!person) notFound()
 
-  const stats = person.statsDuringTenure
+  // Pull live stats from API for this person's tenure period
+  const liveStats = await getLiveStats(person.currentEntityCode, person.firstYear);
+  const stats = liveStats.length > 0 ? liveStats : person.statsDuringTenure
   const totalBaptisms = stats.reduce((s, y) => s + y.baptisms, 0)
   const currentMembership = stats[stats.length - 1]?.membership ?? 0
   const growth = currentMembership - (stats[0]?.membership ?? 0)
