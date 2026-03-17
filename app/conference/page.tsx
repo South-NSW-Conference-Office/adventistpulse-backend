@@ -297,7 +297,7 @@ export default function ConferenceDashboardPage() {
                 <label className={cn('block text-[10px] font-semibold uppercase tracking-wider mb-1', tokens.text.muted)}>Church-approved email</label>
                 <div className={cn('rounded-lg border px-3 py-2 text-sm flex items-center gap-2', tokens.bg.card, tokens.border.default, tokens.text.body)}>
                   mvincentor@adventist.org.au
-                  <span className="ml-auto text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 font-semibold">✓ Verified domain</span>
+                  <span className="ml-auto text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 font-semibold">✓ Known domain (SPD/AUC)</span>
                 </div>
               </div>
             </div>
