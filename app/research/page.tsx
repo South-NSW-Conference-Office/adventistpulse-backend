@@ -55,7 +55,7 @@ function getAllTags(research: ResearchPaper[]): { tag: string; count: number }[]
 
 function getGradeColor(grade: string) {
   if (grade.startsWith('A')) return 'text-emerald-400';
-  if (grade.startsWith('B')) return 'text-teal-400';
+  if (grade.startsWith('B')) return 'text-indigo-400';
   if (grade.startsWith('C')) return 'text-amber-400';
   if (grade.startsWith('D')) return 'text-red-400';
   return 'text-slate-400';
@@ -175,7 +175,7 @@ export default function ResearchPage() {
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={unsplashUrl(paper.id, 120, 90)} alt="" className="w-full h-full object-cover" loading="lazy" />
                     </div>
-                    <p className="text-sm font-semibold text-gray-800 dark:text-slate-200 group-hover:text-teal-500 transition-colors leading-snug line-clamp-2">
+                    <p className="text-sm font-semibold text-gray-800 dark:text-slate-200 group-hover:text-indigo-500 transition-colors leading-snug line-clamp-2">
                       {paper.title}
                     </p>
                   </Link>
@@ -207,7 +207,7 @@ export default function ResearchPage() {
                 </div>
 
                 {/* Title */}
-                <h3 className="font-bold text-gray-900 dark:text-white leading-snug mb-2 group-hover:text-teal-500 transition-colors line-clamp-2">
+                <h3 className="font-bold text-gray-900 dark:text-white leading-snug mb-2 group-hover:text-indigo-500 transition-colors line-clamp-2">
                   {paper.title}
                 </h3>
                 {/* Description */}
@@ -216,7 +216,7 @@ export default function ResearchPage() {
                 </p>
                 {/* Meta */}
                 <div className="flex items-center gap-2 text-xs text-gray-400 dark:text-slate-500">
-                  <span className="font-mono text-teal-400">{paper.id}</span>
+                  <span className="font-mono text-indigo-400">{paper.id}</span>
                   <span>·</span>
                   <span>{paper.sourceCount ?? 0} sources</span>
                   <span>·</span>
@@ -235,13 +235,13 @@ export default function ResearchPage() {
 
           {/* Tags */}
           <div className="flex flex-wrap gap-2 mb-8">
-            <button className="text-xs font-medium px-3 py-1.5 rounded-full border border-teal-400/40 text-teal-500 bg-teal-50 dark:bg-teal-500/10">
+            <button className="text-xs font-medium px-3 py-1.5 rounded-full border border-indigo-400/40 text-indigo-500 bg-indigo-50 dark:bg-indigo-500/10">
               All ({totalCount})
             </button>
             {topTags.map(({ tag, count }) => (
               <button
                 key={tag}
-                className="text-xs font-medium px-3 py-1.5 rounded-full border border-gray-200 dark:border-[#2a3a50] text-gray-500 dark:text-slate-400 hover:border-teal-400/50 hover:text-teal-500 transition-colors"
+                className="text-xs font-medium px-3 py-1.5 rounded-full border border-gray-200 dark:border-[#2a3a50] text-gray-500 dark:text-slate-400 hover:border-indigo-400/50 hover:text-indigo-500 transition-colors"
               >
                 {tag} ({count})
               </button>

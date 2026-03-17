@@ -47,14 +47,14 @@ export default async function Home() {
             <div>
               <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight">
                 The work is<br />
-                <span className="text-[#14b8a6]">not finished.</span>
+                <span className="text-[#6366F1]">not finished.</span>
               </h2>
 
               <div className="mt-10 space-y-8">
                 {[
                   {
                     icon: (
-                      <svg className="w-6 h-6 text-[#14b8a6]" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                      <svg className="w-6 h-6 text-[#6366F1]" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
                         <circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>
                       </svg>
                     ),
@@ -65,7 +65,7 @@ export default async function Home() {
                   },
                   {
                     icon: (
-                      <svg className="w-6 h-6 text-[#14b8a6]" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                      <svg className="w-6 h-6 text-[#6366F1]" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
                         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
                       </svg>
                     ),
@@ -75,7 +75,7 @@ export default async function Home() {
                   },
                   {
                     icon: (
-                      <svg className="w-6 h-6 text-[#14b8a6]" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                      <svg className="w-6 h-6 text-[#6366F1]" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
                         <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
                       </svg>
                     ),
@@ -126,12 +126,12 @@ export default async function Home() {
                   <Link key={div.code} href={`/entity/${div.code}`}>
                     <div className="flex items-center gap-4 py-3 border-b border-gray-100 group">
                       <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-[2px_2px_8px_rgba(0,0,0,0.08),-2px_-2px_8px_rgba(255,255,255,0.9)]">
-                        <span className={`text-lg font-black tabular-nums ${rank === 1 ? 'text-[#14b8a6]' : rank <= 3 ? 'text-gray-500' : 'text-gray-300'}`}>
+                        <span className={`text-lg font-black tabular-nums ${rank === 1 ? 'text-[#6366F1]' : rank <= 3 ? 'text-gray-500' : 'text-gray-300'}`}>
                           {rank}
                         </span>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-gray-800 truncate group-hover:text-[#14b8a6] transition-colors">{shortName}</p>
+                        <p className="text-sm font-semibold text-gray-800 truncate group-hover:text-[#6366F1] transition-colors">{shortName}</p>
                         <div className="flex items-center gap-2 mt-0.5">
                           <span className="text-xs font-bold text-gray-900 tabular-nums">{fmt(membership)}</span>
                           {growth !== null && growth !== undefined && (
@@ -151,7 +151,7 @@ export default async function Home() {
             <div>
               <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight">
                 Where the<br />
-                <span className="text-[#14b8a6]">church stands.</span>
+                <span className="text-[#6366F1]">church stands.</span>
               </h2>
               <p className="mt-4 text-sm text-gray-400 leading-relaxed max-w-xs">
                 World divisions ranked by total membership. Each division represents millions of Adventists across multiple countries and territories.
@@ -164,7 +164,7 @@ export default async function Home() {
                 ].map(({ label, value }) => (
                   <div key={label} className="flex items-center gap-5">
                     <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-[2px_2px_8px_rgba(0,0,0,0.08),-2px_-2px_8px_rgba(255,255,255,0.9)]">
-                      <div className="w-2 h-2 rounded-full bg-[#14b8a6]" />
+                      <div className="w-2 h-2 rounded-full bg-[#6366F1]" />
                     </div>
                     <div>
                       <p className="text-xl font-extrabold text-gray-900 tabular-nums">{value}</p>
@@ -173,7 +173,7 @@ export default async function Home() {
                   </div>
                 ))}
               </div>
-              <Link href="/rankings" className="inline-flex items-center gap-2 mt-8 text-sm font-semibold text-[#14b8a6] hover:underline">
+              <Link href="/rankings" className="inline-flex items-center gap-2 mt-8 text-sm font-semibold text-[#6366F1] hover:underline">
                 Full rankings table →
               </Link>
             </div>
@@ -188,32 +188,32 @@ export default async function Home() {
 
           {/* Centered headline */}
           <h2 className="text-4xl md:text-6xl font-extrabold text-gray-900 text-center tracking-tight mb-16">
-            Explore. Analyse. <span className="text-[#14b8a6]">Act.</span>
+            Explore. Analyse. <span className="text-[#6366F1]">Act.</span>
           </h2>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {[
               {
                 href: '/browse',
-                icon: <BarChart3 className="w-10 h-10 text-[#14b8a6]" />,
+                icon: <BarChart3 className="w-10 h-10 text-[#6366F1]" />,
                 title: 'Statistics',
                 desc: 'Browse entities, rankings, comparisons, and at-risk alerts.',
               },
               {
                 href: '/reports',
-                icon: <FileText className="w-10 h-10 text-[#14b8a6]" />,
+                icon: <FileText className="w-10 h-10 text-[#6366F1]" />,
                 title: 'Reports',
                 desc: 'Editorial deep dives, briefs, and thematic analysis.',
               },
               {
                 href: '/maps',
-                icon: <Globe2 className="w-10 h-10 text-[#14b8a6]" />,
+                icon: <Globe2 className="w-10 h-10 text-[#6366F1]" />,
                 title: 'Maps',
                 desc: 'Interactive church map, territory layers, nearest church.',
               },
               {
                 href: '/research',
-                icon: <Microscope className="w-10 h-10 text-[#14b8a6]" />,
+                icon: <Microscope className="w-10 h-10 text-[#6366F1]" />,
                 title: 'Research',
                 desc: '200+ living research projects on Adventist growth and health.',
               },

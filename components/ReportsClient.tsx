@@ -112,10 +112,10 @@ export default function ReportsClient({ vitalSigns, briefs, stateOfAdventism }: 
                   <div className="flex items-center gap-3 text-xs text-gray-400 mb-3">
                     <span>{formatDate(b.date)}</span>
                     <span className="w-px h-3 bg-gray-200 dark:bg-[#2a3a50]" />
-                    <span className="text-[#14b8a6] font-semibold uppercase tracking-wide">{b.readTime}</span>
+                    <span className="text-[#6366F1] font-semibold uppercase tracking-wide">{b.readTime}</span>
                   </div>
                   {/* Title */}
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white leading-snug mb-2 group-hover:text-[#14b8a6] transition-colors">
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white leading-snug mb-2 group-hover:text-[#6366F1] transition-colors">
                     {b.title}
                   </h3>
                   {/* Subtitle */}
@@ -123,7 +123,7 @@ export default function ReportsClient({ vitalSigns, briefs, stateOfAdventism }: 
                     {b.subtitle}
                   </p>
                   {/* Learn more */}
-                  <span className="text-sm font-semibold text-[#14b8a6] inline-flex items-center gap-1">
+                  <span className="text-sm font-semibold text-[#6366F1] inline-flex items-center gap-1">
                     Learn more &rsaquo;
                   </span>
                 </Link>
@@ -152,7 +152,7 @@ export default function ReportsClient({ vitalSigns, briefs, stateOfAdventism }: 
                 className={cn(
                   'w-full pl-8 pr-3 py-2 rounded-lg border text-xs',
                   tokens.bg.card, tokens.border.default, tokens.text.body,
-                  'focus:outline-none focus:ring-2 focus:ring-[#14b8a6]/40'
+                  'focus:outline-none focus:ring-2 focus:ring-[#6366F1]/40'
                 )}
               />
             </div>
@@ -164,7 +164,7 @@ export default function ReportsClient({ vitalSigns, briefs, stateOfAdventism }: 
                 className={cn(
                   'text-left rounded-lg px-3 py-1.5 text-xs font-medium transition-colors',
                   activeTag === 'all'
-                    ? 'bg-[#14b8a6] text-white'
+                    ? 'bg-[#6366F1] text-white'
                     : cn(tokens.text.muted, 'hover:bg-gray-100 dark:hover:bg-[#253344]')
                 )}
               >
@@ -179,7 +179,7 @@ export default function ReportsClient({ vitalSigns, briefs, stateOfAdventism }: 
                     className={cn(
                       'text-left rounded-lg px-3 py-1.5 text-xs font-medium transition-colors capitalize',
                       activeTag === tag
-                        ? 'bg-[#14b8a6] text-white'
+                        ? 'bg-[#6366F1] text-white'
                         : isRegion
                           ? cn('text-emerald-500 hover:bg-emerald-500/10')
                           : cn(tokens.text.muted, 'hover:bg-gray-100 dark:hover:bg-[#253344]')
@@ -203,15 +203,15 @@ export default function ReportsClient({ vitalSigns, briefs, stateOfAdventism }: 
             <div className="flex items-center gap-3 text-xs text-gray-400 mb-3">
               <span>{formatDate(stateOfAdventism.date)}</span>
               <span className="w-px h-3 bg-gray-200 dark:bg-[#2a3a50]" />
-              <span className="text-[#14b8a6] font-semibold uppercase tracking-wide">{stateOfAdventism.readTime}</span>
+              <span className="text-[#6366F1] font-semibold uppercase tracking-wide">{stateOfAdventism.readTime}</span>
             </div>
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white leading-snug mb-2 group-hover:text-[#14b8a6] transition-colors">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white leading-snug mb-2 group-hover:text-[#6366F1] transition-colors">
               {stateOfAdventism.title}
             </h3>
             <p className="text-sm text-gray-500 dark:text-slate-400 leading-relaxed mb-4">
               {stateOfAdventism.subtitle}
             </p>
-            <span className="text-sm font-semibold text-[#14b8a6]">Learn more &rsaquo;</span>
+            <span className="text-sm font-semibold text-[#6366F1]">Learn more &rsaquo;</span>
           </div>
         </Link>
       </Section>
@@ -229,14 +229,14 @@ export default function ReportsClient({ vitalSigns, briefs, stateOfAdventism }: 
             className={cn(
               'w-full pl-10 pr-4 py-3 rounded-lg border text-sm',
               tokens.bg.card, tokens.border.default, tokens.text.body,
-              'focus:outline-none focus:ring-2 focus:ring-[#14b8a6]/40'
+              'focus:outline-none focus:ring-2 focus:ring-[#6366F1]/40'
             )}
           />
         </div>
         {vsSearch.length > 0 && (
           <div className={cn('rounded-lg border divide-y max-h-80 overflow-y-auto', tokens.bg.card, tokens.border.default)}>
             {filteredVS.slice(0, 20).map(v => (
-              <Link key={v.slug} href={`/entity/${v.entityCode}`} className={cn('flex items-center justify-between px-4 py-3 hover:bg-[#14b8a6]/5 transition-colors')}>
+              <Link key={v.slug} href={`/entity/${v.entityCode}`} className={cn('flex items-center justify-between px-4 py-3 hover:bg-[#6366F1]/5 transition-colors')}>
                 <div className="flex items-center gap-3 min-w-0">
                   <FileText className={cn('h-4 w-4 shrink-0', tokens.text.accent)} />
                   <div className="min-w-0">

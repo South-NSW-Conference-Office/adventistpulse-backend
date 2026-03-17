@@ -31,7 +31,7 @@ function getColor(d: CountryData | undefined, mode: ViewMode): string {
     if (d.presence === 'none' || d.ratio === 0) return '#d1d5db';
     if (d.presence === 'minimal' || d.presence === 'limited') return '#5eead4';
     if (d.ratio < 0.01) return '#2dd4bf';
-    return '#0d9488';
+    return '#4f46e5';
   } else {
     if (d.presence === 'none' || d.ratio === 0) return '#ef4444';
     if (d.presence === 'minimal') return '#fb923c';
@@ -135,7 +135,7 @@ export default function WorldMissionMap({ gcStats }: Props) {
         {/* Legend — inline, no container */}
         <div className="flex items-center gap-3 mb-3">
           {(viewMode === 'where-we-are'
-            ? [['#0d9488', 'Strong'], ['#2dd4bf', 'Medium'], ['#5eead4', 'Weak'], ['#d1d5db', 'None']]
+            ? [['#4f46e5', 'Strong'], ['#2dd4bf', 'Medium'], ['#5eead4', 'Weak'], ['#d1d5db', 'None']]
             : [['#ef4444', 'None'], ['#fb923c', 'Minimal'], ['#fbbf24', 'Limited'], ['#e5e7eb', 'Reached']]
           ).map(([color, label]) => (
             <div key={label} className="flex items-center gap-1.5">
@@ -146,7 +146,7 @@ export default function WorldMissionMap({ gcStats }: Props) {
         </div>
 
         <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-gray-900 leading-tight">
-          Mission <span className="text-teal-500">Map</span>
+          Mission <span className="text-indigo-500">Map</span>
         </h1>
         <p className="text-sm md:text-base mt-3 text-gray-500 leading-relaxed">
           Data-driven mission intelligence for the Adventist Church.

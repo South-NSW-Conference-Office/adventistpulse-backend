@@ -163,7 +163,7 @@ export default async function EntityPage({ params }: Props) {
               {localChurches.length > 0 && (
                 <>
                   {' · '}
-                  <a href="#local-churches" className="text-[#14b8a6] hover:underline">
+                  <a href="#local-churches" className="text-[#6366F1] hover:underline">
                     <Building2 className="w-4 h-4 inline-block mr-1" />{localChurches.length} churches
                   </a>
                 </>
@@ -411,7 +411,7 @@ export default async function EntityPage({ params }: Props) {
                 {[
                   { label: 'Adventurers', sublabel: 'Ages 4–9', icon: '🌟', color: 'bg-pink-500/10 border-pink-500/30 text-pink-500', value: null },
                   { label: 'Pathfinders', sublabel: 'Ages 10–15', icon: '⛺', color: 'bg-amber-500/10 border-amber-500/30 text-amber-600', value: null },
-                  { label: 'Youth Group', sublabel: 'Ages 16–30', icon: '🎓', color: 'bg-teal-500/10 border-teal-500/30 text-teal-500', value: null },
+                  { label: 'Youth Group', sublabel: 'Ages 16–30', icon: '🎓', color: 'bg-indigo-500/10 border-indigo-500/30 text-indigo-500', value: null },
                   { label: 'Total Members', sublabel: `${latestMembership.toLocaleString()} confirmed`, icon: '👥', color: 'bg-indigo-500/10 border-indigo-500/30 text-indigo-500', value: latestMembership },
                 ].map(card => (
                   <div key={card.label} className={cn('rounded-lg border p-4 text-center', card.color)}>

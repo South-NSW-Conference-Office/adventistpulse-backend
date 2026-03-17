@@ -35,9 +35,9 @@ function nameToSlug(name: string): string {
 }
 
 const CONF_COLORS: Record<string, string> = {
-  SNSW: '#14b8a6', NNSW: '#8b5cf6', NSD: '#0ea5e9',
+  SNSW: '#6366F1', NNSW: '#8b5cf6', NSD: '#0ea5e9',
   VIC: '#10b981', SA: '#f59e0b', QLD: '#ef4444',
-  WA: '#ec4899', TAS: '#14b8a6',
+  WA: '#ec4899', TAS: '#6366F1',
 }
 
 interface Props { className?: string }
@@ -84,7 +84,7 @@ export default function DenomGraph({ className }: Props) {
       // Conference nodes + church nodes
       for (const conf of dir.conferences) {
         const confId = conf.code || conf.conference
-        const confColor = CONF_COLORS[confId] || '#14b8a6'
+        const confColor = CONF_COLORS[confId] || '#6366F1'
         nodes.push({
           id: confId,
           name: conf.conference,
@@ -206,7 +206,7 @@ export default function DenomGraph({ className }: Props) {
         'absolute bottom-6 left-4 z-10 px-3 py-2 rounded-lg text-xs space-y-1',
         'bg-black/70 backdrop-blur-sm border border-white/10',
       )}>
-        {[['#f59e0b', 'Division'], ['#14b8a6', 'Conference'], ['#14b8a699', 'Church']].map(([color, label]) => (
+        {[['#f59e0b', 'Division'], ['#6366F1', 'Conference'], ['#6366F199', 'Church']].map(([color, label]) => (
           <div key={label} className="flex items-center gap-2">
             <div className="w-2.5 h-2.5 rounded-full" style={{ background: color }} />
             <span className={tokens.text.muted}>{label}</span>

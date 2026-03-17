@@ -21,7 +21,7 @@ const TYPE_ICONS: Record<string, LucideIcon> = {
 const CONFIDENCE_BADGE: Record<string, { label: string; color: string }> = {
   verified: { label: 'Verified', color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' },
   estimated: { label: 'Estimated', color: 'bg-amber-500/10 text-amber-400 border-amber-500/30' },
-  projected: { label: 'Projected', color: 'bg-[#14b8a6]/10 text-[#14b8a6] border-[#14b8a6]/30' },
+  projected: { label: 'Projected', color: 'bg-[#6366F1]/10 text-[#6366F1] border-[#6366F1]/30' },
 };
 
 export function InsightsPanel({ insights }: { insights: Insight[] }) {

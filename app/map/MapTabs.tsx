@@ -21,7 +21,7 @@ export default function MapTabs({ heatMap, network }: MapTabsProps) {
           className={cn(
             'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors',
             active === 'heat'
-              ? 'bg-teal-600 text-white'
+              ? 'bg-indigo-600 text-white'
               : cn('text-gray-400 hover:text-white', tokens.bg.card)
           )}
         >
@@ -33,7 +33,7 @@ export default function MapTabs({ heatMap, network }: MapTabsProps) {
           className={cn(
             'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors',
             active === 'network'
-              ? 'bg-teal-600 text-white'
+              ? 'bg-indigo-600 text-white'
               : cn('text-gray-400 hover:text-white', tokens.bg.card)
           )}
         >

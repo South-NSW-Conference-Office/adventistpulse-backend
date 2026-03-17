@@ -77,7 +77,7 @@ export function NavBar() {
               >
                 <Link
                   href={pillar.href}
-                  className="px-3 py-2 text-sm text-gray-600 dark:text-slate-400 hover:text-[#14b8a6] transition-colors flex items-center gap-1"
+                  className="px-3 py-2 text-sm text-gray-600 dark:text-slate-400 hover:text-[#6366F1] transition-colors flex items-center gap-1"
                 >
                   {pillar.label} <span className="text-[10px] opacity-60">▾</span>
                 </Link>
@@ -103,7 +103,7 @@ export function NavBar() {
               <Link
                 key={pillar.label}
                 href={pillar.href}
-                className="px-3 py-2 text-sm text-gray-600 dark:text-slate-400 hover:text-[#14b8a6] transition-colors"
+                className="px-3 py-2 text-sm text-gray-600 dark:text-slate-400 hover:text-[#6366F1] transition-colors"
               >
                 {pillar.label}
               </Link>
@@ -131,7 +131,7 @@ export function NavBar() {
               <Link href="/login" className="text-sm text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors">
                 Sign in
               </Link>
-              <Link href="/register" className="text-sm font-semibold text-[#14b8a6] hover:text-[#0d9488] transition-colors">
+              <Link href="/register" className="text-sm font-semibold text-[#6366F1] hover:text-[#4f46e5] transition-colors">
                 Sign up
               </Link>
             </>
@@ -206,7 +206,7 @@ export function NavBar() {
                   <Link href="/login" onClick={() => setIsOpen(false)} className={cn('flex-1 text-center py-2 rounded-full text-sm border', tokens.border.default, tokens.text.body)}>
                     Sign in
                   </Link>
-                  <Link href="/register" onClick={() => setIsOpen(false)} className="flex-1 text-center py-2 rounded-full text-sm font-semibold text-white bg-[#14b8a6]">
+                  <Link href="/register" onClick={() => setIsOpen(false)} className="flex-1 text-center py-2 rounded-full text-sm font-semibold text-white bg-[#6366F1]">
                     Register
                   </Link>
                 </div>

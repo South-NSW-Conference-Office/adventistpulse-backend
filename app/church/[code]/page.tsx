@@ -228,7 +228,7 @@ export default async function ChurchPage({ params }: Props) {
       <main className={cn('min-h-screen', tokens.bg.page, tokens.text.heading)}>
 
         {/* ── 1. Hero ────────────────────────────────────────────────── */}
-        <div className="relative overflow-hidden bg-gradient-to-br from-[#4338ca] via-[#14b8a6] to-[#1e1b4b]">
+        <div className="relative overflow-hidden bg-gradient-to-br from-[#4338ca] via-[#6366F1] to-[#1e1b4b]">
 
           {/* Dot-grid texture */}
           <div
@@ -339,7 +339,7 @@ export default async function ChurchPage({ params }: Props) {
                     href={mapsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-white text-[#0d9488] hover:bg-white/90 transition-colors shadow-md"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-white text-[#4f46e5] hover:bg-white/90 transition-colors shadow-md"
                   >
                     <MapPin className="w-4 h-4" />
                     Google Maps
@@ -558,7 +558,7 @@ export default async function ChurchPage({ params }: Props) {
                 {missing.length > 0 && (
                   <Card accent>
                     <div className="flex items-center gap-2 mb-3">
-                      <Zap className="w-4 h-4 text-[#14b8a6]" />
+                      <Zap className="w-4 h-4 text-[#6366F1]" />
                       <h3 className={cn('text-sm font-semibold', tokens.text.heading)}>
                         Quick Wins — unlock {quickWins.reduce((s, b) => s + b.max, 0)} pts
                       </h3>
@@ -586,7 +586,7 @@ export default async function ChurchPage({ params }: Props) {
                 'flex items-start gap-3 p-4 rounded-xl border',
                 tokens.bg.accentSoft, tokens.border.default
               )}>
-                <Building2 className="w-5 h-5 shrink-0 text-[#14b8a6] mt-0.5" />
+                <Building2 className="w-5 h-5 shrink-0 text-[#6366F1] mt-0.5" />
                 <div>
                   <p className={cn('text-sm font-semibold', tokens.text.heading)}>
                     Is this your church?
@@ -679,7 +679,7 @@ export default async function ChurchPage({ params }: Props) {
             {nearby.length > 0 && (
               <div>
                 <h3 className={cn('text-sm font-semibold mb-3 flex items-center gap-2', tokens.text.heading)}>
-                  <Navigation className="w-4 h-4 text-[#14b8a6]" />
+                  <Navigation className="w-4 h-4 text-[#6366F1]" />
                   Nearby Adventist Churches
                 </h3>
                 <div className="grid gap-3 sm:grid-cols-3">
@@ -695,7 +695,7 @@ export default async function ChurchPage({ params }: Props) {
                         className={cn(
                           'block p-4 rounded-xl border transition-colors',
                           tokens.bg.card, tokens.border.default, tokens.bg.cardHover,
-                          'hover:border-[#14b8a6]/50'
+                          'hover:border-[#6366F1]/50'
                         )}
                       >
                         <p className={cn('text-sm font-semibold', tokens.text.heading)}>
@@ -726,7 +726,7 @@ export default async function ChurchPage({ params }: Props) {
                   {[70, 45, 85, 30, 60].map((w, i) => (
                     <div key={i} className="flex items-center gap-3">
                       <div className={cn('h-3 rounded-full', tokens.bg.accentSoft)} style={{ width: '60px' }} />
-                      <div className="h-5 rounded-full bg-[#14b8a6]/30" style={{ width: `${w}%` }} />
+                      <div className="h-5 rounded-full bg-[#6366F1]/30" style={{ width: `${w}%` }} />
                       <div className={cn('h-3 rounded-full', tokens.bg.cardAlt)} style={{ width: '40px' }} />
                     </div>
                   ))}
@@ -761,7 +761,7 @@ export default async function ChurchPage({ params }: Props) {
                     { icon: TrendingUp,    label: 'Strategy Reports', desc: 'Actionable growth strategies' },
                   ].map(({ icon: Icon, label, desc }) => (
                     <div key={label} className={cn('flex items-start gap-3 p-4 rounded-lg', tokens.bg.cardAlt)}>
-                      <Icon className="w-5 h-5 shrink-0 text-[#14b8a6] mt-0.5" />
+                      <Icon className="w-5 h-5 shrink-0 text-[#6366F1] mt-0.5" />
                       <div>
                         <p className={cn('text-sm font-semibold', tokens.text.heading)}>{label}</p>
                         <p className={cn('text-xs mt-0.5', tokens.text.muted)}>{desc}</p>
@@ -785,7 +785,7 @@ export default async function ChurchPage({ params }: Props) {
                 <ul className={cn('text-xs mb-5 space-y-1', tokens.text.body)}>
                   {['AI Insights', 'Financial Health', 'Ask AI', 'Benchmarking', 'Strategy Reports'].map(f => (
                     <li key={f} className="flex items-center justify-center gap-1.5">
-                      <CheckCircle2 className="w-3 h-3 text-[#14b8a6]" />
+                      <CheckCircle2 className="w-3 h-3 text-[#6366F1]" />
                       {f}
                     </li>
                   ))}

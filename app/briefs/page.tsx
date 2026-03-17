@@ -25,12 +25,12 @@ interface PulseBrief {
 const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string }> = {
   'Stewardship & Finance': { bg: 'bg-emerald-500/10', text: 'text-emerald-400', border: 'border-emerald-500/20' },
   'Church Growth & Decline': { bg: 'bg-blue-500/10', text: 'text-blue-400', border: 'border-blue-500/20' },
-  'Youth & Generational': { bg: 'bg-teal-500/10', text: 'text-teal-400', border: 'border-teal-500/20' },
+  'Youth & Generational': { bg: 'bg-indigo-500/10', text: 'text-indigo-400', border: 'border-indigo-500/20' },
   'Leadership & Governance': { bg: 'bg-amber-500/10', text: 'text-amber-400', border: 'border-amber-500/20' },
   'Health & Lifestyle': { bg: 'bg-rose-500/10', text: 'text-rose-400', border: 'border-rose-500/20' },
   'Education': { bg: 'bg-cyan-500/10', text: 'text-cyan-400', border: 'border-cyan-500/20' },
   'Media & Trust': { bg: 'bg-orange-500/10', text: 'text-orange-400', border: 'border-orange-500/20' },
-  'Cross-Denominational': { bg: 'bg-teal-500/10', text: 'text-teal-400', border: 'border-teal-500/20' },
+  'Cross-Denominational': { bg: 'bg-indigo-500/10', text: 'text-indigo-400', border: 'border-indigo-500/20' },
 };
 
 function getCategoryStyle(category: string) {
@@ -97,7 +97,7 @@ export default function BriefsPage() {
               'text-xs font-medium px-3 py-1.5 rounded-full border transition-colors',
               activeCategory === 'all'
                 ? cn(tokens.bg.accent, tokens.text.onAccent, 'border-transparent')
-                : cn(tokens.bg.card, tokens.text.muted, tokens.border.default, 'hover:border-[#14b8a6]/50')
+                : cn(tokens.bg.card, tokens.text.muted, tokens.border.default, 'hover:border-[#6366F1]/50')
             )}
           >
             All ({briefs.length})
@@ -152,7 +152,7 @@ export default function BriefsPage() {
                     <p className={cn('text-sm mb-3', tokens.text.body)}>{brief.subtitle}</p>
 
                     {!isOpen && (
-                      <blockquote className={cn('text-sm italic border-l-2 pl-3 mb-3 border-[#14b8a6]/30', tokens.text.accent, 'opacity-70')}>
+                      <blockquote className={cn('text-sm italic border-l-2 pl-3 mb-3 border-[#6366F1]/30', tokens.text.accent, 'opacity-70')}>
                         {brief.pullQuote}
                       </blockquote>
                     )}
@@ -163,7 +163,7 @@ export default function BriefsPage() {
                           {brief.body}
                         </div>
                         {brief.discussionPrompt && (
-                          <div className={cn('rounded-lg p-3 border', tokens.bg.accentSoft, 'border-[#14b8a6]/20')}>
+                          <div className={cn('rounded-lg p-3 border', tokens.bg.accentSoft, 'border-[#6366F1]/20')}>
                             <p className={cn('text-xs font-medium mb-1', tokens.text.accent)}>Discussion</p>
                             <p className={cn('text-sm', tokens.text.body)}>{brief.discussionPrompt}</p>
                           </div>
@@ -213,7 +213,7 @@ export default function BriefsPage() {
                     <p className={cn('text-sm mb-2', tokens.text.body)}>{brief.subtitle}</p>
 
                     {!isOpen && (
-                      <blockquote className={cn('text-sm italic border-l-2 pl-3 mb-2 border-[#14b8a6]/20', tokens.text.accent, 'opacity-70')}>
+                      <blockquote className={cn('text-sm italic border-l-2 pl-3 mb-2 border-[#6366F1]/20', tokens.text.accent, 'opacity-70')}>
                         {brief.pullQuote}
                       </blockquote>
                     )}
@@ -224,7 +224,7 @@ export default function BriefsPage() {
                           {brief.body}
                         </div>
                         {brief.discussionPrompt && (
-                          <div className={cn('rounded-lg p-3 border', tokens.bg.accentSoft, 'border-[#14b8a6]/20')}>
+                          <div className={cn('rounded-lg p-3 border', tokens.bg.accentSoft, 'border-[#6366F1]/20')}>
                             <p className={cn('text-xs font-medium mb-1', tokens.text.accent)}>Discussion</p>
                             <p className={cn('text-sm', tokens.text.body)}>{brief.discussionPrompt}</p>
                           </div>

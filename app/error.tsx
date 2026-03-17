@@ -23,7 +23,7 @@ export default function Error({
     <main className={cn('min-h-screen flex items-center justify-center px-4', tokens.bg.page)}>
       <div className="text-center max-w-md space-y-6">
         {/* Pulse flatline */}
-        <svg viewBox="0 0 200 60" className="w-40 h-12 mx-auto text-[#14b8a6] opacity-60" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <svg viewBox="0 0 200 60" className="w-40 h-12 mx-auto text-[#6366F1] opacity-60" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <polyline points="0,30 35,30 45,10 55,50 65,20 72,35 80,30 200,30" />
         </svg>
 
@@ -53,7 +53,7 @@ export default function Error({
             href="/"
             className={cn(
               'inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium border transition-colors',
-              tokens.bg.card, tokens.border.default, tokens.text.body, 'hover:border-[#14b8a6]/50'
+              tokens.bg.card, tokens.border.default, tokens.text.body, 'hover:border-[#6366F1]/50'
             )}
           >
             <Home className="w-4 h-4" />
@@ -63,7 +63,7 @@ export default function Error({
             href="/browse"
             className={cn(
               'inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium border transition-colors',
-              tokens.bg.card, tokens.border.default, tokens.text.body, 'hover:border-[#14b8a6]/50'
+              tokens.bg.card, tokens.border.default, tokens.text.body, 'hover:border-[#6366F1]/50'
             )}
           >
             <Search className="w-4 h-4" />

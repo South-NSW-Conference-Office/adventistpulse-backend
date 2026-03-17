@@ -82,7 +82,7 @@ export function GlobalSearch({ entities, placeholder, autofocus }: GlobalSearchP
           onKeyDown={handleKeyDown}
           autoFocus={autofocus}
           placeholder={placeholder || "Search any entity..."}
-          className="w-full bg-white dark:bg-[#1f2b3d] border border-gray-200 dark:border-slate-700 rounded-xl pl-10 pr-4 py-3 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-[#14b8a6] focus:ring-1 focus:ring-[#14b8a6]/30 transition-all"
+          className="w-full bg-white dark:bg-[#1f2b3d] border border-gray-200 dark:border-slate-700 rounded-xl pl-10 pr-4 py-3 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-[#6366F1] focus:ring-1 focus:ring-[#6366F1]/30 transition-all"
         />
         {query && (
           <button

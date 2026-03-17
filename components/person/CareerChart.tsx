@@ -42,7 +42,7 @@ export default function CareerChart({ data, startYear }: Props) {
         <ReferenceLine
           yAxisId="left"
           x={startYear}
-          stroke="#14b8a6"
+          stroke="#6366F1"
           strokeDasharray="4 3"
           label={{ value: 'Tenure begins', fontSize: 10, fill: '#818cf8', position: 'top' }}
         />
@@ -52,9 +52,9 @@ export default function CareerChart({ data, startYear }: Props) {
           type="monotone"
           dataKey="membership"
           name="Membership"
-          stroke="#14b8a6"
+          stroke="#6366F1"
           strokeWidth={2.5}
-          dot={{ r: 3, fill: '#14b8a6' }}
+          dot={{ r: 3, fill: '#6366F1' }}
           activeDot={{ r: 5 }}
         />
       </ComposedChart>

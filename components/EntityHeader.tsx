@@ -37,7 +37,7 @@ function LinkedText({ segments }: { segments: TextSegment[] }) {
           <Link
             key={i}
             href={seg.link}
-            className="text-[#14b8a6] hover:text-[#0d9488] dark:hover:text-[#8b5cf6] hover:underline"
+            className="text-[#6366F1] hover:text-[#4f46e5] dark:hover:text-[#8b5cf6] hover:underline"
           >
             {seg.text}
           </Link>
@@ -80,7 +80,7 @@ export function EntityHeader({ name, code, level, parentCode, parentName, yearbo
             <span key={child.code}>
               <Link
                 href={`/entity/${child.code}`}
-                className="text-[#14b8a6] hover:text-[#0d9488] dark:hover:text-[#8b5cf6] hover:underline"
+                className="text-[#6366F1] hover:text-[#4f46e5] dark:hover:text-[#8b5cf6] hover:underline"
               >
                 {child.name}
               </Link>

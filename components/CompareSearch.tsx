@@ -83,7 +83,7 @@ export function CompareSearch({ entities }: CompareSearchProps) {
           onChange={(e) => { setQuery(e.target.value); setIsOpen(true); }}
           onFocus={() => setIsOpen(true)}
           placeholder={selected.length === 0 ? "Search for entities to compare..." : "Add another entity..."}
-          className="w-full bg-white dark:bg-[#1f2b3d] border border-gray-200 dark:border-slate-700 rounded-lg px-4 py-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:border-[#14b8a6] transition-colors"
+          className="w-full bg-white dark:bg-[#1f2b3d] border border-gray-200 dark:border-slate-700 rounded-lg px-4 py-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:border-[#6366F1] transition-colors"
         />
 
         {isOpen && results.length > 0 && (
@@ -109,7 +109,7 @@ export function CompareSearch({ entities }: CompareSearchProps) {
       {selected.length >= 2 && (
         <button
           onClick={compare}
-          className="mt-4 bg-[#14b8a6] hover:bg-blue-600 text-white font-medium px-6 py-2.5 rounded-lg transition-colors"
+          className="mt-4 bg-[#6366F1] hover:bg-blue-600 text-white font-medium px-6 py-2.5 rounded-lg transition-colors"
         >
           Compare {selected.length} Entities →
         </button>
