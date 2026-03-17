@@ -22,7 +22,7 @@ let treeCache: any = null;
 function loadTree(): any {
   if (treeCache) return treeCache;
   try {
-    const filePath = path.join(process.cwd(), 'public', 'data', 'yearbook-entity-tree.json');
+    const filePath = path.join(process.cwd(), 'data', 'yearbook-entity-tree.json');
     const raw = fs.readFileSync(filePath, 'utf-8');
     treeCache = JSON.parse(raw);
     return treeCache;

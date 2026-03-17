@@ -234,30 +234,41 @@ export default function MapExplorer() {
       })
       .catch(console.error);
 
-    // Load Australian churches
-    fetch('/data/au-churches-geocoded.json')
+    // Load Australian churches from API
+    const apiBase = process.env.NEXT_PUBLIC_API_URL ?? '';
+    fetch(`${apiBase}/api/v1/stats/map?limit=2000`)
       .then(r => r.json())
       .then(data => {
-        setChurches(data.churches.filter((c: Church) => c.lat && c.lng));
-        setStats({ total: data.total, geocoded: data.geocoded });
+        const raw: any[] = data?.data ?? [];
+        const churches: Church[] = raw.filter((c: any) => c.lat && c.lng).map((c: any) => ({
+          name: c.name ?? '',
+          lat: c.lat ?? c.location?.coordinates?.[1],
+          lng: c.lng ?? c.location?.coordinates?.[0],
+          conference: c.parentCode ?? '',
+          conferenceName: c.conferenceName ?? '',
+          address: c.address ?? '',
+          suburb: c.suburb ?? '',
+          state: c.state ?? '',
+          postcode: c.postcode ?? '',
+        }));
+        setChurches(churches);
+        setStats({ total: churches.length, geocoded: churches.length });
       })
       .catch(console.error);
 
-    // Load AU territories (for SPD drill-down)
-    fetch('/data/au-territories.json')
-      .then(r => r.json())
-      .then(data => setTerritories(data.features))
-      .catch(console.error);
+    // Territories: static GeoJSON (non-sensitive reference data, served separately)
+    // setTerritories([]) — disabled until GeoJSON endpoint available
 
-    // Load all entities from static JSON
-    fetch('/data/entities.json')
+    // Load all entities from API
+    fetch(`${apiBase}/api/v1/entities?limit=5000`)
       .then(r => r.json())
-      .then((data: Record<string, any>) => {
-        const mapped = Object.values(data).map((e: any) => ({
+      .then((data: any) => {
+        const list: any[] = data?.data?.data ?? data?.data ?? [];
+        const mapped = list.map((e: any) => ({
           code: e.code,
           name: e.name,
           level: e.level,
-          parentCode: e.parent,
+          parentCode: e.parentCode,
         }));
         setEntities(mapped);
       })

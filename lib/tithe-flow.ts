@@ -19,7 +19,7 @@ let cache: TitheFlow[] | null = null;
 function loadTitheFlow(): TitheFlow[] {
   if (cache) return cache!;
   try {
-    const filePath = path.join(process.cwd(), 'public', 'data', 'tithe-flow.json');
+    const filePath = path.join(process.cwd(), 'data', 'tithe-flow.json');
     const raw = fs.readFileSync(filePath, 'utf-8');
     const data = JSON.parse(raw);
     cache = data.divisions || [];

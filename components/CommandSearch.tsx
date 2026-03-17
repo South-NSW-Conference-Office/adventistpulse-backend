@@ -47,20 +47,20 @@ export function CommandSearch({ isOpen, onClose }: CommandSearchProps) {
   const modalRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
-  // Fetch entities on mount from static JSON
+  // Fetch entities from API when search opens
   useEffect(() => {
     if (isOpen && entities.length === 0) {
       setIsLoading(true);
-      fetch('/data/entities.json')
+      const apiBase = process.env.NEXT_PUBLIC_API_URL ?? '';
+      fetch(`${apiBase}/api/v1/entities?limit=5000`)
         .then(res => res.json())
-        .then((data: Record<string, { code: string; name: string; level: string; years?: { Year: number; 'Ending Membership'?: number | string }[] }>) => {
-          const mapped = Object.values(data).map(e => ({
+        .then((data: any) => {
+          const list: any[] = data?.data?.data ?? data?.data ?? [];
+          const mapped = list.map((e: any) => ({
             code: e.code,
             name: e.name,
             level: e.level,
-            membership: e.years?.length
-              ? (() => { const last = e.years[e.years.length - 1]; const v = last?.['Ending Membership']; return typeof v === 'string' ? parseFloat(v.replace(/,/g, '')) : (v ?? undefined); })()
-              : undefined,
+            membership: e.latestStats?.membership?.ending ?? e.latestYear?.membership?.ending ?? undefined,
           }));
           setEntities(mapped);
           setIsLoading(false);

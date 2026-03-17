@@ -32,7 +32,7 @@ let _cache: LRP[] | null = null;
 
 export function getAllLRPs(): LRP[] {
   if (_cache) return _cache;
-  const filePath = path.join(process.cwd(), 'public', 'data', 'lrps.json');
+  const filePath = path.join(process.cwd(), 'data', 'lrps.json');
   const raw = fs.readFileSync(filePath, 'utf-8');
   _cache = JSON.parse(raw) as LRP[];
   return _cache;
