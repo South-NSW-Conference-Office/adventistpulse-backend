@@ -41,11 +41,19 @@ export async function getEntityStats(code: string, from?: number, to?: number): 
 }
 
 export async function getEntityChildren(code: string): Promise<EntityWithStats[]> {
-  return apiFetchList<EntityWithStats>(`/entities/${code}/children`);
+  try {
+    return await apiFetchList<EntityWithStats>(`/entities/${code}/children`);
+  } catch {
+    return [];
+  }
 }
 
 export async function getEntitySiblings(code: string): Promise<EntityWithStats[]> {
-  return apiFetchList<EntityWithStats>(`/entities/${code}/siblings`);
+  try {
+    return await apiFetchList<EntityWithStats>(`/entities/${code}/siblings`);
+  } catch {
+    return [];
+  }
 }
 
 export async function searchEntities(query: string, limit = 10): Promise<EntityWithStats[]> {
@@ -53,7 +61,11 @@ export async function searchEntities(query: string, limit = 10): Promise<EntityW
 }
 
 export async function getBreadcrumbs(code: string): Promise<OrgUnit[]> {
-  return apiFetch<OrgUnit[]>(`/entities/${code}/breadcrumbs`);
+  try {
+    return await apiFetch<OrgUnit[]>(`/entities/${code}/breadcrumbs`);
+  } catch {
+    return [];
+  }
 }
 
 export async function getQuickStats(code: string): Promise<QuickStats | null> {
