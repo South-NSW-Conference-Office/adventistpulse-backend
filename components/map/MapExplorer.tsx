@@ -935,7 +935,7 @@ export default function MapExplorer() {
         {/* Title and Search */}
         <div className="flex flex-col md:flex-row items-start md:items-center gap-3">
           <div className="flex-shrink-0">
-            <h1 className="text-lg font-bold">🌍 Adventist Pulse Global Map</h1>
+            <h1 className="text-lg font-bold">Adventist Pulse Global Map</h1>
             <p className="text-[10px] text-gray-400 dark:text-slate-500">
               {viewState.level === 'world' && 'Explore 13 world divisions'}
               {viewState.level === 'division' && `${viewState.selectedDivision} - Unions and Conferences`}

@@ -107,7 +107,7 @@ export default function WorldMissionMap({ gcStats }: Props) {
                 : 'text-gray-500 dark:text-slate-400 hover:text-gray-800 dark:hover:text-white'
             }`}
           >
-            {mode === 'where-we-are' ? '🌿 Where We Are' : '🔥 Where We Are Not'}
+            {mode === 'where-we-are' ? 'Where We Are' : 'Where We Are Not'}
           </button>
         ))}
       </div>

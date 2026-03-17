@@ -166,7 +166,7 @@ export function ResearchExplorer({ lrps, tags }: { lrps: LRP[]; tags: Tag[] }) {
         {/* Highlights — viral curated sections */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
           <HighlightCard title="Highest Rated" lrps={topRated} metric={l => `${l.score}/100`} />
-          <HighlightCard title="📚 Deepest Research" lrps={deepestResearch} metric={l => `${(l.wordCount / 1000).toFixed(1)}K words`} />
+          <HighlightCard title="📚 Deepest Research" lrps={deepestResearch} metric={l => `${(l.wordCount / 1000).toFixed(1)} words`} />
           <HighlightCard title="🔬 Most Sources" lrps={mostSources} metric={l => `${l.sourceCount} sources`} />
           <HighlightCard title="🆕 Recently Updated" lrps={recentlyUpdated} metric={l => l.lastUpdated} />
         </div>
@@ -312,7 +312,7 @@ export function ResearchExplorer({ lrps, tags }: { lrps: LRP[]; tags: Tag[] }) {
                     <div className="flex items-center gap-2 mt-2 text-[10px] text-slate-600">
                       <span>{lrp.sourceCount} sources</span>
                       <span>·</span>
-                      <span>{(lrp.wordCount / 1000).toFixed(1)}K words</span>
+                      <span>{(lrp.wordCount / 1000).toFixed(1)} words</span>
                     </div>
                   </Link>
                 ))}
@@ -337,7 +337,7 @@ export function ResearchExplorer({ lrps, tags }: { lrps: LRP[]; tags: Tag[] }) {
                         {lrp.coreQuestion && <p className="text-xs text-slate-400 mt-1 line-clamp-2 italic">&ldquo;{lrp.coreQuestion}&rdquo;</p>}
                         <div className="flex items-center gap-3 mt-2 text-[10px] text-slate-500">
                           <span>📄 {lrp.sourceCount} sources</span>
-                          <span>📝 {(lrp.wordCount / 1000).toFixed(1)}K words</span>
+                          <span>{ (lrp.wordCount / 1000).toFixed(1)} words</span>
                           <span className="flex items-center gap-1"><Globe2 className="w-3 h-3" />{lrp.regions.length} regions</span>
                         </div>
                         {lrp.tags.length > 0 && (
