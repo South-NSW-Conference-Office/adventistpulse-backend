@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import Link from 'next/link';
 import { getEntitiesByLevel, getAllEntities } from '@/lib/data';
 import { LevelBadge } from '@/components/LevelBadge';

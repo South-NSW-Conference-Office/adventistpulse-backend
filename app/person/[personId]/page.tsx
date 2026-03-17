@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { cn, tokens } from '@/lib/theme'
@@ -5,9 +6,9 @@ import {
   Award, MapPin, Calendar, TrendingUp, Users, Church,
   ChevronRight, BookOpen, Star, Clock, TrendingDown, Minus, AlertCircle
 } from 'lucide-react'
-import dynamic from 'next/dynamic'
+import nextDynamic from 'next/dynamic'
 
-const CareerChart = dynamic(() => import('@/components/person/CareerChart'))
+const CareerChart = nextDynamic(() => import('@/components/person/CareerChart'))
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface CareerRole {

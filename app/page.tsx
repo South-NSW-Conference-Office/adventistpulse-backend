@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import Link from 'next/link';
 import { getAllEntities, getQuickStats } from '@/lib/data';
 import { getAllLRPs } from '@/lib/lrps';

@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Script from 'next/script';
@@ -523,10 +524,3 @@ export async function generateMetadata({ params }: Props) {
   };
 }
 
-// Generate static params for all 116 entity pages at build time
-export async function generateStaticParams() {
-  const entities = await getAllEntities();
-  return entities.map(entity => ({
-    code: entity.code,
-  }));
-}

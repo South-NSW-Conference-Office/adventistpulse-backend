@@ -1,12 +1,12 @@
 'use client'
 
-import dynamic from 'next/dynamic'
+import nextDynamic from 'next/dynamic'
 import { useState } from 'react'
 import { cn, tokens } from '@/lib/theme'
 import { Map, Share2 } from 'lucide-react'
 
-const ChurchHeatMap = dynamic(() => import('@/components/maps/ChurchHeatMap'), { ssr: false })
-const DenomGraph = dynamic(() => import('@/components/maps/DenomGraph'), { ssr: false })
+const ChurchHeatMap = nextDynamic(() => import('@/components/maps/ChurchHeatMap'), { ssr: false })
+const DenomGraph = nextDynamic(() => import('@/components/maps/DenomGraph'), { ssr: false })
 
 type Tab = 'heatmap' | 'network'
 

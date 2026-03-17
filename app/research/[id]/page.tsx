@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getAllLRPs, getLRP, getGradeColor, getGradeBg, getEvidenceDepth, getConfidenceBadge, QUALITY_CATEGORIES } from '@/lib/lrps';
@@ -5,9 +6,6 @@ import { tokens, cn } from '@/lib/theme';
 import { formatDate } from '@/lib/format-date';
 import { Globe2 } from 'lucide-react'
 
-export async function generateStaticParams() {
-  return getAllLRPs().map(lrp => ({ id: lrp.id }));
-}
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import Link from 'next/link';
 import { tokens, cn } from '@/lib/theme';
 import { Logo } from '@/components/Logo';
