@@ -24,19 +24,16 @@ export default function BetaPage() {
     setStatus('loading');
     setErrorMsg('');
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL ?? ''}/api/v1/auth/beta-signup`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: form.name,
-            email: form.email,
-            role: form.role,
-            churchCode: form.church || undefined,
-          }),
-        }
-      );
+      const res = await fetch('/api/beta-signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          role: form.role,
+          church: form.church || undefined,
+        }),
+      });
       const data = await res.json();
       if (!res.ok) {
         throw new Error(data?.error?.message ?? data?.message ?? 'Something went wrong');

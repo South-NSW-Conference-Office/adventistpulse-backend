@@ -24,8 +24,10 @@ export function Footer() {
             <div className="space-y-2">
               <Link href="/rankings" className="block text-sm text-gray-500 dark:text-slate-500 hover:text-gray-900 dark:hover:text-gray-900 dark:hover:text-white transition-colors">Rankings</Link>
               <Link href="/compare" className="block text-sm text-gray-500 dark:text-slate-500 hover:text-gray-900 dark:hover:text-gray-900 dark:hover:text-white transition-colors">Compare</Link>
-              <Link href="/at-risk" className="block text-sm text-gray-500 dark:text-slate-500 hover:text-gray-900 dark:hover:text-gray-900 dark:hover:text-white transition-colors">Entities at Risk</Link>
-              <Link href="/entity/G10001" className="block text-sm text-gray-500 dark:text-slate-500 hover:text-gray-900 dark:hover:text-gray-900 dark:hover:text-white transition-colors">World Church</Link>
+              <Link href="/browse" className="block text-sm text-gray-500 dark:text-slate-500 hover:text-gray-900 dark:hover:text-gray-900 dark:hover:text-white transition-colors">Browse Entities</Link>
+              <Link href="/entity/GC" className="block text-sm text-gray-500 dark:text-slate-500 hover:text-gray-900 dark:hover:text-gray-900 dark:hover:text-white transition-colors">General Conference</Link>
+              <Link href="/tithe-flow" className="block text-sm text-gray-500 dark:text-slate-500 hover:text-gray-900 dark:hover:text-gray-900 dark:hover:text-white transition-colors">Tithe Flow</Link>
+              <Link href="/research" className="block text-sm text-gray-500 dark:text-slate-500 hover:text-gray-900 dark:hover:text-gray-900 dark:hover:text-white transition-colors">Research Library</Link>
             </div>
           </div>
 
