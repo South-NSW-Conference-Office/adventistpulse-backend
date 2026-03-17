@@ -134,8 +134,8 @@ export default async function Home() {
           </h1>
 
           <p className="mt-6 text-lg md:text-xl text-slate-400 max-w-xl leading-relaxed">
-            Real data. Living research. Honest analysis.<br />
-            Built for those who believe growing comes from knowing.
+            Real data about real people for a global mission.<br />
+            Because growing comes from knowing.
           </p>
 
           <div className="flex flex-wrap gap-4 mt-10 justify-center">
