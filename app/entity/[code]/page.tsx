@@ -208,6 +208,7 @@ export default async function EntityPage({ params }: Props) {
           { id: 'tithe-flow', label: 'Tithe Flow', available: !!titheFlow },
           { id: 'metrics', label: 'Key Metrics', available: stats.length > 0 },
           { id: 'peers', label: 'Peers', available: siblings.length > 0 },
+          { id: 'youth-pipeline', label: 'Youth Pipeline', available: entity.level === 'conference' },
           { id: 'local-churches', label: '⛪ Churches', available: entity.level === 'conference' },
         ]} />
 
@@ -394,6 +395,59 @@ export default async function EntityPage({ params }: Props) {
               })}
             </div>
           </section>
+        )}
+
+        {/* Youth Pipeline — conference level only */}
+        {entity.level === 'conference' && (
+          <Section id="youth-pipeline" title="Youth Pipeline">
+            <div className={cn('rounded-xl border p-5 space-y-4', tokens.bg.card, tokens.border.default)}>
+              <p className={cn('text-sm', tokens.text.muted)}>
+                Youth engagement is the leading indicator of long-term church health.
+                Adventurer and Pathfinder enrollment today predicts baptisms 3–5 years from now.
+              </p>
+
+              {/* Pipeline cards */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {[
+                  { label: 'Adventurers', sublabel: 'Ages 4–9', icon: '🌟', color: 'bg-pink-500/10 border-pink-500/30 text-pink-500', value: null },
+                  { label: 'Pathfinders', sublabel: 'Ages 10–15', icon: '⛺', color: 'bg-amber-500/10 border-amber-500/30 text-amber-600', value: null },
+                  { label: 'Youth Group', sublabel: 'Ages 16–30', icon: '🎓', color: 'bg-teal-500/10 border-teal-500/30 text-teal-500', value: null },
+                  { label: 'Total Members', sublabel: `${latestMembership.toLocaleString()} confirmed`, icon: '👥', color: 'bg-indigo-500/10 border-indigo-500/30 text-indigo-500', value: latestMembership },
+                ].map(card => (
+                  <div key={card.label} className={cn('rounded-lg border p-4 text-center', card.color)}>
+                    <div className="text-2xl mb-1">{card.icon}</div>
+                    <div className="text-xl font-bold">{card.value !== null ? card.value.toLocaleString() : '—'}</div>
+                    <div className="text-xs font-semibold mt-0.5">{card.label}</div>
+                    <div className="text-xs opacity-70">{card.sublabel}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Not contributing CTA */}
+              <div className={cn('rounded-lg border border-yellow-500/30 bg-yellow-500/5 p-4 flex items-start gap-3')}>
+                <span className="text-yellow-500 text-lg mt-0.5">⚠</span>
+                <div className="flex-1">
+                  <p className={cn('text-sm font-medium', tokens.text.heading)}>Youth data not yet contributed</p>
+                  <p className={cn('text-xs mt-1', tokens.text.muted)}>
+                    This conference hasn&apos;t submitted Adventurer, Pathfinder, or Youth Group enrollment figures.
+                    Conferences with youth data get a higher Pulse Score and more complete health analysis.
+                  </p>
+                  <a
+                    href={`mailto:pulse@adventist.org.au?subject=Submit Youth Pipeline Data — ${entity.name}&body=Conference: ${entity.name} (${code})%0AYear: %0AAdventurers enrolled: %0APathfinders enrolled: %0AYouth Group (16-30) active: %0ATotal members: `}
+                    className="inline-flex items-center gap-1 mt-2 text-xs font-semibold text-yellow-600 hover:text-yellow-700"
+                  >
+                    Submit your data →
+                  </a>
+                </div>
+              </div>
+
+              {/* Health benchmark */}
+              <p className={cn('text-xs', tokens.text.muted)}>
+                📊 Healthy benchmark: Youth-to-membership ratio of 15–25%.
+                Below 10% is an early warning sign. Above 25% signals strong intergenerational health.
+              </p>
+            </div>
+          </Section>
         )}
 
         {/* Local Churches (conference level only) */}
