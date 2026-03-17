@@ -17,6 +17,7 @@ import {
   type GeocodedChurch,
 } from '@/lib/data';
 import { tokens, cn } from '@/lib/theme';
+import { getChurchBlurb } from '@/lib/insights';
 import { Card, Section } from '@/components/ui';
 import {
   MapPin,
@@ -177,6 +178,7 @@ export default async function ChurchPage({ params }: Props) {
 
   const displayName = church.name
     .replace(/\s+(Seventh-day Adventist Church|Adventist Church|Church|SDA)$/i, '');
+  const churchBlurb = getChurchBlurb(church.code);
 
   const mapsUrl = church.address
     ? `https://maps.google.com/?q=${encodeURIComponent(`${church.address} ${church.suburb} ${church.state} ${church.postcode}`)}`
@@ -281,6 +283,13 @@ export default async function ChurchPage({ params }: Props) {
                   <Building2 className="w-3 h-3" />
                   Seventh-day Adventist Church
                 </span>
+
+                {/* Church blurb — AI generated */}
+                {churchBlurb && (
+                  <p className="text-white/70 text-sm leading-relaxed max-w-md mb-2">
+                    {churchBlurb}
+                  </p>
+                )}
 
                 {/* Pastor */}
                 {church.pastor && (
