@@ -50,7 +50,7 @@ interface Props {
 
 export default async function EntityPage({ params }: Props) {
   const { code } = await params;
-  const entity = await getEntity(code);
+  const entity = await getEntity(code).catch(() => null);
   if (!entity) notFound();
 
   const [stats, quick, children, breadcrumbs, siblings, localChurches, projections] = await Promise.all([
@@ -154,7 +154,7 @@ export default async function EntityPage({ params }: Props) {
               parentName={entity.parentCode ? (breadcrumbs[breadcrumbs.length - 2]?.name || entity.parentCode) : undefined}
               yearbook={yearbook}
               quickStats={{ membership: quick?.membership, churches: quick?.churches, year: quick?.year }}
-              allEntities={(await getAllEntities()).map(e => ({ code: e.code, name: e.name, level: e.level }))}
+              allEntities={(await getAllEntities().catch(() => [])).map(e => ({ code: e.code, name: e.name, level: e.level }))}
               children={children.map(c => ({ code: c.code, name: c.name }))}
             />
           </div>
@@ -501,9 +501,9 @@ export default async function EntityPage({ params }: Props) {
 // Generate metadata for SEO
 export async function generateMetadata({ params }: Props) {
   const { code } = await params;
-  const entity = await getEntity(code);
+  const entity = await getEntity(code).catch(() => null);
   if (!entity) return { title: 'Not Found' };
-  const quick = await getQuickStats(code);
+  const quick = await getQuickStats(code).catch(() => null);
   const memberStr = quick?.membership
     ? ` · ${quick.membership.toLocaleString()} members`
     : '';

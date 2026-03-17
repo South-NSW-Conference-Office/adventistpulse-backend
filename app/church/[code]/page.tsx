@@ -164,7 +164,7 @@ function getMinistryStatuses(church: GeocodedChurch): MinistryStatus[] {
 
 export default async function ChurchPage({ params }: Props) {
   const { code } = await params;
-  const church = await getChurchBySlug(code);
+  const church = await getChurchBySlug(code).catch(() => null);
   if (!church) notFound();
 
   const score = computeScore(church);
@@ -173,7 +173,7 @@ export default async function ChurchPage({ params }: Props) {
   const quickWins = missing.slice(0, 3);
 
   const ministries = getMinistryStatuses(church);
-  const nearby = await getNearbyChurches(code);
+  const nearby = await getNearbyChurches(code).catch(() => []);
 
   const displayName = church.name
     .replace(/\s+(Seventh-day Adventist Church|Adventist Church|Church|SDA)$/i, '');
@@ -815,7 +815,7 @@ export default async function ChurchPage({ params }: Props) {
 
 export async function generateMetadata({ params }: Props) {
   const { code } = await params;
-  const church = await getChurchBySlug(code);
+  const church = await getChurchBySlug(code).catch(() => null);
   if (!church) return { title: 'Church Not Found' };
 
   const displayName = church.name

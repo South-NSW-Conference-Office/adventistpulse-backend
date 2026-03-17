@@ -18,9 +18,9 @@ function fmt(n: number | null | undefined): string {
 
 export default async function Home() {
   const [allEntities, gcStats, lrps] = await Promise.all([
-    getAllEntities(),
-    getQuickStats('G10001'),
-    getAllLRPs(),
+    getAllEntities().catch(() => []),
+    getQuickStats('G10001').catch(() => null),
+    getAllLRPs().catch(() => []),
   ]);
 
   const heroStats = [

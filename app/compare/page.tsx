@@ -30,7 +30,7 @@ const PRESETS: { id: string; label: string; codes: string[]; description: string
 
 export default async function ComparePage({ searchParams }: Props) {
   const params = await searchParams;
-  const allEntities = await getAllEntities();
+  const allEntities = await getAllEntities().catch(() => []);
 
   // Get entity codes from params
   let codes: string[] = [];
@@ -44,7 +44,7 @@ export default async function ComparePage({ searchParams }: Props) {
   // Filter to entities that exist
   const validEntitiesRaw = await Promise.all(
     codes.map(async (code) => {
-      const entity = await getEntity(code);
+      const entity = await getEntity(code).catch(() => null);
       if (!entity) return null;
       const [stats, yearlyStats] = await Promise.all([
         getQuickStats(code),
