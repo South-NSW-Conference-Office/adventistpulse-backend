@@ -131,7 +131,16 @@ export function BrowseSearchFilter({ entities, level }: BrowseSearchFilterProps)
         maxHeight="600px"
         emptyMessage={searchQuery ? `No entities found matching "${searchQuery}"` : 'No entities found'}
         rowKey={(e) => e.code}
-        onRowClick={(e) => router.push(`/entity/${e.code}`)}
+        onRowClick={(e) => {
+          // Churches route to /church/[slug], everything else to /entity/[code]
+          if (e.level === 'church' && e.slug) {
+            router.push(`/church/${e.slug}`);
+          } else if (e.level === 'church') {
+            router.push(`/church/${e.code.toLowerCase().replace(/[^a-z0-9]+/g,'-')}`);
+          } else {
+            router.push(`/entity/${e.code}`);
+          }
+        }}
       />
 
       <div className="text-center py-2 mt-1">

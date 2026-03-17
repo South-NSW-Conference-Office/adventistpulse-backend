@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Logo } from './Logo';
 import { useAuth } from '@/contexts/AuthContext';
 import { tokens, cn } from '@/lib/theme';
-import { BarChart3, FileText, Globe2, Microscope, LogOut } from 'lucide-react';
+import { BarChart3, FileText, Globe2, Microscope, LogOut, Wrench } from 'lucide-react';
 
 const PILLARS = [
   {
@@ -37,6 +37,15 @@ const PILLARS = [
     icon: Microscope,
     href: '/research',
     children: null,
+  },
+  {
+    label: 'Tools',
+    icon: Wrench,
+    href: '/vitality-check',
+    children: [
+      { href: '/vitality-check', label: 'Vitality Check', desc: 'Diagnose your church across 7 mission dimensions' },
+      { href: '/tithe-flow', label: 'Tithe Flow', desc: 'See how your tithe dollar flows through the church' },
+    ],
   },
 ];
 
