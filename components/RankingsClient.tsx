@@ -309,6 +309,7 @@ export function RankingsClient({ data, level, levelLabel, highlightCode, highlig
         maxHeight="600px"
         rowKey={(e) => e.code}
         onRowClick={(e) => router.push(`/entity/${e.code}`)}
+        emptyMessage={`No ${levelLabel.toLowerCase()} data available yet`}
       />
     </div>
   );

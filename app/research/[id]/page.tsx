@@ -4,7 +4,10 @@ import { notFound } from 'next/navigation';
 import { getAllLRPs, getLRP, getGradeColor, getGradeBg, getEvidenceDepth, getConfidenceBadge, QUALITY_CATEGORIES } from '@/lib/lrps';
 import { tokens, cn } from '@/lib/theme';
 import { formatDate } from '@/lib/format-date';
-import { Globe2 } from 'lucide-react'
+import { Globe2, Lock } from 'lucide-react'
+
+// Free tier: show exec summary + first N findings
+const FREE_FINDINGS_LIMIT = 3;
 
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
@@ -112,7 +115,7 @@ export default async function LRPDetailPage({ params }: { params: Promise<{ id: 
           <section className="mb-8">
             <h2 className={cn('text-xl font-bold mb-3', tokens.text.heading)}>Key Findings</h2>
             <div className="space-y-3">
-              {lrp.keyFindings.map((finding, i) => (
+              {lrp.keyFindings.slice(0, FREE_FINDINGS_LIMIT).map((finding, i) => (
                 <div key={i} className={cn('flex gap-3 rounded-xl p-4 border', tokens.bg.card, tokens.border.default)}>
                   <div className="flex-shrink-0 w-7 h-7 rounded-full bg-[#6366F1]/10 border border-[#6366F1]/20 flex items-center justify-center">
                     <span className="text-xs font-bold text-[#6366F1]">{i + 1}</span>
@@ -121,6 +124,43 @@ export default async function LRPDetailPage({ params }: { params: Promise<{ id: 
                 </div>
               ))}
             </div>
+
+            {/* Soft gate — remaining findings blurred */}
+            {lrp.keyFindings.length > FREE_FINDINGS_LIMIT && (
+              <div className="relative mt-3">
+                {/* Blurred preview of next findings */}
+                <div className="space-y-3 blur-sm pointer-events-none select-none opacity-60">
+                  {lrp.keyFindings.slice(FREE_FINDINGS_LIMIT, FREE_FINDINGS_LIMIT + 3).map((finding, i) => (
+                    <div key={i} className={cn('flex gap-3 rounded-xl p-4 border', tokens.bg.card, tokens.border.default)}>
+                      <div className="flex-shrink-0 w-7 h-7 rounded-full bg-[#6366F1]/10 border border-[#6366F1]/20 flex items-center justify-center">
+                        <span className="text-xs font-bold text-[#6366F1]">{i + FREE_FINDINGS_LIMIT + 1}</span>
+                      </div>
+                      <p className="text-sm text-gray-600 dark:text-slate-300 leading-relaxed">{finding}</p>
+                    </div>
+                  ))}
+                </div>
+                {/* Gate overlay */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-b from-transparent via-white/60 dark:via-[#0f1923]/70 to-white dark:to-[#0f1923] rounded-xl">
+                  <div className="text-center px-6 py-4">
+                    <div className="w-10 h-10 rounded-full bg-[#6366F1]/10 border border-[#6366F1]/30 flex items-center justify-center mx-auto mb-3">
+                      <Lock className="w-5 h-5 text-[#6366F1]" />
+                    </div>
+                    <p className={cn('text-sm font-semibold mb-1', tokens.text.heading)}>
+                      {lrp.keyFindings.length - FREE_FINDINGS_LIMIT} more findings in this research
+                    </p>
+                    <p className={cn('text-xs mb-4', tokens.text.muted)}>
+                      Full access with Researcher tier — launching soon.
+                    </p>
+                    <Link
+                      href="/beta"
+                      className="inline-flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold bg-[#6366F1] text-white hover:bg-[#4f46e5] transition-colors"
+                    >
+                      Join the waitlist
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            )}
           </section>
         )}
 
@@ -150,18 +190,23 @@ export default async function LRPDetailPage({ params }: { params: Promise<{ id: 
           </section>
         )}
 
-        {/* References */}
+        {/* References — gated, show count only */}
         {lrp.references && lrp.references.length > 0 && (
           <section className="mb-8">
             <h2 className={cn('text-xl font-bold mb-3', tokens.text.heading)}>References</h2>
-            <div className={cn('rounded-xl p-6 border', tokens.bg.card, tokens.border.default)}>
-              <ol className="list-decimal list-inside space-y-2">
-                {lrp.references.map((ref, i) => (
-                  <li key={i} className="text-sm text-gray-500 dark:text-slate-400 leading-relaxed break-words">
-                    {ref}
-                  </li>
-                ))}
-              </ol>
+            <div className={cn('rounded-xl p-5 border flex items-center gap-4', tokens.bg.card, tokens.border.default)}>
+              <div className="w-10 h-10 rounded-full bg-[#6366F1]/10 flex items-center justify-center flex-shrink-0">
+                <Lock className="w-5 h-5 text-[#6366F1]" />
+              </div>
+              <div className="flex-1">
+                <p className={cn('text-sm font-semibold', tokens.text.heading)}>
+                  {lrp.references.length} source{lrp.references.length !== 1 ? 's' : ''} cited in this research
+                </p>
+                <p className={cn('text-xs mt-0.5', tokens.text.muted)}>
+                  Full bibliography unlocks with Researcher access.{' '}
+                  <Link href="/beta" className="text-[#6366F1] hover:underline">Join waitlist →</Link>
+                </p>
+              </div>
             </div>
           </section>
         )}
