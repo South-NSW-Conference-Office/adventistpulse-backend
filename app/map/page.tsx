@@ -25,7 +25,7 @@ export default function MapPage() {
             Global Church Intelligence
           </h1>
           <p className={cn('text-xs', tokens.text.muted)}>
-            615 churches mapped across Australia
+            Adventist churches mapped across Australia
           </p>
         </div>
 

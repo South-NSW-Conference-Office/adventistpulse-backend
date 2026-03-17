@@ -30,7 +30,7 @@ interface ResearchPaper {
 
 function getAllResearch(): { research: ResearchPaper[]; totalCount: number } {
   try {
-    const researchPath = path.join(process.cwd(), 'public', 'data', 'research-index.json');
+    const researchPath = path.join(process.cwd(), 'data', 'research-index.json');
     const researchData = JSON.parse(fs.readFileSync(researchPath, 'utf-8'));
     return {
       research: researchData.research || [],

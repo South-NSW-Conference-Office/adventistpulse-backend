@@ -54,8 +54,26 @@ export default function DenomGraph({ className }: Props) {
     if (!containerRef.current) return
 
     const buildGraph = async () => {
-      const res = await fetch('/data/au-church-directory.json')
-      const dir = await res.json()
+      const apiBase = process.env.NEXT_PUBLIC_API_URL ?? '';
+      // Build graph from API: get conferences + their children
+      const confRes = await fetch(`${apiBase}/api/v1/entities?level=conference&limit=100`);
+      const confData = await confRes.json();
+      const confList: any[] = confData?.data?.data ?? confData?.data ?? [];
+
+      const churchRes = await fetch(`${apiBase}/api/v1/entities?level=church&limit=2000`);
+      const churchData = await churchRes.json();
+      const churchList: any[] = churchData?.data?.data ?? churchData?.data ?? [];
+
+      // Build a dir-like structure
+      const dir = {
+        conferences: confList.map((c: any) => ({
+          code: c.code,
+          conference: c.name,
+          churches: churchList
+            .filter((ch: any) => ch.parentCode === c.code)
+            .map((ch: any) => ({ name: ch.name, code: ch.code })),
+        })),
+      };
 
       const nodes: GraphNode[] = []
       const links: GraphLink[] = []

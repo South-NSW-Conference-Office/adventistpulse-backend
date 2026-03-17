@@ -55,9 +55,24 @@ export default function ChurchHeatMap({ className }: Props) {
   const [churches, setChurches] = useState<RawChurch[]>([])
 
   useEffect(() => {
-    fetch('/data/au-churches-geocoded.json')
+    const apiBase = process.env.NEXT_PUBLIC_API_URL ?? '';
+    fetch(`${apiBase}/api/v1/stats/map?limit=2000`)
       .then(r => r.json())
-      .then(d => setChurches((d.churches || []).filter((c: RawChurch) => c.lat && c.lng)))
+      .then(d => {
+        // API returns { success, data: [...] } or []
+        const raw: any[] = d?.data ?? d ?? [];
+        const churches = raw
+          .filter((c: any) => c.lat && c.lng)
+          .map((c: any) => ({
+            name: c.name ?? c.churchName ?? '',
+            conference: c.parentCode ?? c.conference ?? '',
+            conferenceName: c.conferenceName ?? '',
+            lat: c.lat ?? c.location?.coordinates?.[1],
+            lng: c.lng ?? c.location?.coordinates?.[0],
+            membership: c.latestStats?.membership?.ending ?? undefined,
+          }));
+        setChurches(churches);
+      })
       .catch(() => {})
   }, [])
 

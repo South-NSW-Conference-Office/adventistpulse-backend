@@ -16,7 +16,7 @@ interface Props {
 
 export async function generateStaticParams() {
   const raw = await fs.readFile(
-    path.join(process.cwd(), 'public/data/reports-index.json'),
+    path.join(process.cwd(), 'data/reports-index.json'),
     'utf-8'
   );
   const data = JSON.parse(raw);
@@ -33,7 +33,7 @@ export default async function ReportPage({ params }: Props) {
   const { slug } = await params;
 
   const raw = await fs.readFile(
-    path.join(process.cwd(), 'public/data/reports-index.json'),
+    path.join(process.cwd(), 'data/reports-index.json'),
     'utf-8'
   );
   const data = JSON.parse(raw);

@@ -21,7 +21,7 @@ let insightsCache: EntityInsight[] | null = null;
 function loadInsights(): EntityInsight[] {
   if (insightsCache) return insightsCache;
   try {
-    const filePath = path.join(process.cwd(), 'public', 'data', 'entity-insights.json');
+    const filePath = path.join(process.cwd(), 'data', 'entity-insights.json');
     const raw = fs.readFileSync(filePath, 'utf-8');
     const data = JSON.parse(raw);
     insightsCache = data.insights || [];
