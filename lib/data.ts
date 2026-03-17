@@ -123,6 +123,13 @@ export interface GeocodedChurch {
   programs?: string[];
   outreach?: string[];
   description?: string;
+  slug?: string;
+  code?: string;
+  // Youth pipeline fields (contributed by churches)
+  memberCount?: number;
+  adventurerCount?: number;
+  pathfinderCount?: number;
+  youthCount?: number;
 }
 
 export interface LocalChurch {
@@ -134,7 +141,7 @@ export interface LocalChurch {
 
 export async function getLocalChurches(conferenceCode: string): Promise<LocalChurch[]> {
   try {
-    return await apiFetch<LocalChurch[]>(`/entities/${conferenceCode}/churches`);
+    return await apiFetchList<LocalChurch>(`/entities/${conferenceCode}/children`);
   } catch {
     return [];
   }
@@ -142,7 +149,9 @@ export async function getLocalChurches(conferenceCode: string): Promise<LocalChu
 
 export async function getAllChurches(): Promise<GeocodedChurch[]> {
   try {
-    return await apiFetch<GeocodedChurch[]>('/api/churches');
+    // Fetch churches via entity list (level=church)
+    const results = await apiFetchList<any>('/entities?level=church&limit=2000');
+    return results.map(entityToChurch);
   } catch {
     return [];
   }
@@ -150,10 +159,42 @@ export async function getAllChurches(): Promise<GeocodedChurch[]> {
 
 export async function getChurchBySlug(slug: string): Promise<GeocodedChurch | null> {
   try {
-    return await apiFetch<GeocodedChurch>(`/api/churches/${slug}`);
+    // Search by slug — entities have a slug field
+    const results = await apiFetchList<any>(`/entities/search?q=${encodeURIComponent(slug)}&limit=10`);
+    const match = results.find((r: any) =>
+      r.slug === slug ||
+      churchNameToSlug(r.name) === slug
+    );
+    return match ? entityToChurch(match) : null;
   } catch {
     return null;
   }
+}
+
+/** Map a backend Entity to the GeocodedChurch shape used by the church page */
+function entityToChurch(e: any): GeocodedChurch {
+  return {
+    name: e.name ?? '',
+    conference: e.parentCode ?? '',
+    conferenceName: e.conferenceName ?? '',
+    address: e.address ?? '',
+    suburb: e.suburb ?? '',
+    state: e.state ?? '',
+    postcode: e.postcode ?? '',
+    lat: e.lat ?? e.location?.coordinates?.[1] ?? null,
+    lng: e.lng ?? e.location?.coordinates?.[0] ?? null,
+    website: e.website ?? undefined,
+    phone: e.phone ?? undefined,
+    email: e.email ?? undefined,
+    pastor: e.pastor ?? undefined,
+    worshipTime: e.worshipTime ?? undefined,
+    sabbathSchoolTime: e.sabbathSchoolTime ?? undefined,
+    programs: e.programs ?? [],
+    outreach: e.outreach ?? [],
+    description: e.description ?? undefined,
+    slug: e.slug ?? undefined,
+    code: e.code ?? undefined,
+  };
 }
 
 export function churchNameToSlug(name: string): string {
@@ -166,7 +207,11 @@ export function churchNameToSlug(name: string): string {
 
 export async function getNearbyChurches(slug: string, limit = 3): Promise<Array<GeocodedChurch & { distanceKm: number }>> {
   try {
-    return await apiFetch<Array<GeocodedChurch & { distanceKm: number }>>(`/api/churches/${slug}/nearby?limit=${limit}`);
+    // Find church code first, then use /nearby endpoint
+    const church = await getChurchBySlug(slug) as any;
+    if (!church?.code) return [];
+    const results = await apiFetchList<any>(`/entities/${church.code}/nearby?limit=${limit}`);
+    return results.map((r: any) => ({ ...entityToChurch(r), distanceKm: r.distanceKm ?? 0 }));
   } catch {
     return [];
   }
