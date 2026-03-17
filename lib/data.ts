@@ -29,10 +29,15 @@ export async function getEntity(code: string): Promise<OrgUnit | null> {
 }
 
 export async function getEntityStats(code: string, from?: number, to?: number): Promise<YearlyStats[]> {
-  const params = new URLSearchParams({ entityCode: code });
-  if (from) params.set('from', String(from));
-  if (to) params.set('to', String(to));
-  return apiFetchList<YearlyStats>(`/stats?${params}`);
+  try {
+    const params = new URLSearchParams();
+    if (from) params.set('from', String(from));
+    if (to) params.set('to', String(to));
+    const qs = params.toString() ? `?${params}` : '';
+    return await apiFetchList<YearlyStats>(`/stats/entity/${code}${qs}`);
+  } catch {
+    return [];
+  }
 }
 
 export async function getEntityChildren(code: string): Promise<EntityWithStats[]> {
