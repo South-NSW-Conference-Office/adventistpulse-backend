@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Logo } from './Logo';
+import { GlobalSearch } from './GlobalSearch';
 import { useAuth } from '@/contexts/AuthContext';
 import { tokens, cn } from '@/lib/theme';
 import { BarChart3, FileText, Globe2, Microscope, LogOut, Wrench } from 'lucide-react';
@@ -141,6 +142,7 @@ export function NavBar() {
             </>
           )}
           <div className="ml-2">
+            <GlobalSearch />
           </div>
         </div>
 

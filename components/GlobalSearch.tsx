@@ -1,136 +1,225 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import type { EntityWithStats } from '@/types/pulse';
+import { Search, Church, Building2, BookOpen, X, Loader2 } from 'lucide-react';
+import { tokens, cn } from '@/lib/theme';
 
-interface GlobalSearchProps {
-  entities: EntityWithStats[];
-  placeholder?: string;
-  autofocus?: boolean;
+interface Result {
+  id: string;
+  label: string;
+  sublabel?: string;
+  type: 'entity' | 'church' | 'research';
+  href: string;
 }
 
-function fmt(n: number | null | undefined): string {
-  if (n === null || n === undefined) return '';
-  if (Math.abs(n) >= 1_000_000) return (n / 1_000_000).toFixed(1) + 'M';
-  if (Math.abs(n) >= 1_000) return (n / 1_000).toFixed(0) + 'K';
-  return n.toLocaleString();
+function levelIcon(level: string) {
+  if (level === 'church') return <Church className="w-3.5 h-3.5" />;
+  return <Building2 className="w-3.5 h-3.5" />;
 }
 
-export function GlobalSearch({ entities, placeholder, autofocus }: GlobalSearchProps) {
+function levelColor(level: string) {
+  switch (level) {
+    case 'division': return 'text-purple-400';
+    case 'union':    return 'text-blue-400';
+    case 'conference': return 'text-indigo-400';
+    case 'church':   return 'text-emerald-400';
+    default:         return 'text-gray-400';
+  }
+}
+
+function churchToSlug(name: string): string {
+  return name
+    .replace(/\s+(Seventh-day Adventist Church|Adventist Church|Church|SDA)$/i, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+}
+
+export function GlobalSearch() {
+  const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedIdx, setSelectedIdx] = useState(0);
-  const ref = useRef<HTMLDivElement>(null);
+  const [results, setResults] = useState<Result[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [selected, setSelected] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const results = query.length >= 1
-    ? entities
-        .filter(e =>
-          e.name.toLowerCase().includes(query.toLowerCase()) ||
-          e.code.toLowerCase().includes(query.toLowerCase())
-        )
-        .slice(0, 8)
-    : [];
+  const apiBase = process.env.NEXT_PUBLIC_API_URL ?? '';
+
+  const search = useCallback(async (q: string) => {
+    if (!q.trim() || q.length < 2) { setResults([]); return; }
+    setLoading(true);
+    try {
+      const res = await fetch(`${apiBase}/api/v1/entities/search?q=${encodeURIComponent(q)}&limit=8`);
+      const data = await res.json();
+      const entities: any[] = data?.data ?? [];
+      const mapped: Result[] = entities.map((e: any) => ({
+        id: e.code,
+        label: e.name,
+        sublabel: `${e.level?.charAt(0).toUpperCase()}${e.level?.slice(1)} · ${e.code}`,
+        type: e.level === 'church' ? 'church' : 'entity',
+        href: e.level === 'church'
+          ? `/church/${e.slug || churchToSlug(e.name)}`
+          : `/entity/${e.code}`,
+      }));
+      setResults(mapped);
+      setSelected(0);
+    } catch {
+      setResults([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [apiBase]);
 
   useEffect(() => {
-    function handleClick(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setIsOpen(false);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => search(query), 250);
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
+  }, [query, search]);
+
+  // Keyboard shortcut: Cmd/Ctrl+K
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setOpen(true);
+        setTimeout(() => inputRef.current?.focus(), 50);
       }
+      if (e.key === 'Escape') setOpen(false);
     }
-    document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
   }, []);
 
-  useEffect(() => {
-    setSelectedIdx(0);
-  }, [query]);
-
-  function navigate(code: string) {
+  function navigate(href: string) {
+    setOpen(false);
     setQuery('');
-    setIsOpen(false);
-    router.push(`/entity/${code}`);
+    setResults([]);
+    router.push(href);
   }
 
-  function handleKeyDown(e: React.KeyboardEvent) {
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      setSelectedIdx(i => Math.min(i + 1, results.length - 1));
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      setSelectedIdx(i => Math.max(i - 1, 0));
-    } else if (e.key === 'Enter' && results[selectedIdx]) {
-      navigate(results[selectedIdx].code);
-    } else if (e.key === 'Escape') {
-      setIsOpen(false);
-      inputRef.current?.blur();
-    }
+  function onKeyDown(e: React.KeyboardEvent) {
+    if (e.key === 'ArrowDown') { e.preventDefault(); setSelected(s => Math.min(s + 1, results.length - 1)); }
+    if (e.key === 'ArrowUp')   { e.preventDefault(); setSelected(s => Math.max(s - 1, 0)); }
+    if (e.key === 'Enter' && results[selected]) navigate(results[selected].href);
+    if (e.key === 'Escape') setOpen(false);
   }
 
   return (
-    <div ref={ref} className="relative w-full">
-      <div className="relative">
-        <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-sm">🔍</span>
-        <input
-          ref={inputRef}
-          type="text"
-          value={query}
-          onChange={(e) => { setQuery(e.target.value); setIsOpen(true); }}
-          onFocus={() => setIsOpen(true)}
-          onKeyDown={handleKeyDown}
-          autoFocus={autofocus}
-          placeholder={placeholder || "Search any entity..."}
-          className="w-full bg-white dark:bg-[#1f2b3d] border border-gray-200 dark:border-slate-700 rounded-xl pl-10 pr-4 py-3 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-[#6366F1] focus:ring-1 focus:ring-[#6366F1]/30 transition-all"
-        />
-        {query && (
-          <button
-            onClick={() => { setQuery(''); inputRef.current?.focus(); }}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white text-sm"
-          >
-            ✕
-          </button>
+    <>
+      {/* Trigger button */}
+      <button
+        onClick={() => { setOpen(true); setTimeout(() => inputRef.current?.focus(), 50); }}
+        className={cn(
+          'flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm transition-colors',
+          tokens.bg.card, tokens.border.default, tokens.text.muted,
+          'hover:border-[#6366F1]/50 hover:text-[#6366F1]'
         )}
-      </div>
+      >
+        <Search className="w-3.5 h-3.5" />
+        <span className="hidden sm:inline text-xs">Search</span>
+        <kbd className="hidden sm:inline text-[10px] px-1.5 py-0.5 rounded border opacity-50 font-mono" style={{ borderColor: 'currentColor' }}>⌘K</kbd>
+      </button>
 
-      {isOpen && results.length > 0 && (
-        <div className="absolute top-full mt-2 left-0 right-0 bg-white dark:bg-[#1f2b3d] border border-gray-200 dark:border-slate-700 rounded-xl shadow-2xl z-50 overflow-hidden">
-          {results.map((entity, i) => {
-            const mem = entity.latestYear?.membership?.ending;
-            const growth = entity.latestYear?.membership?.growthRate;
-            return (
-              <button
-                key={entity.code}
-                onClick={() => navigate(entity.code)}
-                className={`w-full text-left px-4 py-3 transition-colors flex items-center justify-between ${
-                  i === selectedIdx ? 'bg-slate-800' : 'hover:bg-gray-100 dark:hover:bg-slate-800/50'
-                }`}
-              >
-                <div>
-                  <span className="text-white text-sm font-medium">{entity.name}</span>
-                  <span className="text-slate-500 text-xs ml-2">{entity.code}</span>
+      {/* Modal */}
+      {open && (
+        <div className="fixed inset-0 z-50 flex items-start justify-center pt-[15vh] px-4" onClick={() => setOpen(false)}>
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+
+          {/* Panel */}
+          <div
+            className={cn('relative w-full max-w-lg rounded-2xl border shadow-2xl overflow-hidden', tokens.bg.card, tokens.border.default)}
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Input */}
+            <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-200 dark:border-[#2a3a50]">
+              {loading
+                ? <Loader2 className="w-4 h-4 animate-spin text-[#6366F1] flex-shrink-0" />
+                : <Search className="w-4 h-4 text-gray-400 dark:text-slate-500 flex-shrink-0" />
+              }
+              <input
+                ref={inputRef}
+                type="text"
+                placeholder="Search churches, conferences, entities…"
+                value={query}
+                onChange={e => setQuery(e.target.value)}
+                onKeyDown={onKeyDown}
+                className="flex-1 bg-transparent outline-none text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500"
+                autoComplete="off"
+              />
+              {query && (
+                <button onClick={() => { setQuery(''); setResults([]); }} className="text-gray-400 hover:text-gray-600 dark:hover:text-white">
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+
+            {/* Results */}
+            {results.length > 0 && (
+              <ul className="py-2 max-h-72 overflow-y-auto">
+                {results.map((r, i) => (
+                  <li key={r.id}>
+                    <button
+                      onClick={() => navigate(r.href)}
+                      className={cn(
+                        'w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors',
+                        i === selected ? 'bg-[#6366F1]/10' : 'hover:bg-gray-50 dark:hover:bg-white/5'
+                      )}
+                    >
+                      <span className={levelColor(r.type === 'church' ? 'church' : 'conference')}>
+                        {r.type === 'church' ? <Church className="w-4 h-4" /> : <Building2 className="w-4 h-4" />}
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <p className={cn('text-sm font-medium truncate', tokens.text.heading)}>{r.label}</p>
+                        {r.sublabel && <p className={cn('text-xs truncate', tokens.text.muted)}>{r.sublabel}</p>}
+                      </div>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            {query.length >= 2 && !loading && results.length === 0 && (
+              <div className="py-8 text-center">
+                <p className={cn('text-sm', tokens.text.muted)}>No results for &ldquo;{query}&rdquo;</p>
+              </div>
+            )}
+
+            {!query && (
+              <div className="py-4 px-4">
+                <p className={cn('text-xs mb-3', tokens.text.muted)}>Quick links</p>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { label: 'SNSW', href: '/entity/SNSW' },
+                    { label: 'GSC', href: '/entity/GSC' },
+                    { label: 'AUC', href: '/entity/AUC' },
+                    { label: 'SPD', href: '/entity/SPD' },
+                    { label: 'All Rankings', href: '/rankings' },
+                    { label: 'Research', href: '/research' },
+                  ].map(q => (
+                    <button
+                      key={q.label}
+                      onClick={() => navigate(q.href)}
+                      className={cn('px-3 py-1 rounded-lg text-xs border transition-all', tokens.bg.page, tokens.border.default, tokens.text.body, 'hover:border-[#6366F1]/50')}
+                    >
+                      {q.label}
+                    </button>
+                  ))}
                 </div>
-                <div className="flex items-center gap-3">
-                  {mem && <span className="text-xs text-slate-400 tabular-nums">{fmt(mem)}</span>}
-                  {growth !== null && growth !== undefined && (
-                    <span className={`text-xs tabular-nums ${growth > 0 ? 'text-emerald-400' : growth < 0 ? 'text-red-400' : 'text-slate-400'}`}>
-                      {growth > 0 ? '+' : ''}{growth.toFixed(1)}%
-                    </span>
-                  )}
-                  <span className="text-[10px] text-slate-600 uppercase w-16 text-right">{entity.level}</span>
-                </div>
-              </button>
-            );
-          })}
+              </div>
+            )}
+
+            <div className={cn('border-t px-4 py-2 flex items-center gap-4 text-[10px]', tokens.border.default, tokens.text.muted)}>
+              <span><kbd className="font-mono">↑↓</kbd> navigate</span>
+              <span><kbd className="font-mono">↵</kbd> select</span>
+              <span><kbd className="font-mono">esc</kbd> close</span>
+            </div>
+          </div>
         </div>
       )}
-
-      {isOpen && query.length >= 1 && results.length === 0 && (
-        <div className="absolute top-full mt-2 left-0 right-0 bg-white dark:bg-[#1f2b3d] border border-gray-200 dark:border-slate-700 rounded-xl shadow-2xl z-50 p-4 text-center">
-          <span className="text-slate-500 text-sm">No entities found for &ldquo;{query}&rdquo;</span>
-        </div>
-      )}
-    </div>
+    </>
   );
 }

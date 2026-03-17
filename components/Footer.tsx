@@ -28,6 +28,9 @@ export function Footer() {
               <Link href="/entity/GC" className="block text-sm text-gray-500 dark:text-slate-500 hover:text-gray-900 dark:hover:text-gray-900 dark:hover:text-white transition-colors">General Conference</Link>
               <Link href="/tithe-flow" className="block text-sm text-gray-500 dark:text-slate-500 hover:text-gray-900 dark:hover:text-gray-900 dark:hover:text-white transition-colors">Tithe Flow</Link>
               <Link href="/research" className="block text-sm text-gray-500 dark:text-slate-500 hover:text-gray-900 dark:hover:text-gray-900 dark:hover:text-white transition-colors">Research Library</Link>
+              <Link href="/vitality-check" className="block text-sm text-gray-500 dark:text-slate-500 hover:text-gray-900 dark:hover:text-gray-900 dark:hover:text-white transition-colors">Vitality Check</Link>
+              <Link href="/about" className="block text-sm text-gray-500 dark:text-slate-500 hover:text-gray-900 dark:hover:text-gray-900 dark:hover:text-white transition-colors">About</Link>
+              <Link href="/beta" className="block text-sm text-gray-500 dark:text-slate-500 hover:text-gray-900 dark:hover:text-gray-900 dark:hover:text-white transition-colors">Beta Access</Link>
             </div>
           </div>
 
