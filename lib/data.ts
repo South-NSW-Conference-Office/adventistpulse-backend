@@ -164,8 +164,10 @@ export async function getAllChurches(): Promise<GeocodedChurch[]> {
 
 export async function getChurchBySlug(slug: string): Promise<GeocodedChurch | null> {
   try {
-    // Search by slug — entities have a slug field
-    const results = await apiFetchList<any>(`/entities/search?q=${encodeURIComponent(slug)}&limit=10`);
+    // Convert slug back to search terms (e.g. "canberra-national" → "canberra national")
+    const searchTerm = slug.replace(/-/g, ' ');
+    const results = await apiFetchList<any>(`/entities/search?q=${encodeURIComponent(searchTerm)}&limit=20`);
+    // Find the best match — prefer exact slug match
     const match = results.find((r: any) =>
       r.slug === slug ||
       churchNameToSlug(r.name) === slug
