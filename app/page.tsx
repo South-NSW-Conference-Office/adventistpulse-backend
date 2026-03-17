@@ -1,132 +1,124 @@
-export const dynamic = 'force-dynamic';
 import Link from 'next/link';
-import { getAllEntities, getQuickStats } from '@/lib/data';
-import { getAllLRPs } from '@/lib/lrps';
 import { tokens, cn } from '@/lib/theme';
+import { MatrixCanvasLoader } from '@/components/landing/MatrixCanvasLoader';
 import {
   BarChart3, Microscope, Globe2, Users, TrendingUp, BookOpen,
   Check, Minus,
 } from 'lucide-react';
-import { MatrixCanvasLoader } from '@/components/landing/MatrixCanvasLoader';
 
-function fmt(n: number | null | undefined): string {
-  if (n === null || n === undefined) return '—';
-  if (Math.abs(n) >= 1_000_000) return (n / 1_000_000).toFixed(1) + 'M';
-  if (Math.abs(n) >= 1_000) return (n / 1_000).toFixed(0) + 'K';
-  return n.toLocaleString();
+export const metadata = {
+  title: 'Adventist Pulse — Mission Intelligence for the Church',
+  description: 'Real data. Living research. Honest analysis. The Adventist Mission Intelligence Dashboard.',
+};
+
+const heroStats = [
+  { label: 'Members Worldwide', value: '22M+' },
+  { label: 'Churches', value: '90K+' },
+  { label: 'Entities Tracked', value: '116+' },
+  { label: 'Research Projects', value: '208+' },
+];
+
+const tiers = [
+  {
+    name: 'Observer',
+    price: 'Free',
+    priceSub: 'forever',
+    desc: 'Get a feel for the data. See where the church stands.',
+    featured: false,
+    cta: 'Get started free',
+    ctaHref: '/beta',
+    ctaStyle: 'outline' as const,
+    features: [
+      { on: true,  text: 'Public statistics & trends' },
+      { on: true,  text: 'Entity overview pages' },
+      { on: true,  text: 'Research summaries' },
+      { on: true,  text: 'Church directory' },
+      { on: false, text: 'Full research access' },
+      { on: false, text: 'Vitality Check tool' },
+      { on: false, text: 'Maps & geographic data' },
+      { on: false, text: 'Intelligence briefs' },
+    ],
+  },
+  {
+    name: 'Researcher',
+    price: 'Coming Soon',
+    priceSub: '',
+    desc: 'For pastors, leaders and engaged members who want the full picture.',
+    featured: true,
+    cta: 'Join the waitlist',
+    ctaHref: '/beta',
+    ctaStyle: 'solid' as const,
+    features: [
+      { on: true,  text: 'Everything in Observer' },
+      { on: true,  text: 'Full living research (208 projects)' },
+      { on: true,  text: 'Vitality Check for your church' },
+      { on: true,  text: 'Maps & geographic visualisations' },
+      { on: true,  text: 'Intelligence briefs' },
+      { on: true,  text: 'Contribute & earn recognition' },
+      { on: false, text: 'Conference bulk tools' },
+    ],
+  },
+  {
+    name: 'Conference',
+    price: 'Contact us',
+    priceSub: '',
+    desc: 'For conferences deploying Pulse across a leadership team.',
+    featured: false,
+    cta: 'Contact us',
+    ctaHref: 'mailto:pulse@adventist.org.au',
+    ctaStyle: 'outline' as const,
+    features: [
+      { on: true,  text: 'Everything in Researcher' },
+      { on: true,  text: 'Bulk rollout tools' },
+      { on: true,  text: 'Aggregated conference dashboard' },
+      { on: true,  text: 'Personnel intelligence tools' },
+      { on: true,  text: 'White-label reports' },
+      { on: true,  text: 'Priority support' },
+      { on: true,  text: 'Claimable via B&E allowance' },
+    ],
+  },
+];
+
+const featureDefs = [
+  { iconName: 'BarChart3',  title: 'Statistics',          desc: 'Membership, baptisms, tithe and growth trends across every conference, union and division — decades of history in one place.' },
+  { iconName: 'Microscope', title: 'Living Research',     desc: '208 active research projects synthesising decades of Adventist growth data into actionable mission intelligence.' },
+  { iconName: 'Globe2',     title: 'Mission Maps',        desc: 'Interactive heat maps showing church presence, growth corridors, and territories where the work is yet to be finished.' },
+  { iconName: 'Users',      title: 'Church Profiles',     desc: 'Every local church with youth ministry data, community engagement metrics, and ministry coverage at a glance.' },
+  { iconName: 'TrendingUp', title: 'Rankings',            desc: 'Compare conferences and unions on key mission metrics — baptisms, retention, tithe per member, and net growth.' },
+  { iconName: 'BookOpen',   title: 'Intelligence Briefs', desc: 'Curated mission intelligence delivered to leaders — data-backed, theologically grounded, actionable.' },
+];
+
+function FeatureIcon({ name }: { name: string }) {
+  const cls = 'w-5 h-5';
+  switch (name) {
+    case 'BarChart3':  return <BarChart3 className={cls} />;
+    case 'Microscope': return <Microscope className={cls} />;
+    case 'Globe2':     return <Globe2 className={cls} />;
+    case 'Users':      return <Users className={cls} />;
+    case 'TrendingUp': return <TrendingUp className={cls} />;
+    case 'BookOpen':   return <BookOpen className={cls} />;
+    default:           return null;
+  }
 }
 
-export default async function Home() {
-  const [allEntities, gcStats, lrps] = await Promise.all([
-    getAllEntities().catch(() => []),
-    getQuickStats('G10001').catch(() => null),
-    getAllLRPs().catch(() => []),
-  ]);
-
-  const heroStats = [
-    { label: 'Members Worldwide', value: fmt(gcStats?.membership) },
-    { label: 'Churches', value: fmt(gcStats?.churches) },
-    { label: 'Entities Tracked', value: allEntities.length > 0 ? `${allEntities.length}+` : '116+' },
-    { label: 'Research Projects', value: `${lrps.length}+` },
-  ];
-
-  const features = [
-    { icon: <BarChart3 className="w-5 h-5" />, title: 'Statistics', desc: 'Membership, baptisms, tithe and growth trends across every conference, union and division — decades of history in one place.' },
-    { icon: <Microscope className="w-5 h-5" />, title: 'Living Research', desc: '208 active research projects synthesising decades of Adventist growth data into actionable mission intelligence.' },
-    { icon: <Globe2 className="w-5 h-5" />, title: 'Mission Maps', desc: 'Interactive heat maps showing church presence, growth corridors, and territories where the work is yet to be finished.' },
-    { icon: <Users className="w-5 h-5" />, title: 'Church Profiles', desc: 'Every local church with youth ministry data, community engagement metrics, and ministry coverage at a glance.' },
-    { icon: <TrendingUp className="w-5 h-5" />, title: 'Rankings', desc: 'Compare conferences and unions on key mission metrics — baptisms, retention, tithe per member, and net growth.' },
-    { icon: <BookOpen className="w-5 h-5" />, title: 'Intelligence Briefs', desc: 'Curated mission intelligence delivered to leaders — data-backed, theologically grounded, actionable.' },
-  ];
-
-  const tiers = [
-    {
-      name: 'Observer',
-      price: 'Free',
-      priceSub: 'forever',
-      desc: 'Get a feel for the data. See where the church stands.',
-      featured: false,
-      cta: 'Get started free',
-      ctaHref: '/beta',
-      ctaStyle: 'outline' as const,
-      features: [
-        { on: true,  text: 'Public statistics & trends' },
-        { on: true,  text: 'Entity overview pages' },
-        { on: true,  text: 'Research summaries' },
-        { on: true,  text: 'Church directory' },
-        { on: false, text: 'Full research access' },
-        { on: false, text: 'Vitality Check tool' },
-        { on: false, text: 'Maps & geographic data' },
-        { on: false, text: 'Intelligence briefs' },
-      ],
-    },
-    {
-      name: 'Researcher',
-      price: 'Coming Soon',
-      priceSub: '',
-      desc: 'For pastors, leaders and engaged members who want the full picture.',
-      featured: true,
-      cta: 'Join the waitlist',
-      ctaHref: '/beta',
-      ctaStyle: 'solid' as const,
-      features: [
-        { on: true,  text: 'Everything in Observer' },
-        { on: true,  text: 'Full living research (208 projects)' },
-        { on: true,  text: 'Vitality Check for your church' },
-        { on: true,  text: 'Maps & geographic visualisations' },
-        { on: true,  text: 'Intelligence briefs' },
-        { on: true,  text: 'Contribute & earn recognition' },
-        { on: false, text: 'Conference bulk tools' },
-      ],
-    },
-    {
-      name: 'Conference',
-      price: 'Contact us',
-      priceSub: '',
-      desc: 'For conferences deploying Pulse across a leadership team.',
-      featured: false,
-      cta: 'Contact us',
-      ctaHref: 'mailto:pulse@adventist.org.au',
-      ctaStyle: 'outline' as const,
-      features: [
-        { on: true,  text: 'Everything in Researcher' },
-        { on: true,  text: 'Bulk rollout tools' },
-        { on: true,  text: 'Aggregated conference dashboard' },
-        { on: true,  text: 'Personnel intelligence tools' },
-        { on: true,  text: 'White-label reports' },
-        { on: true,  text: 'Priority support' },
-        { on: true,  text: 'Claimable via B&E allowance' },
-      ],
-    },
-  ];
-
+export default function Home() {
   return (
     <div className="min-h-screen -mt-14">
 
-      {/* ── HERO — forced dark, matrix rain ── */}
+      {/* ── HERO — dark, matrix rain ── */}
       <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-6 overflow-hidden bg-[#0D1117]">
-
-        {/* Matrix canvas background */}
         <MatrixCanvasLoader />
 
-        {/* Indigo glow */}
         <div
           className="absolute top-1/4 left-1/2 -translate-x-1/2 pointer-events-none"
-          style={{
-            width: 700, height: 700,
-            background: 'radial-gradient(circle, rgba(99,102,241,0.18) 0%, transparent 70%)',
-            zIndex: 1,
-          }}
+          style={{ width: 700, height: 700, background: 'radial-gradient(circle, rgba(99,102,241,0.18) 0%, transparent 70%)', zIndex: 1 }}
           aria-hidden="true"
         />
 
-        {/* Content */}
         <div className="relative z-10 flex flex-col items-center">
-
-          {/* Badge */}
           <div className="inline-flex items-center gap-2 mb-8 px-4 py-1.5 rounded-full text-sm text-slate-400 border border-white/10 bg-white/5 backdrop-blur-sm">
             <span className="w-1.5 h-1.5 rounded-full bg-[#6366F1] animate-pulse" />
-            Now tracking {allEntities.length > 0 ? `${allEntities.length}+` : '116+'} entities worldwide
+            Now tracking 116+ entities worldwide
           </div>
 
           <h1 className="text-4xl md:text-6xl font-extrabold text-white leading-tight tracking-tight max-w-3xl" style={{ letterSpacing: '-0.03em' }}>
@@ -154,7 +146,6 @@ export default async function Home() {
             </a>
           </div>
 
-          {/* Stats row */}
           <div className="flex flex-wrap gap-10 mt-16 justify-center">
             {heroStats.map(({ label, value }) => (
               <div key={label} className="text-center">
@@ -176,19 +167,11 @@ export default async function Home() {
           <p className={cn('text-center max-w-md mx-auto mb-14', tokens.text.body)}>
             From raw baptism stats to deep theological research — all in one place.
           </p>
-
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {features.map(({ icon, title, desc }) => (
-              <div
-                key={title}
-                className={cn(
-                  'rounded-2xl border p-7 transition-all duration-200 hover:-translate-y-1',
-                  tokens.bg.card, tokens.border.default,
-                  'hover:border-[#6366F1]/40'
-                )}
-              >
+            {featureDefs.map(({ iconName, title, desc }) => (
+              <div key={title} className={cn('rounded-2xl border p-7 transition-all duration-200 hover:-translate-y-1 hover:border-[#6366F1]/40', tokens.bg.card, tokens.border.default)}>
                 <div className="w-10 h-10 rounded-xl bg-[#6366F1]/10 flex items-center justify-center text-[#6366F1] mb-5">
-                  {icon}
+                  <FeatureIcon name={iconName} />
                 </div>
                 <h3 className={cn('text-base font-bold mb-2', tokens.text.heading)}>{title}</h3>
                 <p className={cn('text-sm leading-relaxed', tokens.text.body)}>{desc}</p>
@@ -208,7 +191,6 @@ export default async function Home() {
           <p className={cn('text-center max-w-sm mx-auto mb-14', tokens.text.body)}>
             No credit card required to get started. Upgrade when the mission demands more.
           </p>
-
           <div className="grid md:grid-cols-3 gap-6">
             {tiers.map((tier) => (
               <div
@@ -225,14 +207,12 @@ export default async function Home() {
                     Most Popular
                   </div>
                 )}
-
                 <div className={cn('text-xs font-bold uppercase tracking-widest mb-3', tokens.text.muted)}>{tier.name}</div>
                 <div className={cn('text-3xl font-extrabold mb-1', tokens.text.heading)} style={{ letterSpacing: '-0.02em' }}>
                   {tier.price}
                   {tier.priceSub && <span className={cn('text-sm font-normal ml-1', tokens.text.muted)}>{tier.priceSub}</span>}
                 </div>
                 <p className={cn('text-sm mb-6 pb-6 border-b', tokens.text.body, tokens.border.default)}>{tier.desc}</p>
-
                 <ul className="space-y-3 mb-8 flex-1">
                   {tier.features.map((f) => (
                     <li key={f.text} className={cn('flex items-start gap-2.5 text-sm', f.on ? tokens.text.heading : tokens.text.muted)}>
@@ -244,7 +224,6 @@ export default async function Home() {
                     </li>
                   ))}
                 </ul>
-
                 <Link
                   href={tier.ctaHref}
                   className={cn(
@@ -270,30 +249,6 @@ export default async function Home() {
         <p className="text-slate-400 text-lg">The pulse of the mission — wherever it&apos;s beating.</p>
       </section>
 
-      {/* ── FOOTER ── */}
-      <footer className={cn('px-6 py-10 border-t text-center', tokens.bg.page, tokens.border.default)}>
-        <div className="flex flex-wrap gap-6 justify-center mb-4">
-          {[
-            { label: 'Home', href: '/' },
-            { label: 'Features', href: '#features' },
-            { label: 'Research', href: '/research' },
-            { label: 'Beta Access', href: '/beta' },
-          ].map(({ label, href }) => (
-            <Link key={label} href={href} className={cn('text-sm hover:text-white transition-colors', tokens.text.muted)}>
-              {label}
-            </Link>
-          ))}
-        </div>
-        <p className={cn('text-xs', tokens.text.muted)}>
-          © 2026 Adventist Pulse · South New South Wales Conference
-        </p>
-      </footer>
-
     </div>
   );
 }
-
-export const metadata = {
-  title: 'Adventist Pulse — Mission Intelligence for the Church',
-  description: 'Real data. Living research. Honest analysis. The Adventist Mission Intelligence Dashboard.',
-};
