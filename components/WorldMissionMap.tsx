@@ -83,7 +83,7 @@ export default function WorldMissionMap({ gcStats }: Props) {
   }, [missionData]);
 
   return (
-    <div ref={mapContainerRef} className="relative w-full bg-white overflow-hidden" style={{ height: 'calc(100vh - 56px)', userSelect: 'none' }}>
+    <div ref={mapContainerRef} className="relative w-full bg-gray-100 dark:bg-[#0f172a] overflow-hidden" style={{ height: 'calc(100vh - 56px)', userSelect: 'none' }}>
       <style>{`
         @keyframes tooltip-grow {
           from { opacity: 0; transform: scale(0.6); }
@@ -96,15 +96,15 @@ export default function WorldMissionMap({ gcStats }: Props) {
       `}</style>
 
       {/* Toggle — bottom center */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex bg-white/90 backdrop-blur border border-gray-200 rounded-full p-1 shadow-md">
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex bg-white/90 dark:bg-[#1a2332]/90 backdrop-blur border border-gray-200 dark:border-[#2a3a50] rounded-full p-1 shadow-md">
         {(['where-we-are', 'where-we-are-not'] as ViewMode[]).map(mode => (
           <button
             key={mode}
             onClick={() => setViewMode(mode)}
             className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
               viewMode === mode
-                ? 'bg-black text-white shadow'
-                : 'text-gray-500 hover:text-gray-800'
+                ? 'bg-[#6366F1] text-white shadow'
+                : 'text-gray-500 dark:text-slate-400 hover:text-gray-800 dark:hover:text-white'
             }`}
           >
             {mode === 'where-we-are' ? '🌿 Where We Are' : '🔥 Where We Are Not'}
@@ -120,9 +120,9 @@ export default function WorldMissionMap({ gcStats }: Props) {
           style={{
             left: tooltip.x + 14,
             top: tooltip.y - 14,
-            background: 'rgba(255,255,255,0.95)',
-            color: '#111827',
-            border: '1px solid rgba(0,0,0,0.08)',
+            background: 'rgba(26,35,50,0.97)',
+            color: '#e2e8f0',
+            border: '1px solid rgba(99,102,241,0.3)',
             backdropFilter: 'blur(8px)',
             lineHeight: '1.6',
           }}
@@ -140,15 +140,15 @@ export default function WorldMissionMap({ gcStats }: Props) {
           ).map(([color, label]) => (
             <div key={label} className="flex items-center gap-1.5">
               <div className="w-3 h-3 rounded-sm" style={{ background: color }} />
-              <span className="text-[11px] text-gray-500">{label}</span>
+              <span className="text-[11px] text-slate-300">{label}</span>
             </div>
           ))}
         </div>
 
-        <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-gray-900 leading-tight">
-          Mission <span className="text-indigo-500">Map</span>
+        <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-white leading-tight">
+          Mission <span className="text-[#6366F1]">Map</span>
         </h1>
-        <p className="text-sm md:text-base mt-3 text-gray-500 leading-relaxed">
+        <p className="text-sm md:text-base mt-3 text-slate-300 leading-relaxed">
           Data-driven mission intelligence for the Adventist Church.
           Unlock tools, insights and strategies to help finish the work.
         </p>
@@ -161,8 +161,8 @@ export default function WorldMissionMap({ gcStats }: Props) {
               { label: `Baptisms (${gcStats.year})`, value: fmtNum(gcStats.baptisms) },
             ].map(({ label, value }) => (
               <div key={label}>
-                <div className="text-xl md:text-2xl font-bold tabular-nums text-gray-900">{value}</div>
-                <div className="text-[10px] mt-0.5 uppercase tracking-wider text-gray-400">{label}</div>
+                <div className="text-xl md:text-2xl font-bold tabular-nums text-white">{value}</div>
+                <div className="text-[10px] mt-0.5 uppercase tracking-wider text-slate-400">{label}</div>
               </div>
             ))}
           </div>
