@@ -28,7 +28,7 @@ import { RetentionChart } from '@/components/RetentionChart';
 import { PulseScoreCard } from '@/components/PulseScoreCard';
 import { getDerivedStats } from '@/lib/derived';
 import { getPulseScore } from '@/lib/pulse-score';
-import { getEntityInsights } from '@/lib/insights';
+import { getEntityInsights, getConferenceBrief } from '@/lib/insights';
 import { InsightsPanel } from '@/components/InsightsPanel';
 import { getTitheFlowForDivision } from '@/lib/tithe-flow';
 import { TitheFlowChart } from '@/components/TitheFlowChart';
@@ -68,6 +68,7 @@ export default async function EntityPage({ params }: Props) {
   const derived = latestStats ? getDerivedStats(latestStats as any) : null;
   const pulseScore = await getPulseScore(code).catch(() => null);
   const insights = getEntityInsights(code);
+  const conferenceBrief = getConferenceBrief(code);
   const titheFlow = entity.level === 'division' ? getTitheFlowForDivision(code) : null;
   const yearbook = getYearbookEntity(code);
 
@@ -234,6 +235,26 @@ export default async function EntityPage({ params }: Props) {
           >
             <ChildrenList entities={children} />
           </Section>
+        )}
+
+        {/* Conference Intelligence Brief (Morpheus/Qwen generated) */}
+        {conferenceBrief && (
+          <section id="brief" className="mb-6">
+            <div className={cn('rounded-2xl border p-6', tokens.bg.card, tokens.border.default)}>
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-8 h-8 rounded-lg bg-[#6366F1]/10 flex items-center justify-center">
+                  <span className="text-[#6366F1] text-sm">⚡</span>
+                </div>
+                <div>
+                  <h3 className={cn('text-sm font-bold', tokens.text.heading)}>Mission Intelligence Brief</h3>
+                  <p className={cn('text-xs', tokens.text.muted)}>AI-generated · Adventist Pulse Research</p>
+                </div>
+              </div>
+              <div className={cn('text-sm leading-relaxed whitespace-pre-line', tokens.text.body)}>
+                {conferenceBrief}
+              </div>
+            </div>
+          </section>
         )}
 
         {/* Intelligence Insights (from Finn's research) */}
