@@ -56,16 +56,16 @@ export default function ChurchHeatMap({ className }: Props) {
 
   useEffect(() => {
     const apiBase = process.env.NEXT_PUBLIC_API_URL ?? '';
-    fetch(`${apiBase}/api/v1/stats/map?limit=2000`)
+    fetch(`${apiBase}/api/v1/entities?level=church&limit=2000`)
       .then(r => r.json())
       .then(d => {
-        // API returns { success, data: [...] } or []
-        const raw: any[] = d?.data ?? d ?? [];
+        // API returns { success, data: { data: [...], total } }
+        const raw: any[] = d?.data?.data ?? d?.data ?? d ?? [];
         const churches = raw
-          .filter((c: any) => c.lat && c.lng)
+          .filter((c: any) => (c.lat && c.lng) || c.location?.coordinates?.length)
           .map((c: any) => ({
-            name: c.name ?? c.churchName ?? '',
-            conference: c.parentCode ?? c.conference ?? '',
+            name: c.name ?? '',
+            conference: c.parentCode ?? '',
             conferenceName: c.conferenceName ?? '',
             lat: c.lat ?? c.location?.coordinates?.[1],
             lng: c.lng ?? c.location?.coordinates?.[0],
