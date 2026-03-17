@@ -68,7 +68,7 @@ function BackLink() {
 }
 
 async function VitalSignsPage({ report }: { report: any }) {
-  const stats = await getEntityStats(report.entityCode);
+  const stats = await getEntityStats(report.entityCode).catch(() => null);
   const latest = stats.length > 0 ? stats[stats.length - 1] : null;
 
   const mem = latest?.membership?.ending ?? 0;

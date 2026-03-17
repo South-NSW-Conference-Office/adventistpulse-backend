@@ -19,8 +19,8 @@ export default async function BrowsePage({ searchParams }: Props) {
   const params = await searchParams;
   const activeLevel = params.level || 'division';
   const [entitiesUnsorted, allEntities] = await Promise.all([
-    getEntitiesByLevel(activeLevel as any),
-    getAllEntities(),
+    getEntitiesByLevel(activeLevel as any).catch(() => []),
+    getAllEntities().catch(() => []),
   ]);
   const entities = entitiesUnsorted
     .sort((a, b) => (b.latestYear?.membership?.ending ?? 0) - (a.latestYear?.membership?.ending ?? 0));

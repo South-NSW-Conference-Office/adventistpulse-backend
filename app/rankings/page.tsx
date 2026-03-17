@@ -12,8 +12,8 @@ export default async function RankingsPage({ searchParams }: Props) {
   const level = params.level || 'division';
   const highlightCode = params.highlight || '';
   
-  const allEntities = await getAllEntities();
-  const highlightEntity = highlightCode ? await getEntity(highlightCode) : null;
+  const allEntities = await getAllEntities().catch(() => []);
+  const highlightEntity = highlightCode ? await getEntity(highlightCode).catch(() => null) : null;
 
   // Get entities at this level
   let entities = allEntities;
@@ -53,7 +53,7 @@ export default async function RankingsPage({ searchParams }: Props) {
 
   // Get parent info for scope toggle
   const parentCode = highlightEntity?.parentCode || '';
-  const parentEntity = parentCode ? await getEntity(parentCode) : null;
+  const parentEntity = parentCode ? await getEntity(parentCode).catch(() => null) : null;
 
   const levelLabels: Record<string, string> = {
     division: 'Divisions',

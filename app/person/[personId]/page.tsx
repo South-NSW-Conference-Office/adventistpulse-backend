@@ -294,7 +294,7 @@ export default async function PersonPage({ params }: { params: Promise<{ personI
   if (!person) notFound()
 
   // Pull live stats from API for this person's tenure period
-  const liveStats = await getLiveStats(person.currentEntityCode, person.firstYear);
+  const liveStats = await getLiveStats(person.currentEntityCode, person.firstYear).catch(() => null);
   const stats = liveStats.length > 0 ? liveStats : person.statsDuringTenure
   const totalBaptisms = stats.reduce((s, y) => s + y.baptisms, 0)
   const currentMembership = stats[stats.length - 1]?.membership ?? 0
