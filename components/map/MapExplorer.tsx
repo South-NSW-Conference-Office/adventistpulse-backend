@@ -236,11 +236,11 @@ export default function MapExplorer() {
 
     // Load Australian churches from API
     const apiBase = process.env.NEXT_PUBLIC_API_URL ?? '';
-    fetch(`${apiBase}/api/v1/stats/map?limit=2000`)
+    fetch(`${apiBase}/api/v1/entities?level=church&limit=2000`)
       .then(r => r.json())
       .then(data => {
-        const raw: any[] = data?.data ?? [];
-        const churches: Church[] = raw.filter((c: any) => c.lat && c.lng).map((c: any) => ({
+        const raw: any[] = data?.data?.data ?? data?.data ?? [];
+        const churches: Church[] = raw.filter((c: any) => (c.lat && c.lng) || c.location?.coordinates?.length).map((c: any) => ({
           name: c.name ?? '',
           lat: c.lat ?? c.location?.coordinates?.[1],
           lng: c.lng ?? c.location?.coordinates?.[0],
