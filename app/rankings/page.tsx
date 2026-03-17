@@ -1,29 +1,28 @@
 export const dynamic = 'force-dynamic';
-import { getAllEntities, getEntity } from '@/lib/data';
+import { getEntitiesByLevel, getEntity } from '@/lib/data';
 import { tokens, cn } from '@/lib/theme';
 import { RankingsClient } from '@/components/RankingsClient';
+import Link from 'next/link';
 
 interface Props {
   searchParams: Promise<{ level?: string; highlight?: string }>;
 }
 
+const LEVEL_TABS = [
+  { key: 'division',    label: 'Divisions' },
+  { key: 'union',       label: 'Unions' },
+  { key: 'conference',  label: 'Conferences' },
+];
+
 export default async function RankingsPage({ searchParams }: Props) {
   const params = await searchParams;
-  const level = params.level || 'division';
+  const level = params.level || 'conference';
   const highlightCode = params.highlight || '';
   
-  const allEntities = await getAllEntities().catch(() => []);
-  const highlightEntity = highlightCode ? await getEntity(highlightCode).catch(() => null) : null;
-
-  // Get entities at this level
-  let entities = allEntities;
-  if (level === 'conference') {
-    entities = allEntities.filter(e => e.level === 'conference' || e.level === 'mission');
-  } else if (level === 'field') {
-    entities = allEntities.filter(e => e.level === 'field' || e.level === 'section');
-  } else {
-    entities = allEntities.filter(e => e.level === level);
-  }
+  const [entities, highlightEntity] = await Promise.all([
+    getEntitiesByLevel(level).catch(() => []),
+    highlightCode ? getEntity(highlightCode).catch(() => null) : Promise.resolve(null),
+  ]);
 
   // Calculate metrics for each entity
   const ranked = entities.map(e => {
@@ -65,6 +64,24 @@ export default async function RankingsPage({ searchParams }: Props) {
   return (
     <main className={cn('min-h-screen', tokens.bg.page)}>
       <div className="max-w-6xl mx-auto px-4 py-6">
+        {/* Level tabs */}
+        <div className="flex gap-2 mb-6 flex-wrap">
+          {LEVEL_TABS.map(tab => (
+            <Link
+              key={tab.key}
+              href={`/rankings?level=${tab.key}${highlightCode ? `&highlight=${highlightCode}` : ''}`}
+              className={cn(
+                'px-4 py-2 rounded-xl text-sm font-semibold border transition-all',
+                level === tab.key
+                  ? 'bg-[#6366F1] text-white border-[#6366F1]'
+                  : cn(tokens.bg.card, tokens.border.default, tokens.text.body, 'hover:border-[#6366F1]/50')
+              )}
+            >
+              {tab.label}
+            </Link>
+          ))}
+        </div>
+
         <RankingsClient
           data={data}
           level={level}
