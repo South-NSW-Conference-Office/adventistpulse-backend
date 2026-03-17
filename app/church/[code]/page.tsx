@@ -838,20 +838,6 @@ export async function generateMetadata({ params }: Props) {
   };
 }
 
-// ── Static params ──────────────────────────────────────────────────────────────
-
-export async function generateStaticParams() {
-  const churches = await getAllChurches();
-  const slugs = new Map<string, boolean>();
-  const params: { code: string }[] = [];
-
-  for (const church of churches) {
-    const slug = churchNameToSlug(church.name);
-    if (slug && !slugs.has(slug)) {
-      slugs.set(slug, true);
-      params.push({ code: slug });
-    }
-  }
-
-  return params;
-}
+// Dynamic rendering — no static prebuilding; pages are server-rendered on demand
+export const dynamicRendering = 'force-dynamic';
+export const revalidate = 0;
