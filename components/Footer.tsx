@@ -30,6 +30,7 @@ export function Footer() {
               <Link href="/research" className="block text-sm text-gray-500 dark:text-slate-500 hover:text-gray-900 dark:hover:text-gray-900 dark:hover:text-white transition-colors">Research Library</Link>
               <Link href="/vitality-check" className="block text-sm text-gray-500 dark:text-slate-500 hover:text-gray-900 dark:hover:text-gray-900 dark:hover:text-white transition-colors">Vitality Check</Link>
               <Link href="/about" className="block text-sm text-gray-500 dark:text-slate-500 hover:text-gray-900 dark:hover:text-gray-900 dark:hover:text-white transition-colors">About</Link>
+              <Link href="/pricing" className="block text-sm text-gray-500 dark:text-slate-500 hover:text-gray-900 dark:hover:text-gray-900 dark:hover:text-white transition-colors">Pricing</Link>
               <Link href="/beta" className="block text-sm text-gray-500 dark:text-slate-500 hover:text-gray-900 dark:hover:text-gray-900 dark:hover:text-white transition-colors">Beta Access</Link>
             </div>
           </div>
