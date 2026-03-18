@@ -40,7 +40,6 @@ export async function runSignalSweep(conferenceCode) {
   const churches = await OrgUnit.find({
     parentCode: conf,
     level:      'church',
-    isActive:   { $ne: false },
   }).lean()
 
   logger.info(`[signal-engine] Sweeping ${churches.length} churches for ${conf}`)
@@ -53,7 +52,7 @@ export async function runSignalSweep(conferenceCode) {
       result.processed++
     } catch (err) {
       result.errors.push({ churchCode: church.code, error: err.message })
-      logger.warn(`[signal-engine] Error checking ${church.code}: ${err.message}`)
+      logger.warn(`[signal-engine] Error checking ${church.code}`, err)
     }
   }
 
@@ -82,7 +81,11 @@ async function checkChurch(church, conferenceCode) {
   for (const s of [...staffingResults, ...delegationResults]) {
     if (s.action === 'upsert') {
       await signalService.upsert(s.payload)
-      if (s.isNew !== false) created.push(s)
+      if (s.payload.resolvedAt) {
+        resolved.push(s)
+      } else {
+        created.push(s)
+      }
     }
   }
 
