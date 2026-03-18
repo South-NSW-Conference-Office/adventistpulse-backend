@@ -2,11 +2,13 @@ import { Router } from 'express'
 import { researchService } from '../services/research.service.js'
 import { response } from '../core/response.js'
 import { asyncHandler } from '../controllers/base.controller.js'
+import { validate } from '../middleware/validate.middleware.js'
+import { researchListQuerySchema } from '../validators/research.validator.js'
 
 const router = Router()
 
 // GET /api/v1/research — list research papers with query filters
-router.get('/', asyncHandler(async (req, res) => {
+router.get('/', validate(researchListQuerySchema, 'query'), asyncHandler(async (req, res) => {
   const data = await researchService.list(req.query)
   response.success(res, data)
 }))
