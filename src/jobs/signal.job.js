@@ -1,30 +1,27 @@
 /**
  * Signal Job — scheduled sweeps of the signal engine.
  *
+ * Does NOT register cron jobs on import (no side effects).
+ * Call startScheduler() explicitly from index.js after the DB is connected.
+ *
  * Light pass (every 15 minutes): staffing vacancies + delegation expiry.
  * Heavy pass (nightly 2am AEST): membership trends, financial anomalies,
- *   data quality. (Phase 2 — stubs in signal.engine.js)
- *
- * Uses node-cron. Add to startup in app.js or index.js:
- *   import './jobs/signal.job.js'
- *
- * NOTE: In a multi-process deployment, run the scheduler only in one process
- * (worker 0 if using cluster). The signal.engine.js handles per-conference
- * sweeps independently so you can also run them as separate queue workers.
+ *   data quality checks. (Phase 2 — uncomment when entity-history is built)
  */
 
-import cron from 'node-cron'
-import { OrgUnit }       from '../models/OrgUnit.js'
-import { runSignalSweep } from '../services/signal.engine.js'
-import { logger }         from '../core/logger.js'
+import cron                from 'node-cron'
+import { OrgUnit }         from '../models/OrgUnit.js'
+import { runSignalSweep }  from '../services/signal.engine.js'
+import { logger }          from '../core/logger.js'
 
 let isRunning = false  // guard against overlapping runs
 
 /**
  * Sweep all active conferences.
- * Collects unique conferenceCodes from OrgUnit and sweeps each in sequence.
+ * Used by the scheduler for full passes. Individual admins should use
+ * runSignalSweep(conferenceCode) directly to scope to their territory.
  */
-async function sweepAll() {
+export async function sweepAll() {
   if (isRunning) {
     logger.warn('[signal-job] Sweep already running — skipping this tick')
     return
@@ -34,15 +31,14 @@ async function sweepAll() {
   const start = Date.now()
 
   try {
-    // Get distinct conference codes from active OrgUnits
-    const codes = await OrgUnit.distinct('code', { level: 'conference', isActive: { $ne: false } })
+    const codes = await OrgUnit.distinct('code', { level: 'conference' })
     logger.info(`[signal-job] Starting sweep for ${codes.length} conferences`)
 
     for (const code of codes) {
       try {
         await runSignalSweep(code)
       } catch (err) {
-        logger.error(`[signal-job] Failed sweep for ${code}: ${err.message}`)
+        logger.error(`[signal-job] Failed sweep for ${code}`, err)
       }
     }
 
@@ -52,19 +48,24 @@ async function sweepAll() {
   }
 }
 
-// Light pass — every 15 minutes (staffing + delegations)
-cron.schedule('*/15 * * * *', () => {
-  logger.info('[signal-job] Light pass triggered')
-  sweepAll().catch(err => logger.error('[signal-job] Unhandled error in sweepAll:', err))
-})
+/**
+ * Register cron schedules. Call this once from index.js after connectDB().
+ * Keeping cron registration here (not in app.js) so it only runs in the
+ * server process, not in test runners or other importers of the app.
+ */
+export function startScheduler() {
+  // Light pass — every 15 minutes (staffing + delegations)
+  cron.schedule('*/15 * * * *', () => {
+    logger.info('[signal-job] Light pass triggered')
+    sweepAll().catch(err => logger.error('[signal-job] Unhandled error in sweepAll', err))
+  })
 
-// Heavy pass — 2am AEST daily (UTC+11 = 15:00 UTC)
-// TODO (Phase 2): uncomment when membership/financial checks are implemented
-// cron.schedule('0 15 * * *', () => {
-//   logger.info('[signal-job] Nightly heavy pass triggered')
-//   sweepAll().catch(err => logger.error('[signal-job] Unhandled error in sweepAll:', err))
-// })
+  // Heavy pass — 2am AEST daily (UTC+11 = 15:00 UTC)
+  // TODO (Phase 2): uncomment when membership/financial checks are implemented
+  // cron.schedule('0 15 * * *', () => {
+  //   logger.info('[signal-job] Nightly heavy pass triggered')
+  //   sweepAll().catch(err => logger.error('[signal-job] Unhandled error in sweepAll', err))
+  // })
 
-logger.info('[signal-job] Scheduler registered — light pass every 15 minutes')
-
-export { sweepAll }
+  logger.info('[signal-job] Scheduler registered — light pass every 15 minutes')
+}
