@@ -32,3 +32,6 @@ export const verifyEmailRateLimit    = makeLimit({ windowMs: 15 * 60 * 1000, max
 
 // General API routes — covers /entities, /stats, /auth/me, /auth/logout
 export const apiRateLimit = makeLimit({ windowMs: 60 * 1000, max: 200, devMax: 2000 })
+
+// Survey respond endpoint — public, IP-gated: 3 per IP per 15 minutes
+export const surveyRespondRateLimit = makeLimit({ windowMs: 15 * 60 * 1000, max: 3, devMax: 100 })
