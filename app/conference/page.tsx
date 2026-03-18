@@ -1,10 +1,12 @@
+import React from 'react';
 import Link from 'next/link';
 import { tokens, cn } from '@/lib/theme';
 import {
   Users, Church, Upload, UserCheck, BarChart3,
   ChevronRight, Lock, Calendar, Shield, Building2,
   ClipboardList, ArrowUpRight, UserCog, Settings, Globe2,
-  ToggleLeft, Info
+  Info, Zap, Radio, MessageSquare, TrendingDown, AlertTriangle,
+  CheckCircle2, Clock, Bot
 } from 'lucide-react';
 
 export const metadata = {
@@ -54,12 +56,79 @@ const SAMPLE_STAFFING = [
 ];
 
 const TABS = [
+  { id: 'intel',      label: 'Intel Feed',      icon: Radio },
   { id: 'staffing',   label: 'Staffing',        icon: UserCheck },
   { id: 'history',    label: 'History Import',  icon: Upload },
   { id: 'delegation', label: 'Delegations',     icon: Shield },
   { id: 'access',     label: 'Access',          icon: UserCog },
   { id: 'settings',   label: 'Org Settings',    icon: Settings },
 ];
+
+// Mission Intelligence Feed — Crucix-inspired tiered alert system
+// FLASH = immediate action needed | PRIORITY = review this week | ROUTINE = watch list
+const SIGNAL_FEED: {
+  tier: 'FLASH' | 'PRIORITY' | 'ROUTINE';
+  church: string;
+  signal: string;
+  detail: string;
+  age: string;
+  icon: React.ElementType;
+}[] = [
+  {
+    tier:   'FLASH',
+    church: 'Queanbeyan',
+    signal: 'No pastor assigned',
+    detail: 'Vacant for 3+ months. Elder delegation active but no head-pastor appointment.',
+    age:    '97 days',
+    icon:   AlertTriangle,
+  },
+  {
+    tier:   'PRIORITY',
+    church: 'Wollongong Central',
+    signal: 'Membership down 18% over 24 months',
+    detail: 'Consistent decline across 8 consecutive quarters. No growth events recorded.',
+    age:    'Updated this week',
+    icon:   TrendingDown,
+  },
+  {
+    tier:   'PRIORITY',
+    church: 'Goulburn',
+    signal: 'Stats not submitted — 2 quarters',
+    detail: 'Last data submission: Q2 2024. Automated reminders sent ×3.',
+    age:    '6 months',
+    icon:   Clock,
+  },
+  {
+    tier:   'ROUTINE',
+    church: 'Orange',
+    signal: 'Pastoral tenure milestone — 7 years',
+    detail: 'Pastor David Simms approaches 7yr tenure. Historical average SNSW: 4.2yr.',
+    age:    'This month',
+    icon:   Clock,
+  },
+  {
+    tier:   'ROUTINE',
+    church: 'Bathurst',
+    signal: 'Elder delegation expiring in 30 days',
+    detail: 'Access granted to Elder R. Thompson expires 18 Apr 2026. Renew or let lapse.',
+    age:    '30 days',
+    icon:   Shield,
+  },
+  {
+    tier:   'ROUTINE',
+    church: 'Canberra National',
+    signal: 'Tithe growth +6% YTD',
+    detail: 'Above conference average (+2%). Strong indicator — flag for case study.',
+    age:    'This week',
+    icon:   CheckCircle2,
+  },
+];
+
+const TIER_CONFIG = {
+  FLASH:    { label: 'FLASH',    bg: 'bg-red-500/10',    text: 'text-red-500',    border: 'border-red-500/20',    dot: 'bg-red-500' },
+  PRIORITY: { label: 'PRIORITY', bg: 'bg-amber-500/10',  text: 'text-amber-500',  border: 'border-amber-500/20',  dot: 'bg-amber-500' },
+  ROUTINE:  { label: 'ROUTINE',  bg: 'bg-[#6366F1]/10',  text: 'text-[#6366F1]',  border: 'border-[#6366F1]/20',  dot: 'bg-[#6366F1]' },
+};
 
 export default function ConferenceDashboardPage() {
   return (
@@ -173,13 +242,120 @@ export default function ConferenceDashboardPage() {
                 'flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors cursor-default whitespace-nowrap',
                 i === 0
                   ? 'border-[#6366F1] text-[#6366F1]'
-                  : 'border-transparent text-gray-500 dark:text-slate-500'
+                  : 'border-transparent text-gray-500 dark:text-slate-500',
+                // Flash badge on Intel Feed tab
               )}
             >
               <Icon className="w-3.5 h-3.5" />
               {label}
             </div>
           ))}
+        </div>
+
+        {/* ── INTEL FEED (active tab in preview) ── */}
+        <div className={cn('rounded-2xl border overflow-hidden mb-8', tokens.bg.card, tokens.border.default)}>
+          <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-[#2a3a50]">
+            <div className="flex items-center gap-2">
+              <Radio className="w-4 h-4 text-[#6366F1]" />
+              <h2 className={cn('text-sm font-bold', tokens.text.heading)}>Mission Intelligence Feed</h2>
+              <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse ml-1" title="Live" />
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-red-500/10 text-red-500 font-bold">1 FLASH</span>
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-500 font-bold">2 PRIORITY</span>
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#6366F1]/10 text-[#6366F1] font-bold">3 ROUTINE</span>
+            </div>
+          </div>
+          <div className="divide-y divide-gray-100 dark:divide-[#2a3a50]">
+            {SIGNAL_FEED.map((s, i) => {
+              const cfg = TIER_CONFIG[s.tier];
+              const Icon = s.icon;
+              return (
+                <div key={i} className={cn('flex items-start gap-4 px-5 py-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors', i === 0 ? `border-l-4 ${s.tier === 'FLASH' ? 'border-red-500' : ''}` : '')}>
+                  <div className={cn('flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center', cfg.bg)}>
+                    <Icon className={cn('w-4 h-4', cfg.text)} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+                      <span className={cn('text-[10px] font-bold px-2 py-0.5 rounded-full border', cfg.bg, cfg.text, cfg.border)}>
+                        {s.tier}
+                      </span>
+                      <span className={cn('text-xs font-semibold', tokens.text.heading)}>{s.church}</span>
+                      <span className="text-[10px] text-gray-400 dark:text-slate-500">· {s.age}</span>
+                    </div>
+                    <p className={cn('text-sm font-medium', tokens.text.body)}>{s.signal}</p>
+                    <p className={cn('text-xs mt-0.5 leading-relaxed', tokens.text.muted)}>{s.detail}</p>
+                  </div>
+                  <button className={cn('flex-shrink-0 text-xs font-medium hover:text-[#6366F1] transition-colors hidden sm:block', tokens.text.muted)}>
+                    Act →
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+          <div className="px-5 py-3 border-t border-gray-100 dark:border-[#2a3a50] flex items-center justify-between">
+            <p className={cn('text-xs', tokens.text.muted)}>Signals refresh every 15 minutes · Powered by Pulse data engine</p>
+            <button className={cn('text-xs font-semibold text-[#6366F1] hover:underline')}>View all signals →</button>
+          </div>
+        </div>
+
+        {/* ── PULSE BOT — Telegram intelligence commands ── */}
+        <div className={cn('rounded-2xl border p-6 mb-8', tokens.bg.card, tokens.border.default)}>
+          <div className="flex items-center gap-3 mb-5">
+            <div className="w-8 h-8 rounded-lg bg-[#6366F1]/10 flex items-center justify-center">
+              <Bot className="w-4 h-4 text-[#6366F1]" />
+            </div>
+            <div>
+              <h3 className={cn('text-sm font-bold', tokens.text.heading)}>Pulse Bot — Intelligence on your phone</h3>
+              <p className={cn('text-xs', tokens.text.muted)}>Telegram commands that query your territory in real time</p>
+            </div>
+            <span className="ml-auto text-[10px] px-2 py-0.5 rounded-full bg-[#6366F1]/10 text-[#6366F1] font-semibold">Admin tier</span>
+          </div>
+
+          <div className="grid sm:grid-cols-3 gap-3 mb-5">
+            {[
+              {
+                cmd:    '/brief SNSW',
+                label:  'Conference summary',
+                desc:   'Current staffing, top signals, membership trend, tithe performance — in one message',
+                icon:   MessageSquare,
+              },
+              {
+                cmd:    '/sweep',
+                label:  'Anomaly scan',
+                desc:   'Cross-checks all churches in your territory for FLASH and PRIORITY signals right now',
+                icon:   Radio,
+              },
+              {
+                cmd:    '/church SNSW-CANBNAT',
+                label:  'Church deep-dive',
+                desc:   'Full profile for any church — pastor, stats, trends, delegations, last submission',
+                icon:   Church,
+              },
+            ].map(({ cmd, label, desc, icon: Icon }) => (
+              <div key={cmd} className={cn('rounded-xl p-4', 'bg-gray-50 dark:bg-[#1a2a3a]')}>
+                <Icon className="w-4 h-4 text-[#6366F1] mb-2" />
+                <code className={cn('block text-xs font-mono font-bold mb-1', tokens.text.heading)}>{cmd}</code>
+                <p className={cn('text-xs font-semibold mb-1', tokens.text.body)}>{label}</p>
+                <p className={cn('text-[10px] leading-relaxed', tokens.text.muted)}>{desc}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Sample bot response */}
+          <div className="rounded-xl bg-[#0D1117] border border-[#2a3a50] p-4 font-mono text-xs">
+            <p className="text-[#6366F1] font-bold mb-2">→ /brief SNSW</p>
+            <p className="text-emerald-400 mb-1">⚡ Pulse · South New South Wales Conference</p>
+            <p className="text-gray-400 mb-3">Wed 18 Mar 2026 · 14:32 AEDT</p>
+            <p className="text-white mb-1">📍 <span className="text-amber-400 font-bold">1 FLASH</span>  <span className="text-amber-300 font-bold">2 PRIORITY</span>  <span className="text-[#818cf8]">3 ROUTINE</span></p>
+            <p className="text-red-400 mb-1">🔴 FLASH — Queanbeyan: No pastor (97 days vacant)</p>
+            <p className="text-amber-400 mb-1">🟡 PRIORITY — Wollongong Central: −18% membership 24mo</p>
+            <p className="text-gray-300 mb-3">🟡 PRIORITY — Goulburn: Stats missing 2 quarters</p>
+            <p className="text-gray-400 mb-1">👥 Pastors: 18 active · 1 vacant charge</p>
+            <p className="text-gray-400 mb-1">⛪ Churches: 52 · 4,800 members</p>
+            <p className="text-gray-400 mb-1">💰 Tithe: +3.2% YTD vs prior year</p>
+            <p className="text-gray-500 mt-2 text-[10px]">Reply /sweep to run full anomaly scan · /church [code] for detail</p>
+          </div>
         </div>
 
         {/* Staffing table */}
