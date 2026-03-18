@@ -16,6 +16,7 @@
 
 import { Router }                  from 'express'
 import { authMiddleware }          from '../middleware/auth.middleware.js'
+import { requirePasswordChanged }  from '../middleware/requirePasswordChanged.middleware.js'
 import { requireRole }             from '../middleware/role.middleware.js'
 import { requireApproved }         from '../middleware/requireApproved.middleware.js'
 import { validate }                from '../middleware/validate.middleware.js'
@@ -30,7 +31,7 @@ import {
 } from '../validators/survey.validator.js'
 
 // ─── Auth middleware stack for pastor routes ───────────────────────────────────
-const pastorAuth = [authMiddleware, requireApproved, requireRole('elder')]
+const pastorAuth = [authMiddleware, requirePasswordChanged, requireApproved, requireRole('elder')]
 
 // ─── Pastor router (authenticated) ────────────────────────────────────────────
 export const pastorSurveyRoutes = Router()
