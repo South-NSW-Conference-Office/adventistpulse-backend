@@ -63,18 +63,18 @@ export const mapDataQuerySchema = z.object({
 export const countryTrendQuerySchema = z.object({
   country:  z.string().min(1),
   metric:   z.enum(['membership', 'baptisms', 'tithe', 'net_growth']).default('membership'),
-  lookback: z.string().transform(Number).default('5').pipe(z.number().int().min(1).max(20)),
+  lookback: z.string().transform(Number).pipe(z.number().int().min(1).max(20)).optional().default(5),
 })
 
 export const countrySummaryQuerySchema = z.object({
   country: z.string().min(1),
-  year:    z.string().transform(Number),
+  year:    z.string().transform(Number).optional(),
 })
 
 export const rankingsQuerySchema = z.object({
   level: z.enum(['gc', 'division', 'union', 'conference', 'church']),
-  metric: z.enum(['baptisms', 'growth_rate', 'tithe_per_member', 'retention']),
-  year: z.string().transform(Number),
+  metric: z.enum(['membership', 'baptisms', 'growth_rate', 'tithe_per_member', 'retention']),
+  year: z.string().transform(Number).optional(),
   parentCode: z.string().toUpperCase().optional(),
   page: z.string().optional(),
   limit: z.string().optional(),

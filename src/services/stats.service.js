@@ -25,11 +25,12 @@ class StatsService {
 
   async getRankings(query) {
     const { page, limit, skip } = getPaginationParams(query)
-    const { level, metric, year, parentCode } = query
+    const { level, metric, parentCode } = query
+    const year = query.year ? Number(query.year) : new Date().getFullYear() - 1
 
     const [data, total] = await Promise.all([
-      statsRepository.getRankings({ level, metric, year: Number(year), parentCode, skip, limit }),
-      statsRepository.countRankings({ level, metric, year: Number(year), parentCode }),
+      statsRepository.getRankings({ level, metric, year, parentCode, skip, limit }),
+      statsRepository.countRankings({ level, metric, year, parentCode }),
     ])
 
     return { data, total, page, limit }
@@ -68,8 +69,9 @@ class StatsService {
   }
 
   async getCountrySummary(query) {
-    const { country, year } = query
-    return statsRepository.getCountrySummary(country, Number(year))
+    const { country } = query
+    const year = query.year ? Number(query.year) : new Date().getFullYear() - 1
+    return statsRepository.getCountrySummary(country, year)
   }
 
   async getProjections(code) {

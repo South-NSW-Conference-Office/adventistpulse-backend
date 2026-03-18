@@ -20,6 +20,13 @@ export const response = {
     })
   },
 
+  notFound(res, resource = 'Resource') {
+    return res.status(404).json({
+      success: false,
+      error: { code: 'NOT_FOUND', message: `${resource} not found` },
+    })
+  },
+
   error(res, err) {
     const statusCode = err.statusCode ?? 500
     const body = {

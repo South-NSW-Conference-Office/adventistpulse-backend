@@ -46,7 +46,7 @@ export function errorMiddleware(err, req, res, next) {
     const appErr = new AppError('Token expired', { code: 'TOKEN_EXPIRED', statusCode: 401 })
     return response.error(res, appErr)
   }
-  if (err.code?.startsWith('ERR_JWT') || err.code?.startsWith('ERR_JWE')) {
+  if (typeof err.code === 'string' && (err.code.startsWith('ERR_JWT') || err.code.startsWith('ERR_JWE'))) {
     const appErr = new AppError('Invalid token', { code: 'TOKEN_INVALID', statusCode: 401 })
     return response.error(res, appErr)
   }

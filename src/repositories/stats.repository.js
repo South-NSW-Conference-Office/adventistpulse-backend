@@ -239,6 +239,7 @@ class StatsRepository extends BaseRepository {
   async countRankings({ level, metric, year, parentCode }) {
     // Must mirror getRankings exactly — same metricMap and null-filter — so pagination totals match
     const metricMap = {
+      membership:      '$membership.ending',
       baptisms:        '$membership.baptisms',
       growth_rate:     '$membership.growthRate',
       tithe_per_member: { $cond: [{ $gt: ['$membership.ending', 0] }, { $divide: ['$finance.tithe', '$membership.ending'] }, null] },
@@ -258,6 +259,7 @@ class StatsRepository extends BaseRepository {
 
   async getRankings({ level, metric, year, parentCode, skip = 0, limit = 20 }) {
     const metricMap = {
+      membership: '$membership.ending',
       baptisms: '$membership.baptisms',
       growth_rate: '$membership.growthRate',
       tithe_per_member: { $cond: [{ $gt: ['$membership.ending', 0] }, { $divide: ['$finance.tithe', '$membership.ending'] }, null] },
