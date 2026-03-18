@@ -1,32 +1,32 @@
-import Joi from 'joi'
+import { z } from 'zod'
 
-export const nominateSchema = Joi.object({
-  name:             Joi.string().min(2).max(100).required(),
-  email:            Joi.string().email().required(),
-  role:             Joi.string().valid('member', 'elder', 'pastor', 'editor', 'admin').required(),
-  memberChurch:     Joi.string().uppercase().max(50).optional().allow(null, ''),
-  assignedChurches: Joi.array().items(Joi.string().uppercase().max(50)).default([]),
-  conferenceCode:   Joi.string().uppercase().max(20).optional(),
-  paidBy:           Joi.string().valid('conference', 'self').default('conference'),
+export const nominateSchema = z.object({
+  name:             z.string().min(2).max(100),
+  email:            z.string().email(),
+  role:             z.enum(['member', 'elder', 'pastor', 'editor', 'admin']),
+  memberChurch:     z.string().toUpperCase().max(50).optional().nullable(),
+  assignedChurches: z.array(z.string().toUpperCase().max(50)).default([]),
+  // conferenceCode intentionally omitted — always pinned to req.user.subscription.conferenceCode
+  paidBy:           z.enum(['conference', 'self']).default('conference'),
 })
 
-export const acceptInviteSchema = Joi.object({
-  token:    Joi.string().hex().length(64).required(),
-  password: Joi.string().min(8).max(128).required(),
+export const acceptInviteSchema = z.object({
+  token:    z.string().length(64).regex(/^[0-9a-f]+$/i, 'Invalid token format'),
+  password: z.string().min(8).max(128),
 })
 
-export const delegateSchema = Joi.object({
-  elderEmail: Joi.string().email().required(),
-  churchCode: Joi.string().uppercase().max(50).required(),
-  expiresAt:  Joi.date().iso().min('now').optional().allow(null),
+export const delegateSchema = z.object({
+  elderEmail: z.string().email(),
+  churchCode: z.string().toUpperCase().max(50),
+  expiresAt:  z.string().datetime().optional().nullable(),
 })
 
-export const assignmentSchema = Joi.object({
-  personName:     Joi.string().min(2).max(100).required(),
-  churchCode:     Joi.string().uppercase().max(50).required(),
-  role:           Joi.string().valid('head-pastor','associate-pastor','bible-worker','chaplain','elder','district-leader').default('head-pastor'),
-  startDate:      Joi.date().iso().required(),
-  endDate:        Joi.date().iso().min(Joi.ref('startDate')).optional().allow(null),
-  conferenceCode: Joi.string().uppercase().max(20).optional(),
-  notes:          Joi.string().max(500).optional().allow(null, ''),
+export const assignmentSchema = z.object({
+  personName: z.string().min(2).max(100),
+  churchCode: z.string().toUpperCase().max(50),
+  role:       z.enum(['head-pastor', 'associate-pastor', 'bible-worker', 'chaplain', 'elder', 'district-leader']).default('head-pastor'),
+  startDate:  z.string().datetime(),
+  endDate:    z.string().datetime().optional().nullable(),
+  // conferenceCode intentionally omitted — always pinned to req.user.subscription.conferenceCode
+  notes:      z.string().max(500).optional().nullable(),
 })
