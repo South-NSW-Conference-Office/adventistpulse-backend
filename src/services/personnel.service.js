@@ -7,11 +7,12 @@
  * leadership effectiveness research.
  */
 
-import { parse as csvParse } from 'csv-parse/sync'
-import { PersonnelAssignment } from '../models/PersonnelAssignment.js'
-import { OrgUnit } from '../models/OrgUnit.js'
-import { User } from '../models/User.js'
-import { logger } from '../core/logger.js'
+import { parse as csvParse }    from 'csv-parse/sync'
+import { PersonnelAssignment }  from '../models/PersonnelAssignment.js'
+import { OrgUnit }              from '../models/OrgUnit.js'
+import { User }                 from '../models/User.js'
+import { logger }               from '../core/logger.js'
+import { ForbiddenError }       from '../core/errors/index.js'
 
 /**
  * Escape a string for safe use in a MongoDB $regex.
@@ -30,17 +31,34 @@ function nameRegex(name) {
 
 /**
  * Assert that a churchCode belongs to the given conferenceCode.
- * Throws if the church is not in the admin's territory.
+ * Handles up to two levels of intermediary (e.g. church → district → conference),
+ * which covers the full range of Adventist org structures:
+ *   - Standard:  church → conference          (direct parentCode match)
+ *   - Districts: church → district → conference (intermediate tier)
+ *
+ * Throws ForbiddenError if the church is not found in the admin's territory.
  */
 async function assertChurchInConference(churchCode, conferenceCode) {
-  const church = await OrgUnit.findOne({
-    code:       churchCode.toUpperCase(),
-    parentCode: conferenceCode.toUpperCase(),
-    level:      'church',
-  }).lean()
-  if (!church) {
-    throw new Error(`Church ${churchCode} does not belong to conference ${conferenceCode}`)
+  const upper    = churchCode.toUpperCase()
+  const confUpper = conferenceCode.toUpperCase()
+
+  const church = await OrgUnit.findOne({ code: upper, level: 'church' }).select('code parentCode').lean()
+  if (!church) throw new ForbiddenError(`Church ${churchCode} not found`)
+
+  // Case 1: church is a direct child of the conference
+  if (church.parentCode === confUpper) return
+
+  // Case 2: church is a child of a district/region that belongs to the conference
+  // (handles Philippines-style district tiers — church → district → conference)
+  const intermediate = await OrgUnit.findOne({
+    code:       church.parentCode,
+    parentCode: confUpper,
+  }).select('code').lean()
+
+  if (!intermediate) {
+    throw new ForbiddenError(`Church ${churchCode} does not belong to conference ${conferenceCode}`)
   }
+  // Found — church is two levels below the conference via an intermediate tier
 }
 
 export const personnelService = {
