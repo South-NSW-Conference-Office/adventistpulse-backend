@@ -28,7 +28,7 @@ dotenv.config({ path: join(__dirname, '../.env') })
 const args    = process.argv.slice(2)
 const dryRun  = args.includes('--dry-run')
 const filePath = args.find(a => !a.startsWith('--')) ??
-  resolve(__dirname, '../../bem-adventistpulse/_team-docs/yearbook-data/statistics.json')
+  resolve(__dirname, '../_team-docs/yearbook-data/statistics.json')
 
 // ── MongoDB ───────────────────────────────────────────────────────────────────
 
