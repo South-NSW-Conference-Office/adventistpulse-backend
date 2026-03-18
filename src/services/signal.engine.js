@@ -36,13 +36,24 @@ export async function runSignalSweep(conferenceCode) {
   const conf   = conferenceCode.toUpperCase()
   const result = { processed: 0, signalsCreated: 0, signalsResolved: 0, errors: [] }
 
-  // Get all churches in this conference
-  const churches = await OrgUnit.find({
-    parentCode: conf,
-    level:      'church',
-  }).lean()
+  // Two-step church discovery — mirrors assertChurchInConference from PR #1.
+  // Step 1: churches that sit directly under the conference.
+  const directChurches = await OrgUnit.find({ parentCode: conf, level: 'church' }).lean()
 
-  logger.info(`[signal-engine] Sweeping ${churches.length} churches for ${conf}`)
+  // Step 2: churches that sit under an intermediate tier (district, field, section …).
+  const intermediates = await OrgUnit.find({
+    parentCode: conf,
+    level: { $nin: ['church', 'gc', 'division', 'union', 'conference', 'mission'] },
+  }).select('code').lean()
+
+  const intermediateCodes = intermediates.map(d => d.code)
+  const nestedChurches = intermediateCodes.length > 0
+    ? await OrgUnit.find({ parentCode: { $in: intermediateCodes }, level: 'church' }).lean()
+    : []
+
+  const churches = [...directChurches, ...nestedChurches]
+
+  logger.info(`[signal-engine] Sweeping ${churches.length} churches for ${conf} (${directChurches.length} direct, ${nestedChurches.length} via district tier)`)
 
   for (const church of churches) {
     try {
@@ -225,8 +236,11 @@ async function checkDelegations(church, conferenceCode) {
   const now     = new Date()
   const warnAt  = new Date(now.getTime() + DELEGATION_EXPIRY_WARN_DAYS * 86400000)
 
-  // Find users with delegations to this church expiring within the warning window
+  // Find users with delegations to this church expiring within the warning window.
+  // Scope to conferenceCode defensively — church codes are globally unique today,
+  // but this keeps the query consistent with the rest of the codebase.
   const usersWithExpiringDelegations = await User.find({
+    'subscription.conferenceCode': conferenceCode,
     'delegatedAccess': {
       $elemMatch: {
         churchCode: code,
@@ -258,6 +272,7 @@ async function checkDelegations(church, conferenceCode) {
 
   // Auto-resolve delegation_expiry signals where the delegation has now passed
   const expiredUsers = await User.find({
+    'subscription.conferenceCode': conferenceCode,
     'delegatedAccess': {
       $elemMatch: {
         churchCode: code,
