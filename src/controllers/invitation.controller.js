@@ -1,15 +1,19 @@
 import { invitationService } from '../services/invitation.service.js'
 import { response } from '../core/response.js'
 import { asyncHandler } from './base.controller.js'
+import { ForbiddenError } from '../core/errors/index.js'
 
 export const invitationController = {
 
   /** POST /admin/invite — conference admin nominates a pastor/worker */
   nominate: asyncHandler(async (req, res) => {
-    const {
-      name, email, role, memberChurch,
-      assignedChurches, conferenceCode, paidBy,
-    } = req.body
+    // conferenceCode is ALWAYS taken from the authenticated user's subscription.
+    // We never trust a value from req.body — an SNSW admin must not be able to
+    // nominate someone into a different conference by passing a different code.
+    const conferenceCode = req.user.subscription?.conferenceCode
+    if (!conferenceCode) throw new ForbiddenError('No conference assigned to your account')
+
+    const { name, email, role, memberChurch, assignedChurches, paidBy } = req.body
 
     const result = await invitationService.nominate({
       name,
@@ -17,7 +21,7 @@ export const invitationController = {
       role,
       memberChurch,
       assignedChurches: assignedChurches ?? [],
-      conferenceCode: conferenceCode ?? req.user.subscription?.conferenceCode,
+      conferenceCode, // pinned — body value ignored
       paidBy: paidBy ?? 'conference',
       invitedByUser: req.user,
     })
