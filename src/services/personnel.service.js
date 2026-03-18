@@ -178,16 +178,16 @@ export const personnelService = {
           continue
         }
 
-        // Verify church belongs to this conference (skip with error if not)
-        const church = await OrgUnit.findOne({
-          code:       churchCode.toUpperCase(),
-          parentCode: conf,
-          level:      'church',
-        }).lean()
-        if (!church) {
-          results.errors.push({ row: i + 2, reason: `Church ${churchCode} not in conference ${conf}` })
-          results.skipped++
-          continue
+        // Verify church belongs to this conference — two-step district-tier aware check
+        try {
+          await assertChurchInConference(churchCode, conf)
+        } catch (err) {
+          if (err instanceof ForbiddenError) {
+            results.errors.push({ row: i + 2, reason: err.message })
+            results.skipped++
+            continue
+          }
+          throw err
         }
 
         const role      = rawRole.toLowerCase().replace(/\s+/g, '-').replace('pastor-head', 'head-pastor')
@@ -267,14 +267,15 @@ export const personnelService = {
     const elder = await User.findOne({ email: elderEmail.toLowerCase() })
     if (!elder) throw new Error(`No user found with email ${elderEmail}`)
 
-    // Territory check — elder must be a member of a church in the same conference
+    // Territory check — elder's membership church must be in this conference
     if (elder.memberChurch) {
-      const elderChurch = await OrgUnit.findOne({
-        code:       elder.memberChurch.toUpperCase(),
-        parentCode: conferenceCode.toUpperCase(),
-      }).lean()
-      if (!elderChurch) {
-        throw new Error(`${elder.name} is not a member of a church in your conference`)
+      try {
+        await assertChurchInConference(elder.memberChurch, conferenceCode)
+      } catch (err) {
+        if (err instanceof ForbiddenError) {
+          throw new ForbiddenError(`${elder.name} is not a member of a church in your conference`)
+        }
+        throw err
       }
     }
 
