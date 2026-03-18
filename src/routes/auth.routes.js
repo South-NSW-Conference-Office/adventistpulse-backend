@@ -16,6 +16,7 @@ import {
   loginSchema,
   forgotPasswordSchema,
   resetPasswordSchema,
+  changePasswordSchema,
   changeEmailSchema,
   resendVerificationByEmailSchema,
 } from '../validators/auth.validator.js'
@@ -38,7 +39,8 @@ router.post('/resend-verification',          authMiddleware, authController.rese
 router.post('/resend-verification-by-email', validate(resendVerificationByEmailSchema), authController.resendVerificationByEmail)
 
 // Authenticated + verified routes
-router.post('/change-email', authMiddleware, validate(changeEmailSchema), authController.changeEmail)
+router.post('/change-password', authMiddleware, validate(changePasswordSchema), authController.changePassword)
+router.post('/change-email',    authMiddleware, validate(changeEmailSchema),    authController.changeEmail)
 
 // Beta signup (public)
 router.post('/beta-signup',    registerRateLimit,    authController.betaSignup)

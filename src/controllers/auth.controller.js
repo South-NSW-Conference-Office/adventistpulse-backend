@@ -65,6 +65,12 @@ export const authController = {
     response.success(res, { message: 'Password reset successfully. Please log in.' })
   }),
 
+  changePassword: asyncHandler(async (req, res) => {
+    const { currentPassword, newPassword } = req.body
+    await authService.changePassword(req.user.sub, currentPassword, newPassword)
+    response.success(res, { message: 'Password changed successfully.' })
+  }),
+
   changeEmail: asyncHandler(async (req, res) => {
     const { newEmail, password } = req.body
     await authService.changeEmail(req.user.sub, newEmail, password)

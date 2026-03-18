@@ -269,6 +269,29 @@ class AuthService {
     email.sendPasswordChangedAlert(user.email, { changedAt }).catch(() => {})
   }
 
+  async changePassword(userId, currentPassword, newPassword) {
+    const user = await userRepository.findByIdWithSensitiveFields(userId)
+    if (!user) throw new AppError('User not found', { code: 'NOT_FOUND', statusCode: 404 })
+    if (!user.password) throw new AppError('Cannot change password on OAuth-only accounts', { code: 'OAUTH_ONLY', statusCode: 400 })
+
+    // Verify current password
+    const valid = await crypto.compare(currentPassword, user.password)
+    if (!valid) throw new AppError('Current password is incorrect', { code: 'WRONG_PASSWORD', statusCode: 400 })
+
+    // Hash and save new password
+    const hashed = await crypto.hash(newPassword)
+    const changedAt = new Date()
+
+    await userRepository.updateById(userId, {
+      password:           hashed,
+      mustChangePassword: false,
+      passwordChangedAt:  changedAt,
+    })
+
+    // Send security alert (non-blocking)
+    email.sendPasswordChangedAlert(user.email, { changedAt }).catch(() => {})
+  }
+
   async changeEmail(userId, newEmail, password) {
     // Verify password before allowing email change — single query by id
     const user = await userRepository.findByIdWithSensitiveFields(userId)

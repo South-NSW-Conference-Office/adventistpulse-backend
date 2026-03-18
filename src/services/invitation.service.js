@@ -181,47 +181,14 @@ export const invitationService = {
   },
 
   async _sendInviteEmail({ to, name, role, rawToken, conferenceCode, invitedByName }) {
-    const roleLabel = {
-      pastor: 'Pastor',
-      elder:  'Church Elder',
-      editor: 'Conference Editor',
-      admin:  'Conference Administrator',
-      member: 'Member',
-    }[role] ?? role
-
     const inviteUrl = `${env.FRONTEND_URL}/accept-invite?token=${rawToken}`
-
-    await email.send({
-      to,
-      subject: `You've been added to Adventist Pulse — ${roleLabel}`,
-      html: `
-        <div style="font-family: sans-serif; max-width: 560px; margin: 0 auto; padding: 32px 24px;">
-          <div style="font-size: 22px; font-weight: 800; color: #6366F1; margin-bottom: 4px;">Adventist Pulse</div>
-          <p style="color: #64748b; font-size: 13px; margin-top: 0;">Mission intelligence for the Adventist Church</p>
-          <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 24px 0;" />
-          <p style="color: #1e293b;">Hi ${name},</p>
-          <p style="color: #475569;">
-            <strong>${invitedByName}</strong>${conferenceCode ? ` from the ${conferenceCode} Conference` : ''} has added you to 
-            <strong>Adventist Pulse</strong> as a <strong>${roleLabel}</strong>.
-          </p>
-          <p style="color: #475569;">
-            Your account is ready — click below to set your password and access your dashboard.
-          </p>
-          <div style="text-align: center; margin: 32px 0;">
-            <a href="${inviteUrl}"
-               style="display: inline-block; background: #6366F1; color: white; text-decoration: none;
-                      padding: 14px 32px; border-radius: 10px; font-weight: 700; font-size: 15px;">
-              Accept Invitation →
-            </a>
-          </div>
-          <p style="color: #94a3b8; font-size: 12px;">This link expires in 7 days. If you weren't expecting this email, you can safely ignore it.</p>
-          <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 24px 0;" />
-          <p style="color: #cbd5e1; font-size: 11px; text-align: center;">
-            Adventist Pulse · South New South Wales Conference · <a href="mailto:pulse@adventist.org.au" style="color: #6366F1;">pulse@adventist.org.au</a>
-          </p>
-        </div>
-      `,
-      text: `Hi ${name},\n\n${invitedByName} has added you to Adventist Pulse as ${roleLabel}.\n\nAccept your invitation here: ${inviteUrl}\n\nThis link expires in 7 days.`,
+    await email.sendInvite(to, {
+      inviteeName:    name,
+      inviterName:    invitedByName,
+      conferenceCode,
+      conferenceName: conferenceCode, // TODO: fetch human-readable name from OrgUnit
+      role,
+      inviteUrl,
     })
   },
 }
