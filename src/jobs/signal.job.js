@@ -52,8 +52,18 @@ export async function sweepAll() {
  * Register cron schedules. Call this once from index.js after connectDB().
  * Keeping cron registration here (not in app.js) so it only runs in the
  * server process, not in test runners or other importers of the app.
+ *
+ * PM2 cluster guard: in cluster mode every worker would call startScheduler(),
+ * running N sweeps per tick. Only register on worker 0 (or non-cluster).
+ * NODE_APP_INSTANCE is set by PM2; undefined in single-process or test.
  */
 export function startScheduler() {
+  const workerId = process.env.NODE_APP_INSTANCE
+  if (workerId !== undefined && workerId !== '0') {
+    logger.info(`[signal-job] Skipping scheduler registration on worker ${workerId} (cluster mode)`)
+    return
+  }
+
   // Light pass — every 15 minutes (staffing + delegations)
   cron.schedule('*/15 * * * *', () => {
     logger.info('[signal-job] Light pass triggered')

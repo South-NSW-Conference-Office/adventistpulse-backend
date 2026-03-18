@@ -33,17 +33,14 @@ export const signalService = {
       query.tier = { $in: tiers.map(t => t.toUpperCase()) }
     }
 
-    // Order: FLASH first, then PRIORITY, then ROUTINE; within each tier, oldest first
-    const TIER_ORDER = { FLASH: 0, PRIORITY: 1, ROUTINE: 2 }
-
-    const signals = await Signal
+    // Sort by tier first (FLASH < PRIORITY < ROUTINE alphabetically), then by age.
+    // Sorting in MongoDB before .limit() ensures high-priority signals are never
+    // pushed out by a large volume of ROUTINE signals hitting the limit boundary.
+    return Signal
       .find(query)
-      .sort({ generatedAt: 1 })
+      .sort({ tier: 1, generatedAt: 1 })
       .limit(Math.min(limit, 500))
       .lean()
-
-    signals.sort((a, b) => (TIER_ORDER[a.tier] ?? 3) - (TIER_ORDER[b.tier] ?? 3))
-    return signals
   },
 
   /**
