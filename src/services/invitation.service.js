@@ -16,7 +16,7 @@ import { env } from '../config/env.js'
 import { logger } from '../core/logger.js'
 
 // Load the denominational domain map (advisory, not a blocker)
-import emailDomains from '../../data/email-domains.json' assert { type: 'json' }
+import emailDomains from '../../data/email-domains.json' with { type: 'json' }
 const TRUSTED_DOMAINS = new Set(emailDomains.known_trusted_domains ?? [])
 
 export const invitationService = {
@@ -77,27 +77,31 @@ export const invitationService = {
     const rawToken = randomBytes(32).toString('hex')
     const hashedToken = cryptoLib.hashToken(rawToken)
 
-    // Create the pre-configured user account
+    // Create the pre-configured user account.
+    // emailVerified and accountStatus are pre-existing User schema fields —
+    // we set them here because conference nomination is the verification step:
+    // the admin vouches for the email, so no separate email verification needed.
     const user = await User.create({
       name,
       email: emailAddress.toLowerCase(),
-      password: null, // set when invite is accepted
+      password: null, // set when invite is accepted via acceptInvite()
       role,
-      memberChurch: memberChurch?.toUpperCase() || null,
-      verifiedMember: true, // conference nomination = verified
-      assignedChurches: assignedChurches.map(c => c.toUpperCase()),
+      memberChurch:      memberChurch?.toUpperCase() || null,
+      verifiedMember:    true, // conference nomination = verified
+      assignedChurches:  assignedChurches.map(c => c.toUpperCase()),
       subscription: {
-        tier: role === 'admin' ? 'admin' : role === 'pastor' || role === 'elder' ? 'pastor' : 'member',
+        tier:           role === 'admin' ? 'admin' : (role === 'pastor' || role === 'elder') ? 'pastor' : 'member',
         paidBy,
         conferenceCode: conferenceCode?.toUpperCase() || null,
-        status: 'invited',
+        status:         'invited',
       },
-      inviteToken: hashedToken,
+      inviteToken:   hashedToken,
       inviteExpires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
-      invitedAt: new Date(),
-      invitedBy: invitedByUser._id,
-      emailVerified: true, // conference vouches for the email address
-      accountStatus: 'approved',
+      invitedAt:     new Date(),
+      invitedBy:     invitedByUser._id,
+      // Pre-existing schema fields — set intentionally:
+      emailVerified: true,       // conference vouches for the address; skip email verify step
+      accountStatus: 'approved', // skip approval queue; conference is the approver
     })
 
     // Send invite email
