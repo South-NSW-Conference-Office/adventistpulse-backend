@@ -83,8 +83,9 @@ export const submitResponseSchema = z.object({
     .string({ required_error: 'dedupeToken is required' })
     .uuid({ message: 'dedupeToken must be a valid UUID' }),
 
-  // Phase 2: phone for requirePhone sessions — optional now
-  phone: z.string().optional(),
+  // Phase 2: phone OTP flow — when requirePhone=true, accept raw phone number here.
+  // Server will hash it — never accept a pre-hashed value from the client.
+  // phone: z.string().optional(),
 })
 
 // ─── List sessions (query params) ─────────────────────────────────────────────

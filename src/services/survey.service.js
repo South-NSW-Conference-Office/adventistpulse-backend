@@ -9,6 +9,7 @@
  */
 
 import QRCode              from 'qrcode'
+import { randomBytes }     from 'crypto'
 import { SurveySession }   from '../models/SurveySession.js'
 import { SurveyResponse }  from '../models/SurveyResponse.js'
 import { OrgUnit }         from '../models/OrgUnit.js'
@@ -90,12 +91,15 @@ function getBand(score) {
   return               { label: 'Needs Attention',   color: '#ef4444' }
 }
 
-/** Generate a random 6-char uppercase alphanumeric code. */
+/**
+ * Generate a cryptographically random 6-char uppercase alphanumeric session code.
+ * Uses crypto.randomBytes instead of Math.random() for better randomness.
+ * Excludes visually ambiguous characters (I, O, 0, 1).
+ */
 function generateCode() {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789' // no I/O/0/1 to avoid confusion
-  let code = ''
-  for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)]
-  return code
+  const bytes = randomBytes(6)
+  return Array.from(bytes).map(b => chars[b % chars.length]).join('')
 }
 
 /**
@@ -211,7 +215,10 @@ export const surveyService = {
    * - Increments responseCount.
    */
   async respond(code, body) {
-    const { answers, denominationType, dedupeToken, phoneHash = null } = body
+    const { answers, denominationType, dedupeToken } = body
+    // phoneHash is intentionally NOT accepted from the client.
+    // Phase 2: when requirePhone=true, accept raw `phone` and hash server-side.
+    const phoneHash = null
 
     const session = await SurveySession.findOne({ sessionCode: code.toUpperCase() })
     if (!session) throw new NotFoundError(`Survey session '${code}'`)
@@ -361,13 +368,29 @@ export const surveyService = {
   /**
    * List sessions for a conference with pagination.
    * Pastor can filter by churchCode and/or status.
+   *
+   * IMPORTANT: When filtering for 'active' sessions, also exclude expired ones.
+   * A session can be status='active' but past its expiresAt — treat as expired.
    */
   async listSessions(conferenceCode, query) {
     const { page, limit, skip } = getPaginationParams(query)
 
     const filter = { conferenceCode: conferenceCode.toUpperCase() }
     if (query.churchCode) filter.churchCode = query.churchCode.toUpperCase()
-    if (query.status)     filter.status     = query.status
+
+    if (query.status === 'active') {
+      // Active = status is 'active' AND not yet expired
+      filter.status    = 'active'
+      filter.expiresAt = { $gt: new Date() }
+    } else if (query.status === 'closed') {
+      // Closed includes both explicitly closed AND expired-but-not-closed
+      filter.$or = [
+        { status: 'closed' },
+        { status: 'active', expiresAt: { $lte: new Date() } },
+      ]
+    } else if (query.status) {
+      filter.status = query.status
+    }
 
     const [data, total] = await Promise.all([
       SurveySession.find(filter)
