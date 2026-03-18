@@ -1,16 +1,17 @@
 import { Router } from 'express'
-import invitationRoutes  from './invitation.routes.js'
-import authRoutes        from './auth.routes.js'
-import entityRoutes      from './entity.routes.js'
-import statsRoutes       from './stats.routes.js'
-import adminRoutes       from './admin.routes.js'
-import onboardingRoutes  from './onboarding.routes.js'
-import riskRoutes        from './risk.routes.js'
-import pulseRoutes       from './pulse.routes.js'
-import reportRoutes      from './report.routes.js'
-import researchRoutes    from './research.routes.js'
-import churchRoutes      from './church.routes.js'
-import signalRoutes      from './signal.routes.js'
+import invitationRoutes   from './invitation.routes.js'
+import authRoutes         from './auth.routes.js'
+import entityRoutes       from './entity.routes.js'
+import statsRoutes        from './stats.routes.js'
+import adminRoutes        from './admin.routes.js'
+import onboardingRoutes   from './onboarding.routes.js'
+import riskRoutes         from './risk.routes.js'
+import pulseRoutes        from './pulse.routes.js'
+import reportRoutes       from './report.routes.js'
+import researchRoutes     from './research.routes.js'
+import churchRoutes       from './church.routes.js'
+import signalRoutes       from './signal.routes.js'
+import institutionRoutes  from './institution.routes.js'
 
 const router = Router()
 
@@ -27,5 +28,6 @@ router.use('/v1/reports',       reportRoutes)
 router.use('/v1/research',      researchRoutes)
 router.use('/v1/churches',      churchRoutes)
 router.use('/v1/admin/signals', signalRoutes)
+router.use('/v1/institutions',  institutionRoutes)
 
 export default router
