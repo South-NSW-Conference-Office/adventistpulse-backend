@@ -9,6 +9,7 @@ import {
   forgotPasswordRateLimit,
   resetPasswordRateLimit,
   verifyEmailRateLimit,
+  apiRateLimit,
 } from '../middleware/rateLimit.middleware.js'
 import {
   registerSchema,
@@ -27,7 +28,7 @@ router.post('/login',           loginRateLimit,          validate(loginSchema), 
 router.post('/refresh',         refreshRateLimit,                                         authController.refresh)
 router.post('/logout',                                                                    authController.logout)
 router.get ('/verify-email',    verifyEmailRateLimit,                                     authController.verifyEmail)
-router.get ('/confirm-email-change',                                                      authController.confirmEmailChange)
+router.get ('/confirm-email-change', verifyEmailRateLimit,                                  authController.confirmEmailChange)
 router.post('/forgot-password', forgotPasswordRateLimit, validate(forgotPasswordSchema),  authController.forgotPassword)
 router.post('/reset-password',  resetPasswordRateLimit,  validate(resetPasswordSchema),   authController.resetPassword)
 
@@ -40,7 +41,7 @@ router.post('/resend-verification-by-email', validate(resendVerificationByEmailS
 router.post('/change-email', authMiddleware, validate(changeEmailSchema), authController.changeEmail)
 
 // Beta signup (public)
-router.post('/beta-signup', authController.betaSignup)
-router.get ('/pastor-confirm', authController.pastorConfirm)
+router.post('/beta-signup',    registerRateLimit,    authController.betaSignup)
+router.get ('/pastor-confirm', apiRateLimit,         authController.pastorConfirm)
 
 export default router

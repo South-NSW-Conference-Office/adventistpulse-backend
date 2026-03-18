@@ -2,6 +2,16 @@ import nodemailer from 'nodemailer'
 import { env } from '../config/env.js'
 import { logger } from '../core/logger.js'
 
+function esc(str) {
+  if (!str) return ''
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 function createTransport() {
   if (!env.SMTP_HOST) {
     logger.warn('SMTP not configured — emails will not be sent')
@@ -154,9 +164,9 @@ export const email = {
       htmlContent: `
         <div style="font-family:sans-serif;max-width:600px;padding:32px">
           <p>Hello,</p>
-          <p><strong>${firstName} ${lastName ?? ''}</strong> has requested beta access to Adventist Pulse, listing their church as <strong>${church}</strong>.</p>
+          <p><strong>${esc(firstName)} ${esc(lastName ?? '')}</strong> has requested beta access to Adventist Pulse, listing their church as <strong>${esc(church)}</strong>.</p>
           <p style="margin-top:16px">As their pastor, please confirm:</p>
-          <p style="font-size:18px;font-weight:600;color:#1a1a1a;margin:16px 0">Is ${firstName} a member in good and regular standing at ${church}?</p>
+          <p style="font-size:18px;font-weight:600;color:#1a1a1a;margin:16px 0">Is ${esc(firstName)} a member in good and regular standing at ${esc(church)}?</p>
           <div style="margin:24px 0">
             <a href="${yesUrl}" style="background:#10b981;color:white;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:700;font-size:16px;margin-right:12px">
               ✓ Yes, confirm membership
@@ -452,11 +462,11 @@ export const email = {
           <table cellpadding="0" cellspacing="0" style="border-left:3px solid #cccccc;padding-left:16px;">
             <tr><td style="padding-bottom:12px;">
               <span style="${LBL}">Name</span>
-              <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111111;">${userName}</p>
+              <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111111;">${esc(userName)}</p>
             </td></tr>
             <tr><td>
               <span style="${LBL}">Email</span>
-              <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111111;">${userEmail}</p>
+              <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111111;">${esc(userEmail)}</p>
             </td></tr>
           </table>
         </td></tr>
@@ -467,7 +477,7 @@ export const email = {
       </table>`
     return send({
       to: env.SMTP_FROM,
-      subject: `New account application — ${userName}`,
+      subject: `New account application — ${esc(userName)}`,
       text: `ADVENTIST PULSE\nNew account application\n\nUser: ${userName}\nEmail: ${userEmail}\n\nSign in to the admin panel to review this application.`,
       html: layout(body),
     })
@@ -484,7 +494,7 @@ export const email = {
         </td></tr>
         ${HR}
         <tr><td>
-          <p style="${P}">Dear ${name},</p>
+          <p style="${P}">Dear ${esc(name)},</p>
           <p style="${P}">
             Thank you for completing your Adventist Pulse profile. Your application has been
             received and is currently under review by our administration team.
@@ -518,7 +528,7 @@ export const email = {
         </td></tr>
         ${HR}
         <tr><td>
-          <p style="${P}">Dear ${name},</p>
+          <p style="${P}">Dear ${esc(name)},</p>
           <p style="${P}">
             We are pleased to inform you that your Adventist Pulse account application has been
             reviewed and approved. You may now sign in to access the platform.
@@ -546,7 +556,7 @@ export const email = {
           <table cellpadding="0" cellspacing="0" style="border-left:3px solid #cccccc;padding-left:16px;">
             <tr><td>
               <span style="${LBL}">Reason provided</span>
-              <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#333333;">${reason}</p>
+              <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#333333;">${esc(reason)}</p>
             </td></tr>
           </table>
         </td></tr>`
@@ -561,7 +571,7 @@ export const email = {
         </td></tr>
         ${HR}
         <tr><td>
-          <p style="${P}">Dear ${name},</p>
+          <p style="${P}">Dear ${esc(name)},</p>
           <p style="${P}">
             After reviewing your Adventist Pulse account application, we are unable to approve
             your request at this time.
