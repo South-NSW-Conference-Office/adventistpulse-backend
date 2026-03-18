@@ -12,9 +12,10 @@ const userSchema = new mongoose.Schema({
   // - pastor: multi-church district dashboard (conference-assigned)
   // - editor: conference comms/staff (write access to content)
   // - admin:  full territory management (conference/union/division/GC)
+  // 'viewer' kept for backwards compatibility — existing DB docs retain their value
   role: {
     type: String,
-    enum: ['member', 'elder', 'pastor', 'editor', 'admin'],
+    enum: ['viewer', 'member', 'elder', 'pastor', 'editor', 'admin'],
     default: 'member',
   },
   entityAccess: [{ type: String }],
