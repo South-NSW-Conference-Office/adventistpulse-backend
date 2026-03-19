@@ -35,7 +35,10 @@ class ResearchService {
   async getBody(id) {
     const doc = await researchRepository.findBodyById(id)
     if (!doc) throw new NotFoundError(`ResearchPaper '${id}'`)
-    return { id: doc.id, body: doc.body ?? null }
+    // Return 404 with specific code when body not yet seeded — lets frontend distinguish
+    // "paper doesn't exist" from "paper exists but body not available yet"
+    if (doc.body == null) throw new NotFoundError(`Body not yet available for '${id}'. Run seed:lrp-body.`)
+    return { id: doc.id, body: doc.body }
   }
 }
 

@@ -8,7 +8,8 @@ class ResearchRepository extends BaseRepository {
   }
 
   async findById(id) {
-    return this.model.findOne({ id }).lean()
+    // Exclude body from the public endpoint — body is gated behind GET /:id/body (memberAuth)
+    return this.model.findOne({ id }, { body: 0 }).lean()
   }
 
   async findByIdOrFail(id) {
