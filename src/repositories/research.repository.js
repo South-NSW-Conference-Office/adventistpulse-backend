@@ -28,6 +28,14 @@ class ResearchRepository extends BaseRepository {
   async findByTag(tag, { skip = 0, limit = 20 } = {}) {
     return this.find({ tags: tag }, { sort: { lastUpdated: -1 }, skip, limit })
   }
+
+  /**
+   * Returns only the id and body fields for a paper.
+   * Body is excluded from the default findById to keep list responses lean.
+   */
+  async findBodyById(id) {
+    return this.model.findOne({ id }, { id: 1, body: 1, _id: 0 }).lean()
+  }
 }
 
 export const researchRepository = new ResearchRepository()
