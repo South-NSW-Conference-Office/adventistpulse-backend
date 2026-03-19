@@ -12,7 +12,8 @@
     "test:coverage": "vitest run --coverage",
     "migrate": "node --experimental-vm-modules scripts/migrate-json-to-mongo.js",
     "migrate-reports": "node --experimental-vm-modules scripts/migrate-reports.js",
-    "migrate-research": "node --experimental-vm-modules scripts/migrate-research.js"
+    "migrate-research": "node --experimental-vm-modules scripts/migrate-research.js",
+    "seed:lrp-body": "node scripts/seed-lrp-body.js"
   },
   "keywords": [],
   "author": "",
