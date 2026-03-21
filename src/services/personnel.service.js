@@ -144,6 +144,19 @@ export const personnelService = {
     const ROLE_VALID = new Set(['head-pastor','associate-pastor','bible-worker','chaplain','elder','district-leader'])
     const conf = conferenceCode.toUpperCase()
 
+    // Batch-load all churches in this conference to avoid N+1 queries
+    const conferenceChurches = await OrgUnit.find({
+      parentCode: conf,
+      level:      'church',
+    }).select('code').lean()
+    const validChurchCodes = new Set(conferenceChurches.map(c => c.code))
+
+    // Batch-load all users for name matching
+    const allUsers = await User.find().select('_id name').lean()
+    const usersByNormalizedName = new Map(
+      allUsers.map(u => [u.name?.trim().toLowerCase(), u._id])
+    )
+
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i]
       try {
@@ -160,13 +173,7 @@ export const personnelService = {
           continue
         }
 
-        // Verify church belongs to this conference (skip with error if not)
-        const church = await OrgUnit.findOne({
-          code:       churchCode.toUpperCase(),
-          parentCode: conf,
-          level:      'church',
-        }).lean()
-        if (!church) {
+        if (!validChurchCodes.has(churchCode.toUpperCase())) {
           results.errors.push({ row: i + 2, reason: `Church ${churchCode} not in conference ${conf}` })
           results.skipped++
           continue
@@ -200,12 +207,10 @@ export const personnelService = {
         })
         if (exists) { results.skipped++; continue }
 
-        const matchedUser = await User.findOne({
-          name: nameRegex(personName),
-        }).select('_id').lean()
+        const matchedUserId = usersByNormalizedName.get(personName.trim().toLowerCase()) ?? null
 
         await PersonnelAssignment.create({
-          userId:         matchedUser?._id ?? null,
+          userId:         matchedUserId,
           personName:     personName.trim(),
           churchCode:     churchCode.toUpperCase(),
           role:           validRole,

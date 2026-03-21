@@ -1,18 +1,7 @@
 import { personnelService } from '../services/personnel.service.js'
 import { response } from '../core/response.js'
 import { asyncHandler } from './base.controller.js'
-import { ForbiddenError } from '../core/errors/index.js'
-
-/**
- * Resolve the calling admin's conference code.
- * Always pinned to req.user.subscription.conferenceCode — never trusted from the request.
- * Throws if the user has no conference assigned (shouldn't happen in practice).
- */
-function getCallerConference(req) {
-  const code = req.user?.subscription?.conferenceCode
-  if (!code) throw new ForbiddenError('No conference assigned to your account')
-  return code
-}
+import { getCallerConference } from '../lib/conference.js'
 
 export const personnelController = {
 
@@ -62,8 +51,7 @@ export const personnelController = {
 
   /** POST /pastor/delegate — pastor delegates to elder */
   delegate: asyncHandler(async (req, res) => {
-    const conferenceCode = req.user?.subscription?.conferenceCode
-    if (!conferenceCode) throw new ForbiddenError('No conference assigned to your account')
+    const conferenceCode = getCallerConference(req)
     const result = await personnelService.delegateToElder({
       pastorId:       req.user._id,
       elderEmail:     req.body.elderEmail,

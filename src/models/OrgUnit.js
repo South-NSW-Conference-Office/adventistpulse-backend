@@ -43,8 +43,7 @@ const orgUnitSchema = new mongoose.Schema({
 }, { timestamps: true })
 
 // code: unique:true on the field already creates the index — no need for schema.index()
-orgUnitSchema.index({ level: 1 })
-orgUnitSchema.index({ parentCode: 1 })
+orgUnitSchema.index({ parentCode: 1, level: 1 })
 orgUnitSchema.index({ location: '2dsphere' }, { sparse: true })
 
 export const OrgUnit = mongoose.model('OrgUnit', orgUnitSchema)
