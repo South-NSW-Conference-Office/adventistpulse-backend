@@ -14,7 +14,7 @@ export function errorMiddleware(err, req, res, next) {
 
   // Mongoose CastError (invalid ObjectId format)
   if (err.name === 'CastError') {
-    const appErr = new AppError(`Invalid ${err.path}: '${err.value}'`, {
+    const appErr = new AppError(`Invalid value for ${err.path}`, {
       code: 'INVALID_ID',
       statusCode: 400,
     })

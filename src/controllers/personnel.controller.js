@@ -76,7 +76,7 @@ export const personnelController = {
 
   /** DELETE /pastor/delegate/:elderId/:churchCode — revoke delegation */
   revokeDelegate: asyncHandler(async (req, res) => {
-    const conferenceCode = req.user?.subscription?.conferenceCode ?? null
+    const conferenceCode = getCallerConference(req)
     const result = await personnelService.revokeDelegation({
       elderId:        req.params.elderId,
       churchCode:     req.params.churchCode,
