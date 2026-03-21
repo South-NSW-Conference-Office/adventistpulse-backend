@@ -12,7 +12,14 @@ const envSchema = z.object({
   JWT_REFRESH_EXPIRY_SECONDS:         z.string().default('604800').transform(Number),   // 7 days
   JWT_REMEMBER_ME_EXPIRY_SECONDS:     z.string().default('2592000').transform(Number),  // 30 days
 
-  FRONTEND_URL: z.string().url('FRONTEND_URL must be a valid URL').default('http://localhost:3000'),
+  // Required in production — invite email links will be broken without it.
+  // Default only applies in development/test.
+  FRONTEND_URL: z.string().url('FRONTEND_URL must be a valid URL')
+    .refine(
+      (val) => process.env.NODE_ENV !== 'production' || !val.includes('localhost'),
+      { message: 'FRONTEND_URL must not be localhost in production' }
+    )
+    .default('http://localhost:3000'),
 
   RATE_LIMIT_WINDOW_MS: z.string().default('900000').transform(Number),
   RATE_LIMIT_MAX:       z.string().default('10').transform(Number),

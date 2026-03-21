@@ -31,6 +31,7 @@ export async function authMiddleware(req, res, next) {
 
     req.user = {
       sub:                user._id.toString(),
+      _id:                user._id,  // ObjectId — needed by services that call User.findById(req.user._id)
       name:               user.name,
       email:              user.email,
       role:               user.role,
@@ -38,6 +39,9 @@ export async function authMiddleware(req, res, next) {
       emailVerified:      user.emailVerified,
       mustChangePassword: !!user.mustChangePassword,
       accountStatus:      user.accountStatus ?? 'approved', // null-safe for existing users
+      // subscription — needed for territory-scoped routes (admin/pastor/signal endpoints).
+      // conferenceCode here is the source of truth; never trust conferenceCode from request params.
+      subscription:       user.subscription ?? null,
     }
 
     // Silent token rotation — re-issue if expiring soon

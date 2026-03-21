@@ -14,6 +14,27 @@ const orgUnitSchema = new mongoose.Schema({
     country: String,
     established: Number,
     website: String,
+    emailDomain: String,  // primary email domain for this territory (e.g. "adventist.org.au")
+  },
+
+  // ─── Org Structure Config ──────────────────────────────────────────────────
+  // Controls which hierarchy levels are active for this entity's territory.
+  // Allows the admin dashboard to hide levels that don't exist (e.g. Norway
+  // has no conference tier — union manages churches directly).
+  levelConfig: {
+    conference: { type: Boolean, default: true },   // false = union manages churches directly
+    region:     { type: Boolean, default: false },  // true = North/South regions used instead
+    district:   { type: Boolean, default: false },  // true = Philippines-style district layer
+  },
+
+  // Configurable display labels for each level (defaults to standard names).
+  // e.g. some territories say "Mission" instead of "Conference",
+  // or "Section" instead of "District".
+  levelLabels: {
+    conference: { type: String, default: 'Conference' },
+    region:     { type: String, default: 'Region' },
+    district:   { type: String, default: 'District' },
+    church:     { type: String, default: 'Church' },
   },
   location: {
     type:        { type: String, enum: ['Point'], default: 'Point' },

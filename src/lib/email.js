@@ -599,6 +599,59 @@ export const email = {
     })
   },
 
+  async sendInvite(to, { inviteeName, inviterName, conferenceCode, conferenceName, role, inviteUrl }) {
+    const roleLabel = {
+      admin:  'Conference Administrator',
+      editor: 'Conference Editor',
+      pastor: 'Pastor',
+      elder:  'Elder',
+      member: 'Member',
+    }[role] ?? role
+
+    const subject = `You've been given access to ${conferenceName ?? conferenceCode} Pulse`
+
+    const html = layout(`
+    <h1 style="margin:0 0 8px;font-family:Arial,Helvetica,sans-serif;font-size:24px;font-weight:700;color:#111111;letter-spacing:-0.5px;">
+      You've been seated at the table.
+    </h1>
+    <p style="margin:0 0 24px;font-family:Arial,Helvetica,sans-serif;font-size:16px;color:#555555;line-height:1.6;">
+      ${esc(inviterName)} has given you access to the <strong>${esc(conferenceName ?? conferenceCode)} Pulse</strong> intelligence dashboard.
+    </p>
+
+    <table cellpadding="0" cellspacing="0" style="margin:0 0 24px;background:#f8f8f8;border:1px solid #e0e0e0;border-radius:6px;width:100%;">
+      <tr>
+        <td style="padding:16px 20px;">
+          <p style="margin:0 0 4px;font-family:Arial,Helvetica,sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#999999;">Your access</p>
+          <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:600;color:#111111;">${esc(roleLabel)} — ${esc(conferenceName ?? conferenceCode)}</p>
+        </td>
+      </tr>
+    </table>
+
+    <p style="margin:0 0 28px;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#555555;line-height:1.7;">
+      Adventist Pulse is the intelligence layer for the Seventh-day Adventist Church — membership trends, mission signals, and pastoral intelligence in one place. Your seat gives you access to the data that matters for your territory.
+    </p>
+
+    <table cellpadding="0" cellspacing="0" style="margin:0 0 24px;">
+      <tr>
+        <td style="background:#4f46e5;border-radius:6px;">
+          <a href="${esc(inviteUrl)}" style="display:inline-block;padding:14px 32px;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:700;color:#ffffff;text-decoration:none;letter-spacing:0.3px;">
+            Activate Your Account →
+          </a>
+        </td>
+      </tr>
+    </table>
+
+    <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#aaaaaa;line-height:1.6;">
+      This invitation was sent by ${esc(inviterName)}. The link expires in 7 days.
+      If you weren't expecting this, you can safely ignore it.
+    </p>
+  `)
+
+    const text = `You've been given access to ${conferenceName ?? conferenceCode} Pulse.\n\n${inviterName} has given you a seat at the ${conferenceName ?? conferenceCode} intelligence table as ${roleLabel}.\n\nActivate your account: ${inviteUrl}\n\nThis link expires in 7 days.`
+
+    await send({ to, subject, html, text })
+  },
+
   async sendEmailChange(to, rawToken) {
     const url = `${env.FRONTEND_URL}/confirm-email-change?token=${rawToken}`
     const body = `

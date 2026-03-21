@@ -12,7 +12,8 @@
     "test:coverage": "vitest run --coverage",
     "migrate": "node --experimental-vm-modules scripts/migrate-json-to-mongo.js",
     "migrate-reports": "node --experimental-vm-modules scripts/migrate-reports.js",
-    "migrate-research": "node --experimental-vm-modules scripts/migrate-research.js"
+    "migrate-research": "node --experimental-vm-modules scripts/migrate-research.js",
+    "seed:lrp-body": "node scripts/seed-lrp-body.js"
   },
   "keywords": [],
   "author": "",
@@ -22,6 +23,7 @@
     "bcryptjs": "^3.0.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
+    "csv-parse": "^6.2.0",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
     "express-rate-limit": "^8.3.0",
@@ -29,7 +31,10 @@
     "jose": "^6.2.0",
     "mongoose": "^9.2.4",
     "morgan": "^1.10.1",
+    "multer": "^2.1.1",
+    "node-cron": "^4.2.1",
     "nodemailer": "^8.0.1",
+    "qrcode": "^1.5.4",
     "uuid": "^13.0.0",
     "zod": "^4.3.6",
     "zxcvbn": "^4.4.2"

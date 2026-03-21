@@ -1,12 +1,16 @@
 import 'dotenv/config'
 import mongoose from 'mongoose'
-import { env } from './config/env.js'
-import { connectDB } from './config/db.js'
-import { logger } from './core/logger.js'
+import { env }            from './config/env.js'
+import { connectDB }      from './config/db.js'
+import { logger }         from './core/logger.js'
+import { startScheduler } from './jobs/signal.job.js'
 import app from './app.js'
 
 async function start() {
   await connectDB()
+
+  // Start the signal engine scheduler — runs after DB is connected
+  startScheduler()
 
   const server = app.listen(env.PORT, () => {
     logger.info(`Server running on http://localhost:${env.PORT} [${env.NODE_ENV}]`)
