@@ -228,6 +228,36 @@ export async function submitEngineResponse(data) {
     }
   }
 
+  // Validate each submitted answer against its question type
+  for (const q of survey.questions) {
+    const answer = data.answers[q.questionId]
+    if (answer == null) continue // unanswered optional question — skip
+
+    if (q.type === 'likert') {
+      const min = q.scale?.min ?? 1
+      const max = q.scale?.max ?? 5
+      if (typeof answer !== 'number' || !Number.isInteger(answer) || answer < min || answer > max) {
+        throw new ValidationError(`Answer to "${q.questionId}" must be an integer between ${min} and ${max}`)
+      }
+    } else if (q.type === 'nps') {
+      if (typeof answer !== 'number' || !Number.isInteger(answer) || answer < 0 || answer > 10) {
+        throw new ValidationError(`Answer to "${q.questionId}" must be an integer between 0 and 10`)
+      }
+    } else if (q.type === 'yesno') {
+      if (answer !== 'yes' && answer !== 'no') {
+        throw new ValidationError(`Answer to "${q.questionId}" must be "yes" or "no"`)
+      }
+    } else if (q.type === 'multiplechoice') {
+      const options = q.options ?? []
+      const values = Array.isArray(answer) ? answer : [answer]
+      for (const v of values) {
+        if (!options.includes(v)) {
+          throw new ValidationError(`Answer value "${v}" is not a valid option for question "${q.questionId}"`)
+        }
+      }
+    }
+  }
+
   const response = new SurveyEngineResponse({
     surveyId:       session.surveyId,
     sessionId:      session._id,
