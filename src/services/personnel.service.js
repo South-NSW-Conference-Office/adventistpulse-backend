@@ -151,10 +151,17 @@ export const personnelService = {
     }).select('code').lean()
     const validChurchCodes = new Set(conferenceChurches.map(c => c.code))
 
-    // Batch-load all users for name matching
-    const allUsers = await User.find().select('_id name').lean()
+    // Collect unique person names from CSV for batch user matching
+    const uniqueNames = [...new Set(
+      rows.map(r => (r.pastor_name || r.name || r.pastor || r.Person || '').trim())
+           .filter(Boolean)
+    )]
+    const matchedUsers = uniqueNames.length > 0
+      ? await User.find({ name: { $in: uniqueNames.map(n => new RegExp(`^${escapeRegex(n)}$`, 'i')) } })
+          .select('_id name').lean()
+      : []
     const usersByNormalizedName = new Map(
-      allUsers.map(u => [u.name?.trim().toLowerCase(), u._id])
+      matchedUsers.map(u => [u.name.trim().toLowerCase(), u._id])
     )
 
     for (let i = 0; i < rows.length; i++) {
