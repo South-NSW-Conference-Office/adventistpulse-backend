@@ -17,6 +17,9 @@ const surveySessionSchema = new mongoose.Schema({
     denominationType: { type: String, enum: ['adventist', 'other', 'auto'], default: 'auto' },
   },
   closedAt: { type: Date, default: null },
+  // Survey Engine — links a session to a specific custom Survey document
+  surveyId:   { type: mongoose.Schema.Types.ObjectId, ref: 'Survey', default: null },
+  surveyType: { type: String, enum: ['vitality', 'custom'], default: null },
 }, { timestamps: true })
 
 surveySessionSchema.index({ churchCode: 1 })
