@@ -14,12 +14,24 @@ const GooglePlacesCacheSchema = new mongoose.Schema(
     /** Google Place ID for future detail fetches */
     placeId: { type: String, default: null },
 
+    /**
+     * Set to true when Google returned no result for this lookup key.
+     * Negative cache — avoids re-hitting Google for known-missing churches.
+     * TTL is shorter (7 days) for not-found entries vs 30 days for hits.
+     */
+    notFound: { type: Boolean, default: false },
+
     /** Display data */
-    rating:       { type: Number, default: null },
-    reviewCount:  { type: Number, default: null },
-    photosCount:  { type: Number, default: null },
-    phone:        { type: String, default: null },
-    googleMapsUrl:{ type: String, default: null },
+    rating:             { type: Number, default: null },
+    reviewCount:        { type: Number, default: null },
+    /**
+     * Number of photo previews Google returned for this place.
+     * Google caps the photos array at 10 regardless of actual photo count,
+     * so this reflects "previews available", not total photos at the church.
+     */
+    photosPreviewCount: { type: Number, default: null },
+    phone:              { type: String, default: null },
+    googleMapsUrl:      { type: String, default: null },
 
     /** When this record was last fetched from Google */
     fetchedAt: { type: Date, required: true, default: Date.now },
