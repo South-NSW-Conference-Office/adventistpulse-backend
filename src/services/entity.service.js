@@ -77,7 +77,7 @@ class EntityService {
   async search(query, limit = 10) {
     const regex = new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i')
     const entities = await entityRepository.model
-      .find({ $or: [{ name: regex }, { code: regex }] })
+      .find({ hidden: { $ne: true }, $or: [{ name: regex }, { code: regex }] })
       .limit(Number(limit))
       .lean()
 
