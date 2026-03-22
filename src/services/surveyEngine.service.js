@@ -31,7 +31,7 @@ export async function createSurvey(data, user) {
     description: data.description ?? '',
     questions:   data.questions ?? [],
     owner:       user._id,
-    ownerOrg:    user.conferenceCode ?? user.entityAccess?.[0] ?? 'UNKNOWN',
+    ownerOrg:    (() => { const code = user.subscription?.conferenceCode; if (!code) throw new ValidationError('No conference assigned to your account'); return code.toUpperCase() })(),
     template:    data.template ?? null,
     settings: {
       anonymous:    data.settings?.anonymous ?? true,
@@ -49,7 +49,7 @@ export async function createSurvey(data, user) {
  */
 export async function listSurveys(user) {
   const filter = user.role === 'admin'
-    ? { ownerOrg: user.conferenceCode ?? user.entityAccess?.[0] }
+    ? { ownerOrg: user.subscription?.conferenceCode }
     : { owner: user._id }
   return Survey.find(filter).sort({ createdAt: -1 }).lean()
 }
@@ -167,7 +167,7 @@ export async function publishSurvey(id, data, user) {
     const session = new SurveySession({
       churchCode,
       createdBy:      user._id,
-      conferenceCode: targeting.conferenceCode ?? survey.ownerOrg,
+      conferenceCode: user.subscription?.conferenceCode?.toUpperCase() ?? survey.ownerOrg,
       sessionCode,
       status:         'active',
       expiresAt:      new Date(Date.now() + expiryMs),
