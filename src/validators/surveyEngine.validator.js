@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 /** Valid question types */
-const questionTypeEnum = z.enum(['likert', 'yesno', 'multiplechoice', 'text', 'nps', 'ranking'])
+const questionTypeEnum = z.enum(['likert', 'yesno', 'multiplechoice', 'text', 'nps'])
 
 /** Single question shape */
 const questionSchema = z.object({

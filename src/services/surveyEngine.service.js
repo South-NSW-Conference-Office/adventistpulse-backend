@@ -1,7 +1,7 @@
 import { Survey } from '../models/Survey.js'
 import { SurveySession } from '../models/SurveySession.js'
 import { SurveyEngineResponse } from '../models/SurveyEngineResponse.js'
-import { NotFoundError, ForbiddenError, ValidationError } from '../lib/errors.js'
+import { NotFoundError, ForbiddenError, ValidationError } from '../core/errors/index.js'
 import crypto from 'crypto'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -31,7 +31,7 @@ export async function createSurvey(data, user) {
     description: data.description ?? '',
     questions:   data.questions ?? [],
     owner:       user._id,
-    ownerOrg:    user.conferenceCode ?? user.entityAccess?.[0] ?? 'UNKNOWN',
+    ownerOrg:    (() => { const code = user.subscription?.conferenceCode; if (!code) throw new ValidationError('No conference assigned to your account'); return code.toUpperCase() })(),
     template:    data.template ?? null,
     settings: {
       anonymous:    data.settings?.anonymous ?? true,
@@ -49,7 +49,7 @@ export async function createSurvey(data, user) {
  */
 export async function listSurveys(user) {
   const filter = user.role === 'admin'
-    ? { ownerOrg: user.conferenceCode ?? user.entityAccess?.[0] }
+    ? { ownerOrg: user.subscription?.conferenceCode }
     : { owner: user._id }
   return Survey.find(filter).sort({ createdAt: -1 }).lean()
 }
@@ -60,9 +60,7 @@ export async function listSurveys(user) {
 export async function getSurvey(id, user) {
   const survey = await Survey.findById(id).lean()
   if (survey == null) throw new NotFoundError('Survey not found')
-  if (survey.owner.toString() !== user._id.toString() && user.role !== 'admin') {
-    throw new ForbiddenError('Access denied')
-  }
+  assertOwner(survey, user._id, user.role)
   return survey
 }
 
@@ -145,9 +143,11 @@ export async function publishSurvey(id, data, user) {
     : 30 * 24 * 60 * 60 * 1000 // 30 days default
   const expiryMinutes = Math.max(15, Math.round(expiryMs / 60000))
 
+  // TODO: sequential session creation could be slow for many churches; consider bulkWrite
   const sessions = []
   for (const churchCode of churchCodes) {
     const existing = await SurveySession.findOne({
+      surveyId: survey._id,
       churchCode,
       createdBy: user._id,
       status: 'active',
@@ -157,6 +157,7 @@ export async function publishSurvey(id, data, user) {
       continue
     }
 
+    // TODO: session code collision — retry loop is unbounded; add max retries
     let sessionCode
     let collision = true
     while (collision) {
@@ -167,7 +168,7 @@ export async function publishSurvey(id, data, user) {
     const session = new SurveySession({
       churchCode,
       createdBy:      user._id,
-      conferenceCode: targeting.conferenceCode ?? survey.ownerOrg,
+      conferenceCode: user.subscription?.conferenceCode?.toUpperCase() ?? survey.ownerOrg,
       sessionCode,
       status:         'active',
       expiresAt:      new Date(Date.now() + expiryMs),
@@ -228,6 +229,36 @@ export async function submitEngineResponse(data) {
     }
   }
 
+  // Validate each submitted answer against its question type
+  for (const q of survey.questions) {
+    const answer = data.answers[q.questionId]
+    if (answer == null) continue // unanswered optional question — skip
+
+    if (q.type === 'likert') {
+      const min = q.scale?.min ?? 1
+      const max = q.scale?.max ?? 5
+      if (typeof answer !== 'number' || !Number.isInteger(answer) || answer < min || answer > max) {
+        throw new ValidationError(`Answer to "${q.questionId}" must be an integer between ${min} and ${max}`)
+      }
+    } else if (q.type === 'nps') {
+      if (typeof answer !== 'number' || !Number.isInteger(answer) || answer < 0 || answer > 10) {
+        throw new ValidationError(`Answer to "${q.questionId}" must be an integer between 0 and 10`)
+      }
+    } else if (q.type === 'yesno') {
+      if (answer !== 'yes' && answer !== 'no') {
+        throw new ValidationError(`Answer to "${q.questionId}" must be "yes" or "no"`)
+      }
+    } else if (q.type === 'multiplechoice') {
+      const options = q.options ?? []
+      const values = Array.isArray(answer) ? answer : [answer]
+      for (const v of values) {
+        if (!options.includes(v)) {
+          throw new ValidationError(`Answer value "${v}" is not a valid option for question "${q.questionId}"`)
+        }
+      }
+    }
+  }
+
   const response = new SurveyEngineResponse({
     surveyId:       session.surveyId,
     sessionId:      session._id,
@@ -254,10 +285,9 @@ export async function submitEngineResponse(data) {
 export async function getSurveyResults(id, user) {
   const survey = await Survey.findById(id).lean()
   if (survey == null) throw new NotFoundError('Survey not found')
-  if (survey.owner.toString() !== user._id.toString() && user.role !== 'admin') {
-    throw new ForbiddenError('Access denied')
-  }
+  assertOwner(survey, user._id, user.role)
 
+  // TODO: memory load — all responses loaded in memory; paginate or stream for large surveys
   const responses = await SurveyEngineResponse.find({ surveyId: id }).lean()
   const totalResponses = responses.length
 
