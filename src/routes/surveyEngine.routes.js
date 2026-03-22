@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import { asyncHandler } from '../controllers/base.controller.js'
+import { surveyEngineRespondRateLimit, aiUserRateLimit } from '../middleware/rateLimit.middleware.js'
 import { validate } from '../middleware/validate.middleware.js'
 import { authMiddleware } from '../middleware/auth.middleware.js'
 import { requirePasswordChanged } from '../middleware/requirePasswordChanged.middleware.js'
@@ -86,13 +87,13 @@ router.get('/:id/results', auth, asyncHandler(async (req, res) => {
 // ── AI Assistance ─────────────────────────────────────────────────────────────
 
 /** POST /api/v1/survey-engine/ai/generate — generate questions from intent */
-router.post('/ai/generate', auth, validate(aiGenerateSchema), asyncHandler(async (req, res) => {
+router.post('/ai/generate', auth, aiUserRateLimit, validate(aiGenerateSchema), asyncHandler(async (req, res) => {
   const questions = await generateSurveyQuestions(req.body.intent, req.body.questionCount)
   res.json({ success: true, data: { questions } })
 }))
 
 /** POST /api/v1/survey-engine/ai/review — review a single question for quality */
-router.post('/ai/review', auth, validate(aiReviewSchema), asyncHandler(async (req, res) => {
+router.post('/ai/review', auth, aiUserRateLimit, validate(aiReviewSchema), asyncHandler(async (req, res) => {
   const review = await reviewSurveyQuestion(req.body.question, req.body.type)
   res.json({ success: true, data: review })
 }))
@@ -100,7 +101,7 @@ router.post('/ai/review', auth, validate(aiReviewSchema), asyncHandler(async (re
 // ── Public: Submit Response ───────────────────────────────────────────────────
 
 /** POST /api/v1/survey-engine/respond — submit a response (no auth required) */
-router.post('/respond', validate(submitEngineResponseSchema), asyncHandler(async (req, res) => {
+router.post('/respond', surveyEngineRespondRateLimit, validate(submitEngineResponseSchema), asyncHandler(async (req, res) => {
   const result = await submitEngineResponse(req.body)
   res.status(201).json({ success: true, data: result })
 }))
