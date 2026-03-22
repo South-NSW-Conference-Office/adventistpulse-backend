@@ -7,6 +7,11 @@ class EntityRepository extends BaseRepository {
     super(OrgUnit)
   }
 
+  // Always exclude hidden admin-bucket entities (ATTACHED/DETACHED/UNATTACHED)
+  #baseFilter(extra = {}) {
+    return { hidden: { $ne: true }, ...extra }
+  }
+
   async findByCode(code) {
     return this.model.findOne({ code: code.toUpperCase() }).lean()
   }
@@ -18,15 +23,25 @@ class EntityRepository extends BaseRepository {
   }
 
   async findByLevel(level, { skip, limit, sort } = {}) {
-    return this.find({ level }, { skip, limit, sort })
+    return this.model.find(this.#baseFilter({ level })).sort(sort).skip(skip ?? 0).limit(limit ?? 20).lean()
   }
 
   async findChildren(parentCode, { skip, limit } = {}) {
-    return this.find({ parentCode: parentCode.toUpperCase() }, { skip, limit })
+    return this.model.find(this.#baseFilter({ parentCode: parentCode.toUpperCase() })).skip(skip ?? 0).limit(limit ?? 200).lean()
   }
 
   async existsByCode(code) {
     return this.model.exists({ code: code.toUpperCase() })
+  }
+
+  async paginate(filter = {}, { page = 1, limit = 20, sort = { createdAt: -1 } } = {}) {
+    const skip = (page - 1) * limit
+    const safeFilter = this.#baseFilter(filter)
+    const [data, total] = await Promise.all([
+      this.model.find(safeFilter).sort(sort).skip(skip).limit(limit).lean(),
+      this.model.countDocuments(safeFilter),
+    ])
+    return { data, total, page, limit }
   }
 
   /**
