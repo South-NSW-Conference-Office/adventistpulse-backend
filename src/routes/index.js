@@ -15,6 +15,7 @@ import institutionRoutes  from './institution.routes.js'
 import { pastorSurveyRoutes, publicSurveyRoutes } from './survey.routes.js'
 import surveyEngineRoutes from './surveyEngine.routes.js'
 import placesRoutes       from './places.routes.js'
+import pulseNotesRoutes   from './pulseNotes.routes.js'
 
 const router = Router()
 
@@ -36,5 +37,6 @@ router.use('/v1/pastor/survey', pastorSurveyRoutes)
 router.use('/v1/survey',        publicSurveyRoutes)
 router.use('/v1/survey-engine', surveyEngineRoutes)
 router.use('/v1/places',        placesRoutes)
+router.use('/v1/notes',         pulseNotesRoutes)
 
 export default router
