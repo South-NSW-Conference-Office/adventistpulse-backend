@@ -35,3 +35,20 @@ export const apiRateLimit = makeLimit({ windowMs: 60 * 1000, max: 200, devMax: 2
 
 // Survey respond endpoint — public, IP-gated: 3 per IP per 15 minutes
 export const surveyRespondRateLimit = makeLimit({ windowMs: 15 * 60 * 1000, max: 3, devMax: 100 })
+
+// Google Places proxy — public, unauthenticated: 30 req/min per IP
+// Prevents use of the backend as a free Google Places API proxy.
+export const churchPlacesRateLimit = makeLimit({ windowMs: 60 * 1000, max: 30, devMax: 300 })
+
+// Survey Engine respond — public, IP-gated: mirrors surveyRespondRateLimit
+export const surveyEngineRespondRateLimit = makeLimit({ windowMs: 15 * 60 * 1000, max: 3, devMax: 100 })
+
+// AI assistance endpoints — per-user (req.user._id), 20 requests per hour
+export const aiUserRateLimit = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: isDev ? 500 : 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: req => req.user?._id?.toString() ?? req.ip,
+  message,
+})

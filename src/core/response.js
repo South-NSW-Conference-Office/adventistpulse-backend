@@ -20,6 +20,13 @@ export const response = {
     })
   },
 
+  badRequest(res, message = 'Bad request') {
+    return res.status(400).json({
+      success: false,
+      error: { code: 'BAD_REQUEST', message },
+    })
+  },
+
   notFound(res, resource = 'Resource') {
     return res.status(404).json({
       success: false,

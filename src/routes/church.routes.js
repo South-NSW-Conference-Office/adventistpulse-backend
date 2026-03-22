@@ -10,7 +10,8 @@ router.get('/', asyncHandler(async (req, res) => {
   const { conference, limit = 2000 } = req.query
   const filter = { level: 'church' }
   if (conference) filter.parentCode = conference.toUpperCase()
-  const data = await OrgUnit.find(filter).limit(Number(limit)).lean()
+  const safeLimit = Math.min(Math.max(1, Number(limit) || 2000), 2000)
+  const data = await OrgUnit.find(filter).limit(safeLimit).lean()
   response.success(res, data)
 }))
 
@@ -32,7 +33,7 @@ router.get('/:slug/nearby', asyncHandler(async (req, res) => {
         $maxDistance: 50000, // 50km
       },
     },
-  }).limit(Number(limit)).lean()
+  }).limit(Math.min(Math.max(1, Number(limit) || 5), 20)).lean()
 
   // Add distanceKm approx
   const withDist = nearby.map(c => {
