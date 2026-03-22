@@ -60,9 +60,7 @@ export async function listSurveys(user) {
 export async function getSurvey(id, user) {
   const survey = await Survey.findById(id).lean()
   if (survey == null) throw new NotFoundError('Survey not found')
-  if (survey.owner.toString() !== user._id.toString() && user.role !== 'admin') {
-    throw new ForbiddenError('Access denied')
-  }
+  assertOwner(survey, user._id, user.role)
   return survey
 }
 
@@ -145,9 +143,11 @@ export async function publishSurvey(id, data, user) {
     : 30 * 24 * 60 * 60 * 1000 // 30 days default
   const expiryMinutes = Math.max(15, Math.round(expiryMs / 60000))
 
+  // TODO: sequential session creation could be slow for many churches; consider bulkWrite
   const sessions = []
   for (const churchCode of churchCodes) {
     const existing = await SurveySession.findOne({
+      surveyId: survey._id,
       churchCode,
       createdBy: user._id,
       status: 'active',
@@ -157,6 +157,7 @@ export async function publishSurvey(id, data, user) {
       continue
     }
 
+    // TODO: session code collision — retry loop is unbounded; add max retries
     let sessionCode
     let collision = true
     while (collision) {
@@ -284,10 +285,9 @@ export async function submitEngineResponse(data) {
 export async function getSurveyResults(id, user) {
   const survey = await Survey.findById(id).lean()
   if (survey == null) throw new NotFoundError('Survey not found')
-  if (survey.owner.toString() !== user._id.toString() && user.role !== 'admin') {
-    throw new ForbiddenError('Access denied')
-  }
+  assertOwner(survey, user._id, user.role)
 
+  // TODO: memory load — all responses loaded in memory; paginate or stream for large surveys
   const responses = await SurveyEngineResponse.find({ surveyId: id }).lean()
   const totalResponses = responses.length
 
