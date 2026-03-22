@@ -1,5 +1,4 @@
-import fetch from 'node-fetch';
-import GooglePlacesCache from '../models/GooglePlacesCache.js';
+import GooglePlacesCache from '../models/GooglePlacesCache.js'
 
 const PLACES_API_KEY = process.env.GOOGLE_PLACES_API_KEY;
 const TTL_DAYS = 30;

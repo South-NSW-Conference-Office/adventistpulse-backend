@@ -1,48 +1,37 @@
-import { Router } from 'express';
-import { query, validationResult } from 'express-validator';
-import asyncHandler from '../utils/asyncHandler.js';
-import { getChurchPlacesData } from '../services/googlePlaces.service.js';
+import { Router } from 'express'
+import { asyncHandler } from '../controllers/base.controller.js'
+import { validate } from '../middleware/validate.middleware.js'
+import { getChurchPlacesData } from '../services/googlePlaces.service.js'
+import { churchPlacesQuerySchema } from '../validators/places.validator.js'
 
-const router = Router();
+const router = Router()
 
 /**
  * GET /api/v1/places/church
  * On-demand Google Places lookup with 30-day cache.
  * Public — no auth required (read-only, cached, no sensitive data).
+ * Rate limited: see rateLimit.middleware.js (churchPlacesRateLimit applied in mount).
  *
  * Query params:
- *   name  {string} Church name
- *   lat   {number} Latitude
- *   lng   {number} Longitude
- *   address {string} Optional street address (improves match accuracy)
+ *   name    {string}  Church name (required, max 200 chars)
+ *   lat     {number}  Latitude (optional — improves match accuracy)
+ *   lng     {number}  Longitude (optional — improves match accuracy)
+ *   address {string}  Optional street address (improves match accuracy)
  *
  * Response:
- *   { rating, reviewCount, photosCount, phone, googleMapsUrl, placeId, fromCache }
+ *   { rating, reviewCount, photosPreviewCount, phone, googleMapsUrl, placeId, fromCache }
  */
 router.get(
   '/church',
-  [
-    query('name').notEmpty().withMessage('name is required'),
-    query('lat').isFloat({ min: -90, max: 90 }).withMessage('valid lat required'),
-    query('lng').isFloat({ min: -180, max: 180 }).withMessage('valid lng required'),
-  ],
+  validate(churchPlacesQuerySchema, 'query'),
   asyncHandler(async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
+    const { name, lat, lng, address = '' } = req.query
 
-    const { name, lat, lng, address = '' } = req.query;
+    // lat/lng are coerced to numbers (or undefined) by Zod validation above
+    const data = await getChurchPlacesData({ name, lat, lng, address })
 
-    const data = await getChurchPlacesData({
-      name,
-      lat:  parseFloat(lat),
-      lng:  parseFloat(lng),
-      address,
-    });
-
-    return res.json(data);
+    return res.json(data)
   }),
-);
+)
 
-export default router;
+export default router
