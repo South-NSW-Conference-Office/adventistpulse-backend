@@ -65,6 +65,7 @@ export async function generateSurveyQuestions(intent, questionCount = 8) {
     return fallbackGenerate(intent, questionCount)
   }
 
+  // TODO: AI prompt injection — user-supplied intent is passed directly to the AI; consider sanitization/length limits
   const prompt = `Survey intent: "${intent}"
 
 Generate exactly ${questionCount} survey questions that will help a church leader understand this topic.
@@ -102,6 +103,7 @@ export async function reviewSurveyQuestion(question, type) {
     return ruleBasedReview(question)
   }
 
+  // TODO: AI prompt injection — user-supplied question is passed directly to the AI; consider sanitization
   const prompt = `Review this survey question for quality issues:
 
 Question: "${question}"
