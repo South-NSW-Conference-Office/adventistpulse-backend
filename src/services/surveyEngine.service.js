@@ -1,7 +1,7 @@
 import { Survey } from '../models/Survey.js'
 import { SurveySession } from '../models/SurveySession.js'
 import { SurveyEngineResponse } from '../models/SurveyEngineResponse.js'
-import { NotFoundError, ForbiddenError, ValidationError } from '../lib/errors.js'
+import { NotFoundError, ForbiddenError, ValidationError } from '../core/errors/index.js'
 import crypto from 'crypto'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────

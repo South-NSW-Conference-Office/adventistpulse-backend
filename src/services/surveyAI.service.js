@@ -7,7 +7,7 @@
  */
 
 import Anthropic from '@anthropic-ai/sdk'
-import { ValidationError } from '../lib/errors.js'
+import { ValidationError } from '../core/errors/index.js'
 
 const client = process.env.ANTHROPIC_API_KEY
   ? new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })

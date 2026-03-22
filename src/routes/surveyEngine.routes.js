@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { asyncHandler } from '../lib/asyncHandler.js'
+import { asyncHandler } from '../controllers/base.controller.js'
 import { validate } from '../middleware/validate.middleware.js'
 import { authMiddleware } from '../middleware/auth.middleware.js'
 import { requirePasswordChanged } from '../middleware/requirePasswordChanged.middleware.js'
