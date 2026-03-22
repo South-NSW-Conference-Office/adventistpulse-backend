@@ -144,6 +144,26 @@ export const personnelService = {
     const ROLE_VALID = new Set(['head-pastor','associate-pastor','bible-worker','chaplain','elder','district-leader'])
     const conf = conferenceCode.toUpperCase()
 
+    // Batch-load all churches in this conference to avoid N+1 queries
+    const conferenceChurches = await OrgUnit.find({
+      parentCode: conf,
+      level:      'church',
+    }).select('code').lean()
+    const validChurchCodes = new Set(conferenceChurches.map(c => c.code))
+
+    // Collect unique person names from CSV for batch user matching
+    const uniqueNames = [...new Set(
+      rows.map(r => (r.pastor_name || r.name || r.pastor || r.Person || '').trim())
+           .filter(Boolean)
+    )]
+    const matchedUsers = uniqueNames.length > 0
+      ? await User.find({ name: { $in: uniqueNames.map(n => new RegExp(`^${escapeRegex(n)}$`, 'i')) } })
+          .select('_id name').lean()
+      : []
+    const usersByNormalizedName = new Map(
+      matchedUsers.map(u => [u.name.trim().toLowerCase(), u._id])
+    )
+
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i]
       try {
@@ -160,13 +180,7 @@ export const personnelService = {
           continue
         }
 
-        // Verify church belongs to this conference (skip with error if not)
-        const church = await OrgUnit.findOne({
-          code:       churchCode.toUpperCase(),
-          parentCode: conf,
-          level:      'church',
-        }).lean()
-        if (!church) {
+        if (!validChurchCodes.has(churchCode.toUpperCase())) {
           results.errors.push({ row: i + 2, reason: `Church ${churchCode} not in conference ${conf}` })
           results.skipped++
           continue
@@ -200,12 +214,10 @@ export const personnelService = {
         })
         if (exists) { results.skipped++; continue }
 
-        const matchedUser = await User.findOne({
-          name: nameRegex(personName),
-        }).select('_id').lean()
+        const matchedUserId = usersByNormalizedName.get(personName.trim().toLowerCase()) ?? null
 
         await PersonnelAssignment.create({
-          userId:         matchedUser?._id ?? null,
+          userId:         matchedUserId,
           personName:     personName.trim(),
           churchCode:     churchCode.toUpperCase(),
           role:           validRole,

@@ -24,6 +24,7 @@ import { surveyRespondRateLimit }  from '../middleware/rateLimit.middleware.js'
 import { asyncHandler }            from '../controllers/base.controller.js'
 import { response }                from '../core/response.js'
 import { surveyService }           from '../services/survey.service.js'
+import { getCallerConference }     from '../lib/conference.js'
 import {
   createSessionSchema,
   submitResponseSchema,
@@ -42,16 +43,7 @@ pastorSurveyRoutes.post(
   ...pastorAuth,
   validate(createSessionSchema),
   asyncHandler(async (req, res) => {
-    const conferenceCode = req.user.subscription?.conferenceCode
-    if (!conferenceCode) {
-      return response.error(res, {
-        statusCode: 403,
-        code: 'NO_CONFERENCE_ASSIGNED',
-        message: 'Your account is not assigned to a conference.',
-        isOperational: true,
-      })
-    }
-
+    const conferenceCode = getCallerConference(req)
     const data = await surveyService.createSession(req.user._id, conferenceCode, req.body)
     response.created(res, data)
   })
@@ -63,16 +55,7 @@ pastorSurveyRoutes.get(
   ...pastorAuth,
   validate(listSessionsSchema, 'query'),
   asyncHandler(async (req, res) => {
-    const conferenceCode = req.user.subscription?.conferenceCode
-    if (!conferenceCode) {
-      return response.error(res, {
-        statusCode: 403,
-        code: 'NO_CONFERENCE_ASSIGNED',
-        message: 'Your account is not assigned to a conference.',
-        isOperational: true,
-      })
-    }
-
+    const conferenceCode = getCallerConference(req)
     const { data, total, page, limit } = await surveyService.listSessions(conferenceCode, req.query)
     response.paginated(res, data, { total, page, limit })
   })
