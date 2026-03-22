@@ -55,15 +55,23 @@ export async function runSignalSweep(conferenceCode) {
 
   logger.info(`[signal-engine] Sweeping ${churches.length} churches for ${conf} (${directChurches.length} direct, ${nestedChurches.length} via district tier)`)
 
-  for (const church of churches) {
-    try {
-      const counts = await checkChurch(church, conf)
-      result.signalsCreated  += counts.created
-      result.signalsResolved += counts.resolved
-      result.processed++
-    } catch (err) {
-      result.errors.push({ churchCode: church.code, error: err.message })
-      logger.warn(`[signal-engine] Error checking ${church.code}`, err)
+  // Process churches in parallel batches to avoid overwhelming the DB
+  const BATCH_SIZE = 20
+  for (let i = 0; i < churches.length; i += BATCH_SIZE) {
+    const batch = churches.slice(i, i + BATCH_SIZE)
+    const settled = await Promise.allSettled(
+      batch.map(church => checkChurch(church, conf))
+    )
+    for (let j = 0; j < settled.length; j++) {
+      const outcome = settled[j]
+      if (outcome.status === 'fulfilled') {
+        result.signalsCreated  += outcome.value.created
+        result.signalsResolved += outcome.value.resolved
+        result.processed++
+      } else {
+        result.errors.push({ churchCode: batch[j].code, error: outcome.reason.message })
+        logger.warn(`[signal-engine] Error checking ${batch[j].code}`, outcome.reason)
+      }
     }
   }
 

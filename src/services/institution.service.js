@@ -1,13 +1,21 @@
 import { Institution } from '../models/Institution.js'
 import { ACNCEntry } from '../models/ACNCEntry.js'
 
+/**
+ * Escape a string for safe use in a MongoDB $regex.
+ * Prevents ReDoS from user-supplied input.
+ */
+function escapeRegex(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
 export class institutionService {
   /** List institutions with optional filters + pagination */
   static async list({ type, region, country, q, page = 1, limit = 50 } = {}) {
     const query = { active: true }
     if (type)    query.type = type
-    if (region)  query.region = new RegExp(region, 'i')
-    if (country) query.country = new RegExp(country, 'i')
+    if (region)  query.region = new RegExp(escapeRegex(region), 'i')
+    if (country) query.country = new RegExp(escapeRegex(country), 'i')
     if (q)       query.$text = { $search: q }
 
     const skip = (page - 1) * limit
