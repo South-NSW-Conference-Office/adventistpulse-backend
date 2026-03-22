@@ -1,6 +1,8 @@
 import GooglePlacesCache from '../models/GooglePlacesCache.js'
+import { logger } from '../core/logger.js'
+import { env } from '../config/env.js'
 
-const PLACES_API_KEY = process.env.GOOGLE_PLACES_API_KEY;
+const PLACES_API_KEY = env.GOOGLE_PLACES_API_KEY
 const TTL_DAYS = 30;
 
 /**
@@ -98,7 +100,7 @@ export async function getChurchPlacesData({ name, lat, lng, address = '' }) {
 
     return { rating, reviewCount, photosCount, phone, googleMapsUrl, placeId, fromCache: false };
   } catch (err) {
-    console.error('[GooglePlaces] fetch error:', err.message);
-    return { rating: null, reviewCount: null, photosCount: null, phone: null, googleMapsUrl: null, placeId: null, fromCache: false };
+    logger.error('[GooglePlaces] fetch error', err)
+    return { rating: null, reviewCount: null, photosCount: null, phone: null, googleMapsUrl: null, placeId: null, fromCache: false }
   }
 }
