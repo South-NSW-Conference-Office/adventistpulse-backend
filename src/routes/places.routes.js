@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { asyncHandler } from '../controllers/base.controller.js'
 import { validate } from '../middleware/validate.middleware.js'
+import { churchPlacesRateLimit } from '../middleware/rateLimit.middleware.js'
 import { getChurchPlacesData } from '../services/googlePlaces.service.js'
 import { churchPlacesQuerySchema } from '../validators/places.validator.js'
 
@@ -10,7 +11,7 @@ const router = Router()
  * GET /api/v1/places/church
  * On-demand Google Places lookup with 30-day cache.
  * Public — no auth required (read-only, cached, no sensitive data).
- * Rate limited: see rateLimit.middleware.js (churchPlacesRateLimit applied in mount).
+ * Rate limited: 30 req/min per IP (churchPlacesRateLimit).
  *
  * Query params:
  *   name    {string}  Church name (required, max 200 chars)
@@ -23,6 +24,7 @@ const router = Router()
  */
 router.get(
   '/church',
+  churchPlacesRateLimit,
   validate(churchPlacesQuerySchema, 'query'),
   asyncHandler(async (req, res) => {
     const { name, lat, lng, address = '' } = req.query
