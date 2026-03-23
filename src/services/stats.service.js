@@ -18,9 +18,11 @@ const MAX_PROJECTION_HORIZON   = 150
 
 class StatsService {
   async getForEntity(code, query) {
-    await entityRepository.findByCodeOrFail(code)
+    const entity = await entityRepository.findByCodeOrFail(code)
     const { from, to } = query
-    return statsRepository.findByEntityCode(code, { from, to })
+    // Fetch stats for canonical code — alias stats were migrated to canonical during dedup
+    // Use the resolved entity's canonical code (in case 'code' was an alias)
+    return statsRepository.findByEntityCode(entity.code, { from, to })
   }
 
   async getRankings(query) {
