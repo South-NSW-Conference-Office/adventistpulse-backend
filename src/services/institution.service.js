@@ -11,12 +11,13 @@ function escapeRegex(str) {
 
 export class institutionService {
   /** List institutions with optional filters + pagination */
-  static async list({ type, region, country, q, page = 1, limit = 50 } = {}) {
+  static async list({ type, region, country, conferenceCode, q, page = 1, limit = 50 } = {}) {
     const query = { active: true }
-    if (type)    query.type = type
-    if (region)  query.region = new RegExp(escapeRegex(region), 'i')
-    if (country) query.country = new RegExp(escapeRegex(country), 'i')
-    if (q)       query.$text = { $search: q }
+    if (type)           query.type = type
+    if (region)         query.region = new RegExp(escapeRegex(region), 'i')
+    if (country)        query.country = new RegExp(escapeRegex(country), 'i')
+    if (conferenceCode) query.conferenceCode = conferenceCode.toUpperCase()
+    if (q)              query.$text = { $search: q }
 
     const skip = (page - 1) * limit
     const [data, total] = await Promise.all([

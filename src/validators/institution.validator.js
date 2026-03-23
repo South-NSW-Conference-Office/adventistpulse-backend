@@ -39,12 +39,13 @@ export const createInstitutionSchema = z.object({
 export const updateInstitutionSchema = createInstitutionSchema.partial().omit({ code: true })
 
 export const institutionQuerySchema = z.object({
-  type:    z.enum(INSTITUTION_TYPES).optional(),
-  region:  z.string().optional(),
-  country: z.string().optional(),
-  q:       z.string().optional(),         // text search
-  page:    z.coerce.number().int().min(1).optional().default(1),
-  limit:   z.coerce.number().int().min(1).max(100).optional().default(50),
+  type:           z.enum(INSTITUTION_TYPES).optional(),
+  region:         z.string().optional(),
+  country:        z.string().optional(),
+  conferenceCode: z.string().toUpperCase().optional(),  // filter by linked conference/org unit
+  q:              z.string().optional(),                // text search
+  page:           z.coerce.number().int().min(1).optional().default(1),
+  limit:          z.coerce.number().int().min(1).max(100).optional().default(50),
 })
 
 export const createACNCEntrySchema = z.object({
