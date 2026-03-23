@@ -25,8 +25,8 @@ import path from 'path'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 dotenv.config({ path: path.join(__dirname, '..', '.env') })
 
-const MONGO_URI = process.env.MONGODB_URI || 
-  'mongodb+srv://adminbem:digitalmission2126@snswcluster.wrvm8i.mongodb.net/adventistpulse_dev?appName=SNSWCluster'
+const MONGO_URI = process.env.MONGODB_URI
+if (!MONGO_URI) throw new Error('MONGODB_URI environment variable is required. Set it in .env or pass it explicitly.')
 
 // ─── Schema definitions (inline to avoid import issues) ───────────────────────
 
