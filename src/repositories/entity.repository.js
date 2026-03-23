@@ -7,8 +7,20 @@ class EntityRepository extends BaseRepository {
     super(OrgUnit)
   }
 
+  // Always exclude hidden admin-bucket entities (ATTACHED/DETACHED/UNATTACHED)
+  #baseFilter(extra = {}) {
+    return { hidden: { $ne: true }, ...extra }
+  }
+
   async findByCode(code) {
-    return this.model.findOne({ code: code.toUpperCase() }).lean()
+    const upper = code.toUpperCase()
+    // Primary lookup by canonical code — apply baseFilter to exclude hidden entities
+    let doc = await this.model.findOne(this.#baseFilter({ code: upper })).lean()
+    // Alias fallback — if not found by code, check if any entity lists it as an alias
+    if (!doc) {
+      doc = await this.model.findOne(this.#baseFilter({ aliases: upper })).lean()
+    }
+    return doc
   }
 
   async findByCodeOrFail(code) {
@@ -17,16 +29,26 @@ class EntityRepository extends BaseRepository {
     return doc
   }
 
-  async findByLevel(level, { skip, limit, sort } = {}) {
-    return this.find({ level }, { skip, limit, sort })
+  async findByLevel(level, { skip, limit, sort = { createdAt: -1 } } = {}) {
+    return this.model.find(this.#baseFilter({ level })).sort(sort).skip(skip ?? 0).limit(limit ?? 20).lean()
   }
 
-  async findChildren(parentCode, { skip, limit } = {}) {
-    return this.find({ parentCode: parentCode.toUpperCase() }, { skip, limit })
+  async findChildren(parentCode, { skip, limit, sort = { name: 1 } } = {}) {
+    return this.model.find(this.#baseFilter({ parentCode: parentCode.toUpperCase() })).sort(sort).skip(skip ?? 0).limit(limit ?? 200).lean()
   }
 
   async existsByCode(code) {
     return this.model.exists({ code: code.toUpperCase() })
+  }
+
+  async paginate(filter = {}, { page = 1, limit = 20, sort = { createdAt: -1 } } = {}) {
+    const skip = (page - 1) * limit
+    const safeFilter = this.#baseFilter(filter)
+    const [data, total] = await Promise.all([
+      this.model.find(safeFilter).sort(sort).skip(skip).limit(limit).lean(),
+      this.model.countDocuments(safeFilter),
+    ])
+    return { data, total, page, limit }
   }
 
   /**

@@ -77,7 +77,7 @@ class EntityService {
   async search(query, limit = 10) {
     const regex = new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i')
     const entities = await entityRepository.model
-      .find({ $or: [{ name: regex }, { code: regex }] })
+      .find({ hidden: { $ne: true }, $or: [{ name: regex }, { code: regex }] })
       .limit(Number(limit))
       .lean()
 
@@ -244,6 +244,7 @@ class EntityService {
 
     const [lng, lat] = entity.location.coordinates
     const nearby = await entityRepository.model.find({
+      hidden: { $ne: true },
       code: { $ne: entity.code },
       location: {
         $near: {
@@ -271,7 +272,8 @@ class EntityService {
 
   async #findWithStats(filter, refStats, limit, filterFn) {
     // Get entities matching filter, then join with latest stats and apply filterFn
-    const entities = await entityRepository.model.find(filter).limit(200).lean()
+    // Always exclude hidden entities (admin buckets) from comparisons and rankings
+    const entities = await entityRepository.model.find({ hidden: { $ne: true }, ...filter }).limit(200).lean()
     const codes = entities.map(e => e.code)
     const latestStats = await statsRepository.findLatestForEntities(codes)
     const statsMap = Object.fromEntries(latestStats.map(s => [s.entityCode, s]))

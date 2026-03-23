@@ -40,11 +40,21 @@ const orgUnitSchema = new mongoose.Schema({
     type:        { type: String, enum: ['Point'], default: 'Point' },
     coordinates: { type: [Number] },
   },
+
+  // ─── Deduplication / Alias System ─────────────────────────────────────────
+  // A single real-world entity may have been recorded under multiple codes
+  // across different data sources. The canonical code is the primary identifier.
+  // All other codes are stored as aliases so old links and data continue to resolve.
+  aliases:      { type: [String], default: [] },          // e.g. ['GSYD', 'C10174']
+  hidden:       { type: Boolean,  default: false },        // true = not visible on platform
+  hiddenReason: { type: String,   default: null },         // why this entity is hidden
+  canonicalCode:{ type: String,   default: null },         // if hidden, points to the canonical
 }, { timestamps: true })
 
 // code: unique:true on the field already creates the index — no need for schema.index()
 orgUnitSchema.index({ parentCode: 1, level: 1 })
 orgUnitSchema.index({ level: 1 })  // church.routes + signal.job query by level alone
+orgUnitSchema.index({ aliases: 1 }) // alias fallback lookup in entity.repository.findByCode
 orgUnitSchema.index({ location: '2dsphere' }, { sparse: true })
 
 export const OrgUnit = mongoose.model('OrgUnit', orgUnitSchema)

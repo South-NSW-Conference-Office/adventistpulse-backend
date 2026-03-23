@@ -34,6 +34,9 @@ const envSchema = z.object({
   // Brevo — optional, beta signup flow
   BREVO_API_KEY: z.string().optional(),
   ADMIN_DASHBOARD_URL: z.string().optional().default('https://adventistpulse.org/admin'),
+
+  // Google Places — optional, church location enrichment (rating, photos, phone)
+  GOOGLE_PLACES_API_KEY: z.string().optional(),
 })
 
 const parsed = envSchema.safeParse(process.env)
