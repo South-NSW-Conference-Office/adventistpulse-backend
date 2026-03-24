@@ -38,7 +38,12 @@ const orgUnitSchema = new mongoose.Schema({
   },
   location: {
     type:        { type: String, enum: ['Point'], default: 'Point' },
-    coordinates: { type: [Number] },
+    coordinates: { type: [Number] },  // GeoJSON: [lng, lat]
+    // Human-readable address — replaces display_name from entity-locations.json
+    displayName: { type: String, default: null },
+    // Where the coordinates came from — for audit trail
+    source:      { type: String, enum: ['yearbook', 'nominatim', 'manual', 'finn-audit', null], default: null },
+    verifiedAt:  { type: Date, default: null },
   },
 
   // ─── Deduplication / Alias System ─────────────────────────────────────────
