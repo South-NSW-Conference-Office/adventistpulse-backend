@@ -53,7 +53,15 @@ export async function runSignalSweep(conferenceCode) {
 
   const churches = [...directChurches, ...nestedChurches]
 
-  logger.info(`[signal-engine] Sweeping ${churches.length} churches for ${conf} (${directChurches.length} direct, ${nestedChurches.length} via district tier)`)
+  // Skip at debug level — no info noise for conferences with no churches.
+  // The scheduler already filters these out via getActiveConferenceCodes(),
+  // but runSignalSweep() can still be called directly (e.g. from the controller).
+  if (churches.length === 0) {
+    logger.debug(`[signal-engine] ${conf}: 0 churches — skipping`)
+    return result
+  }
+
+  logger.info(`[signal-engine] ${conf}: sweeping ${churches.length} churches (${directChurches.length} direct, ${nestedChurches.length} via intermediate tier)`)
 
   // Process churches in parallel batches to avoid overwhelming the DB
   const BATCH_SIZE = 20
@@ -70,12 +78,18 @@ export async function runSignalSweep(conferenceCode) {
         result.processed++
       } else {
         result.errors.push({ churchCode: batch[j].code, error: outcome.reason.message })
-        logger.warn(`[signal-engine] Error checking ${batch[j].code}`, outcome.reason)
+        logger.warn(`[signal-engine] ${conf}/${batch[j].code}: check failed`, outcome.reason)
       }
     }
   }
 
-  logger.info(`[signal-engine] Sweep complete for ${conf}`, result)
+  // Only log at info when there was actual work — keeps logs clean on quiet conferences
+  if (result.signalsCreated > 0 || result.signalsResolved > 0 || result.errors.length > 0) {
+    logger.info(`[signal-engine] ${conf}: done — ${result.signalsCreated} created, ${result.signalsResolved} resolved, ${result.errors.length} errors`)
+  } else {
+    logger.debug(`[signal-engine] ${conf}: done — no changes`)
+  }
+
   return result
 }
 
