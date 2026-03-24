@@ -19,7 +19,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.80.0",
     "@panva/hkdf": "^1.2.1",
     "bcryptjs": "^3.0.3",
     "cookie-parser": "^1.4.7",
