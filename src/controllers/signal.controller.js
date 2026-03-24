@@ -1,5 +1,5 @@
 import { signalService }       from '../services/signal.service.js'
-import { runSignalSweep }      from '../services/signal.engine.js'
+import { runSignalSweep, sweepIfStale } from '../services/signal.engine.js'
 import { response }            from '../core/response.js'
 import { asyncHandler }        from './base.controller.js'
 import { getCallerConference } from '../lib/conference.js'
@@ -11,6 +11,10 @@ export const signalController = {
   list: asyncHandler(async (req, res) => {
     const conferenceCode = getCallerConference(req)
     const { tiers, resolved, limit } = req.query // validated + transformed by middleware
+
+    // Lazy sweep — only runs if this conference hasn't been swept in the last hour.
+    // Fire and forget: returns immediately with current signals; fresh ones appear on next poll.
+    sweepIfStale(conferenceCode)
 
     const [signals, counts] = await Promise.all([
       signalService.list(conferenceCode, { tiers, resolved, limit }),

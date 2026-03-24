@@ -2,7 +2,7 @@
  * Signal Engine
  *
  * Scans church data for anomalies and writes signals to the Signal collection.
- * Called by the scheduler (signal.job.js) and the manual sweep endpoint.
+ * Called by the controller (lazy on-demand) and the manual sweep endpoint.
  *
  * Each check is independent — a failure in one church doesn't abort the sweep.
  * All generated signals go through signalService.upsert() for dedup handling.
@@ -10,6 +10,11 @@
  * Phase 1 checks (staffing + data quality) are implemented here.
  * Phase 2 checks (membership/financial trends) require entity-history collection
  * which Bem is building in Week 3 — stubs are included with clear TODOs.
+ *
+ * Staleness cache:
+ *   runSignalSweep() updates lastSweptAt[code] on completion.
+ *   sweepIfStale() checks the cache before running — safe to call on every request.
+ *   Cache is in-memory; resets on server restart (first request sweeps, then cached).
  */
 
 import { OrgUnit }             from '../models/OrgUnit.js'
@@ -27,6 +32,36 @@ const DELEGATION_EXPIRY_WARN_DAYS = 30
 // Tenure milestones (years) that trigger a ROUTINE signal
 const TENURE_MILESTONES_YRS = [5, 7, 10]
 const TENURE_LONG_YRS       = 10  // PRIORITY when exceeded
+
+// ── Staleness cache (in-memory) ──────────────────────────────────────────────
+// Tracks when each conference was last swept. Resets on server restart.
+// On first request after restart the cache is empty → sweep runs once, then
+// the TTL guards subsequent requests for the next SWEEP_TTL_MS milliseconds.
+const lastSweptAt = new Map() // conferenceCode (uppercase) → Date
+
+const SWEEP_TTL_MS = 60 * 60 * 1000 // 1 hour
+
+/**
+ * Sweep a conference only if it hasn't been swept within SWEEP_TTL_MS.
+ * Safe to call on every GET /admin/signals request — fire and forget.
+ * Returns true if a sweep was triggered, false if still fresh.
+ */
+export function sweepIfStale(conferenceCode) {
+  const code = conferenceCode.toUpperCase()
+  const last = lastSweptAt.get(code)
+  if (last && Date.now() - last.getTime() < SWEEP_TTL_MS) return false
+
+  // Mark as swept NOW to prevent concurrent triggers from parallel requests
+  lastSweptAt.set(code, new Date())
+
+  runSignalSweep(code).catch(err => {
+    // On failure, clear the cache entry so the next request retries
+    lastSweptAt.delete(code)
+    logger.error(`[signal-engine] sweepIfStale failed for ${code}`, err)
+  })
+
+  return true
+}
 
 /**
  * Run a full signal sweep for one conference.

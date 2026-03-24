@@ -64,18 +64,15 @@ export function startScheduler() {
     return
   }
 
-  // Light pass — every 15 minutes (staffing + delegations)
-  cron.schedule('*/15 * * * *', () => {
-    logger.info('[signal-job] Light pass triggered')
+  // Nightly pass — 3am AEST (UTC+11 = 16:00 UTC) — keeps signals fresh even
+  // for conferences whose admins haven't logged in that day.
+  // Individual conferences are swept lazily (on-demand) when admins view their
+  // Intel Feed — see sweepIfStale() in signal.engine.js. The nightly job is
+  // a safety net only; it is NOT the primary sweep mechanism.
+  cron.schedule('0 16 * * *', () => {
+    logger.info('[signal-job] Nightly pass triggered')
     sweepAll().catch(err => logger.error('[signal-job] Unhandled error in sweepAll', err))
   })
 
-  // Heavy pass — 2am AEST daily (UTC+11 = 15:00 UTC)
-  // TODO (Phase 2): uncomment when membership/financial checks are implemented
-  // cron.schedule('0 15 * * *', () => {
-  //   logger.info('[signal-job] Nightly heavy pass triggered')
-  //   sweepAll().catch(err => logger.error('[signal-job] Unhandled error in sweepAll', err))
-  // })
-
-  logger.info('[signal-job] Scheduler registered — light pass every 15 minutes')
+  logger.info('[signal-job] Scheduler registered — nightly pass at 3am AEST (on-demand sweeps handle intraday freshness)')
 }
