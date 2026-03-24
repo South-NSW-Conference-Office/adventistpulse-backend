@@ -1,6 +1,10 @@
 import { statsRepository } from '../repositories/stats.repository.js'
 import { entityRepository } from '../repositories/entity.repository.js'
 import { getPaginationParams } from '../lib/paginate.js'
+import { OrgUnit }        from '../models/OrgUnit.js'
+import { YearlyStats }    from '../models/YearlyStats.js'
+import { ComputedStats }  from '../models/ComputedStats.js'
+import { logger }         from '../core/logger.js'
 
 // ── Projection constants ──────────────────────────────────────────────────────
 // Historical average annual growth rate for a typical division (conservative baseline)
@@ -282,3 +286,201 @@ class StatsService {
 }
 
 export const statsService = new StatsService()
+
+// ── Computed Stats (country-level aggregations) ───────────────────────────────
+//
+// Expensive datasets cached in MongoDB (ComputedStats collection) for 24h.
+// Rebuilt on expiry or on demand via ?rebuild=true&secret=X on the route.
+// Nightly cron calls rebuildAllComputedStats() after the signal sweep.
+//
+// Design principles:
+//   SRP — computation logic here; persistence in ComputedStats model.
+//   OCP — add new computed keys to BUILDERS without touching existing code.
+//   DRY — shared helpers getCountryEntities() and getStatsMap() used by all builders.
+
+const TTL_MS = 24 * 60 * 60 * 1000  // 24 hours
+
+// ── Shared helpers ────────────────────────────────────────────────────────────
+
+/**
+ * Get all visible entities that have a metadata.country set.
+ * Building block for all country-level aggregations.
+ * @returns {Promise<object[]>}
+ */
+async function getCountryEntities() {
+  return OrgUnit.find(
+    {
+      hidden:             { $ne: true },
+      'metadata.country': { $exists: true, $nin: [null, '', '__EXCLUDE__'] },
+    },
+    { code: 1, name: 1, level: 1, parentCode: 1, 'metadata.country': 1, location: 1 },
+  ).lean()
+}
+
+/**
+ * Get YearlyStats for a set of entity codes.
+ * Returns a Map of entityCode → sorted array of { year, membership }.
+ */
+async function getStatsMap(codes) {
+  const stats = await YearlyStats.find(
+    { entityCode: { $in: codes } },
+    { entityCode: 1, year: 1, membership: 1 },
+  ).sort({ year: 1 }).lean()
+
+  const map = new Map()
+  for (const s of stats) {
+    const mem = typeof s.membership === 'object' ? s.membership.ending : s.membership
+    if (!mem || isNaN(mem)) continue
+    if (!map.has(s.entityCode)) map.set(s.entityCode, [])
+    map.get(s.entityCode).push({ year: s.year, membership: mem })
+  }
+  return map
+}
+
+// ── country-growth builder ────────────────────────────────────────────────────
+
+/**
+ * Build country-level YoY membership growth rates.
+ *
+ * Algorithm:
+ *   1. Group entities by metadata.country
+ *   2. Sum membership across all entities per year
+ *   3. Find latest year ≥ STALE_YEAR; find prior year ≥ MIN_COMPARE_GAP years back
+ *   4. Compute annualised growth rate
+ */
+async function buildCountryGrowth() {
+  const STALE_YEAR       = 2018
+  const MIN_COMPARE_GAP  = 2
+
+  const entities = await getCountryEntities()
+  const statsMap = await getStatsMap(entities.map(e => e.code))
+
+  const byCountry = new Map()
+  for (const e of entities) {
+    const country = e.metadata.country
+    if (!byCountry.has(country)) byCountry.set(country, [])
+    byCountry.get(country).push(e.code)
+  }
+
+  const results = []
+  for (const [country, entityCodes] of byCountry) {
+    const yearTotals = new Map()
+    for (const code of entityCodes) {
+      for (const { year, membership } of statsMap.get(code) || []) {
+        yearTotals.set(year, (yearTotals.get(year) || 0) + membership)
+      }
+    }
+    if (yearTotals.size < 2) continue
+
+    const years      = [...yearTotals.keys()].sort((a, b) => a - b)
+    const latestYear = years[years.length - 1]
+    if (latestYear < STALE_YEAR) continue
+
+    const priorYear = years.slice().reverse().find(y => latestYear - y >= MIN_COMPARE_GAP)
+    if (!priorYear) continue
+
+    const latestMem = yearTotals.get(latestYear)
+    const priorMem  = yearTotals.get(priorYear)
+    if (!latestMem || !priorMem || priorMem === 0) continue
+
+    const yearsCompared = latestYear - priorYear
+    const totalGrowth   = (latestMem - priorMem) / priorMem
+    const annualised    = Math.round(((totalGrowth / yearsCompared) * 100) * 100) / 100
+
+    results.push({
+      country,
+      growthRate:       annualised,
+      latestYear,
+      latestMembership: latestMem,
+      priorYear,
+      priorMembership:  priorMem,
+      yearsCompared,
+      entityCodes,
+    })
+  }
+  return results.sort((a, b) => a.country.localeCompare(b.country))
+}
+
+// ── country-membership builder ────────────────────────────────────────────────
+
+/** Build latest known membership per country (Adventist Density choropleth). */
+async function buildCountryMembership() {
+  const entities = await getCountryEntities()
+  const statsMap = await getStatsMap(entities.map(e => e.code))
+
+  const byCountry = new Map()
+  for (const e of entities) {
+    const country = e.metadata.country
+    if (!byCountry.has(country)) byCountry.set(country, [])
+    byCountry.get(country).push(e.code)
+  }
+
+  const results = []
+  for (const [country, entityCodes] of byCountry) {
+    let totalMembership = 0
+    let latestYear      = 0
+    for (const code of entityCodes) {
+      const yearlyData = statsMap.get(code) || []
+      if (!yearlyData.length) continue
+      const latest = yearlyData[yearlyData.length - 1]
+      totalMembership += latest.membership
+      if (latest.year > latestYear) latestYear = latest.year
+    }
+    if (totalMembership > 0) results.push({ country, membership: totalMembership, latestYear })
+  }
+  return results.sort((a, b) => a.country.localeCompare(b.country))
+}
+
+// ── Cache layer ───────────────────────────────────────────────────────────────
+
+const BUILDERS = {
+  'country-growth':     buildCountryGrowth,
+  'country-membership': buildCountryMembership,
+}
+
+/**
+ * Get a computed stats dataset — serve from cache, or build if missing/stale.
+ *
+ * @param {string}  key            - Dataset key (e.g. 'country-growth')
+ * @param {boolean} [forceRebuild] - Skip cache and rebuild immediately
+ * @returns {Promise<{ data, builtAt: Date, fresh: boolean }>}
+ */
+export async function getComputedStats(key, forceRebuild = false) {
+  const builder = BUILDERS[key]
+  if (!builder) throw new Error(`Unknown computed stats key: '${key}'`)
+
+  if (!forceRebuild) {
+    const cached = await ComputedStats.findOne({ key }).lean()
+    if (cached && cached.expiresAt > new Date()) {
+      return { data: cached.data, builtAt: cached.builtAt, fresh: true }
+    }
+  }
+
+  logger.info(`[stats-service] Building '${key}'...`)
+  const t0      = Date.now()
+  const data    = await builder()
+  const buildMs = Date.now() - t0
+  const now     = new Date()
+
+  await ComputedStats.findOneAndUpdate(
+    { key },
+    { key, data, builtAt: now, expiresAt: new Date(now.getTime() + TTL_MS), buildMs },
+    { upsert: true, new: true },
+  )
+
+  logger.info(`[stats-service] Built '${key}' in ${buildMs}ms — ${Array.isArray(data) ? data.length : '?'} entries`)
+  return { data, builtAt: now, fresh: false }
+}
+
+/**
+ * Rebuild all computed stats keys. Called by the nightly cron in signal.job.js.
+ */
+export async function rebuildAllComputedStats() {
+  for (const key of Object.keys(BUILDERS)) {
+    try {
+      await getComputedStats(key, true)
+    } catch (err) {
+      logger.error(`[stats-service] Failed to rebuild '${key}'`, err)
+    }
+  }
+}

@@ -15,10 +15,11 @@
  *   DRY — conference discovery is a single function (getActiveConferenceCodes)
  */
 
-import cron               from 'node-cron'
-import { OrgUnit }        from '../models/OrgUnit.js'
-import { runSignalSweep } from '../services/signal.engine.js'
-import { logger }         from '../core/logger.js'
+import cron                        from 'node-cron'
+import { OrgUnit }                 from '../models/OrgUnit.js'
+import { runSignalSweep }          from '../services/signal.engine.js'
+import { rebuildAllComputedStats } from '../services/stats.service.js'
+import { logger }                  from '../core/logger.js'
 
 // ── Overlap guard (single-process) ───────────────────────────────────────────
 // Prevents overlapping sweepAll() runs if a pass takes longer than the cron interval.
@@ -111,11 +112,13 @@ export function startScheduler() {
   })
 
   // Heavy pass — 2am AEST daily (UTC+11 = 15:00 UTC)
-  // TODO (Phase 2): uncomment when membership/financial checks are implemented
-  // cron.schedule('0 15 * * *', () => {
-  //   logger.info('[signal-job] Nightly heavy pass triggered')
-  //   sweepAll().catch(err => logger.error('[signal-job] Unhandled error in sweepAll', err))
-  // })
+  // Runs full signal sweep + rebuilds all computed stats (country-growth, country-membership).
+  cron.schedule('0 15 * * *', () => {
+    logger.info('[signal-job] Nightly heavy pass triggered')
+    sweepAll()
+      .then(() => rebuildAllComputedStats())
+      .catch(err => logger.error('[signal-job] Unhandled error in nightly pass', err))
+  })
 
   logger.info('[signal-job] Scheduler registered — light pass every 15 minutes (active conferences only)')
 }
