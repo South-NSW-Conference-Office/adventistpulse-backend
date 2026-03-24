@@ -69,7 +69,7 @@ pastorSurveyRoutes.get(
     const data = await surveyService.getResults(
       req.params.id,
       req.user._id,
-      req.user.subscription?.conferenceCode
+      getCallerConference(req)
     )
     response.success(res, data)
   })
@@ -83,7 +83,7 @@ pastorSurveyRoutes.patch(
     const data = await surveyService.closeSession(
       req.params.id,
       req.user._id,
-      req.user.subscription?.conferenceCode
+      getCallerConference(req)
     )
     response.success(res, data)
   })

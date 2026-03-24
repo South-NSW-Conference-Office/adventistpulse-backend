@@ -12,6 +12,7 @@ import { PersonnelAssignment } from '../models/PersonnelAssignment.js'
 import { OrgUnit } from '../models/OrgUnit.js'
 import { User } from '../models/User.js'
 import { logger } from '../core/logger.js'
+import { assertChurchInConference, getChurchCodesForConference } from '../lib/church.js'
 
 /**
  * Escape a string for safe use in a MongoDB $regex.
@@ -28,20 +29,10 @@ function nameRegex(name) {
   return new RegExp(`^${escapeRegex(name)}$`, 'i')
 }
 
-/**
- * Assert that a churchCode belongs to the given conferenceCode.
- * Throws if the church is not in the admin's territory.
- */
-async function assertChurchInConference(churchCode, conferenceCode) {
-  const church = await OrgUnit.findOne({
-    code:       churchCode.toUpperCase(),
-    parentCode: conferenceCode.toUpperCase(),
-    level:      'church',
-  }).lean()
-  if (!church) {
-    throw new Error(`Church ${churchCode} does not belong to conference ${conferenceCode}`)
-  }
-}
+// assertChurchInConference + getChurchCodesForConference imported from lib/church.js —
+// correctly handles nested church hierarchies (church → district → conference).
+// The previous local implementation only checked parentCode = conferenceCode,
+// silently missing churches nested under intermediate tiers (districts, fields, etc.).
 
 export const personnelService = {
 
@@ -144,12 +135,8 @@ export const personnelService = {
     const ROLE_VALID = new Set(['head-pastor','associate-pastor','bible-worker','chaplain','elder','district-leader'])
     const conf = conferenceCode.toUpperCase()
 
-    // Batch-load all churches in this conference to avoid N+1 queries
-    const conferenceChurches = await OrgUnit.find({
-      parentCode: conf,
-      level:      'church',
-    }).select('code').lean()
-    const validChurchCodes = new Set(conferenceChurches.map(c => c.code))
+    // Batch-load all churches in this conference (incl. nested via districts/fields)
+    const validChurchCodes = await getChurchCodesForConference(conf)
 
     // Collect unique person names from CSV for batch user matching
     const uniqueNames = [...new Set(

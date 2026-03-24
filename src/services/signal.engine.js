@@ -17,6 +17,7 @@ import { PersonnelAssignment } from '../models/PersonnelAssignment.js'
 import { User }                from '../models/User.js'
 import { signalService }       from './signal.service.js'
 import { logger }              from '../core/logger.js'
+import { getChurchesForConference } from '../lib/church.js'
 
 // How many days a church can be vacant before escalating to FLASH
 const VACANT_FLASH_DAYS = 90
@@ -36,22 +37,11 @@ export async function runSignalSweep(conferenceCode) {
   const conf   = conferenceCode.toUpperCase()
   const result = { processed: 0, signalsCreated: 0, signalsResolved: 0, errors: [] }
 
-  // Two-step church discovery — mirrors assertChurchInConference from PR #1.
-  // Step 1: churches that sit directly under the conference.
-  const directChurches = await OrgUnit.find({ parentCode: conf, level: 'church' }).lean()
-
-  // Step 2: churches that sit under an intermediate tier (district, field, section …).
-  const intermediates = await OrgUnit.find({
-    parentCode: conf,
-    level: { $nin: ['church', 'gc', 'division', 'union', 'conference', 'mission'] },
-  }).select('code').lean()
-
-  const intermediateCodes = intermediates.map(d => d.code)
-  const nestedChurches = intermediateCodes.length > 0
-    ? await OrgUnit.find({ parentCode: { $in: intermediateCodes }, level: 'church' }).lean()
-    : []
-
-  const churches = [...directChurches, ...nestedChurches]
+  // Church discovery — includes churches nested under intermediate tiers (districts, fields…).
+  // Delegated to lib/church.js: single DRY implementation used across signal, personnel, survey.
+  const churches = await getChurchesForConference(conf)
+  const directChurches = churches.filter(c => c.parentCode === conf)
+  const nestedChurches  = churches.filter(c => c.parentCode !== conf)
 
   // Skip at debug level — no info noise for conferences with no churches.
   // The scheduler already filters these out via getActiveConferenceCodes(),
