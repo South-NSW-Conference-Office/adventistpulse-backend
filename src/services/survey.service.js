@@ -15,6 +15,7 @@ import { SurveyResponse }  from '../models/SurveyResponse.js'
 import { OrgUnit }         from '../models/OrgUnit.js'
 import { AppError, NotFoundError, ForbiddenError } from '../core/errors/index.js'
 import { getPaginationParams }  from '../lib/paginate.js'
+import { getChurchCodesForConference } from '../lib/church.js'
 import { env }             from '../config/env.js'
 
 // ─── Scoring Constants ─────────────────────────────────────────────────────────
@@ -105,12 +106,17 @@ function generateCode() {
 /**
  * Verify churchCode is a real church AND belongs to the given conference.
  * Throws AppError 404 or 403 if not.
+ *
+ * Uses getChurchCodesForConference() from lib/church.js — correctly handles
+ * churches nested under intermediate tiers (districts, fields, etc.) rather
+ * than only checking parentCode === conferenceCode.
  */
 async function assertChurchInConference(churchCode, conferenceCode) {
   const church = await OrgUnit.findOne({ code: churchCode.toUpperCase(), level: 'church' }).lean()
   if (!church) throw new NotFoundError(`Church '${churchCode}'`)
 
-  if (church.parentCode?.toUpperCase() !== conferenceCode.toUpperCase()) {
+  const validCodes = await getChurchCodesForConference(conferenceCode)
+  if (!validCodes.has(churchCode.toUpperCase())) {
     throw new ForbiddenError(`Church '${churchCode}' does not belong to your conference`)
   }
 
