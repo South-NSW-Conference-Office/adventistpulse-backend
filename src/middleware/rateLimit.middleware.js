@@ -1,4 +1,4 @@
-import rateLimit from 'express-rate-limit'
+import rateLimit, { ipKeyGenerator } from 'express-rate-limit'
 import { env } from '../config/env.js'
 
 const isDev = env.NODE_ENV === 'development'
@@ -49,6 +49,6 @@ export const aiUserRateLimit = rateLimit({
   max: isDev ? 500 : 20,
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: req => req.user?._id?.toString() ?? req.ip,
+  keyGenerator: req => req.user?._id?.toString() ?? ipKeyGenerator(req.ip),
   message,
 })
