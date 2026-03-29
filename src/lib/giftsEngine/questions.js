@@ -8,9 +8,11 @@
  * Gifts covered (22): administration, apostleship, craftsmanship, discernment,
  * encouragement, evangelism, faith, giving, healing, helps, hospitality,
  * intercession, knowledge, leadership, mercy, miracles, prophecy, shepherding,
- * teaching, tongues*, wisdom, worship
+ * teaching, tongues, wisdom, worship
  *
- * * tongues is excluded from the Adventist version — see getAdventistQuestions()
+ * Tongues is included in the Adventist version (reframed as xenolalia — Acts 2
+ * cross-cultural languages gift). Only interpretation_of_tongues is excluded
+ * (see adventistOverrides.js). Both versions assess all 22 anchor questions.
  *
  * All statements are first-person behavioural ("I do…"), not aspirational.
  * Answered on a 1–5 Likert scale:
@@ -969,12 +971,19 @@ export const screeningQuestions = questions.filter(q => q.phase === 'screening')
 export const deepQuestions = questions.filter(q => q.phase === 'deep')
 
 // ── Gift IDs excluded from the Adventist version ─────────────────────────────
-const ADVENTIST_EXCLUDED = ['tongues']
+// Tongues is NOT excluded — SDA theology includes it as xenolalia (Acts 2: real
+// human languages for cross-cultural mission), not Pentecostal ecstatic speech.
+// Only interpretation_of_tongues is excluded (see adventistOverrides.js).
+// Both versions have 22 anchor questions.
+const ADVENTIST_EXCLUDED = []
+
+/** Number of anchor (Phase 1) questions per version. Both are 22. */
+export const ANCHOR_QUESTION_COUNT = 22
 
 /**
  * Screening (anchor) questions only — Phase 1.
  * @param {string} version - 'adventist' | 'standard'
- * @returns {Array} 21 or 22 anchor questions
+ * @returns {Array} 22 anchor questions (both versions — tongues reframed, not removed)
  */
 export function getScreeningQuestions(version = 'adventist') {
   return questions.filter(q => {

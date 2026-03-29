@@ -9,10 +9,12 @@
 
 import { response } from '../core/response.js'
 import { asyncHandler } from './base.controller.js'
+import { ForbiddenError } from '../core/errors/index.js'
 import {
   startAssessment,
   submitResponses,
   getResult,
+  getResultPublic,
   claimAssessment,
   getMyAssessments,
   getChurchGiftProfile,
@@ -27,7 +29,7 @@ export const giftsController = {
   start: asyncHandler(async (req, res) => {
     const result = await startAssessment({
       ...req.body,
-      userId: req.user?.sub ?? null,
+      userId: req.user?._id ?? null,  // authMiddleware sets req.user as Mongoose doc; use _id not .sub
     })
     response.created(res, result)
   }),
@@ -38,9 +40,11 @@ export const giftsController = {
     response.success(res, result)
   }),
 
-  /** GET /api/v1/gifts/result/:token — get result by session token (public) */
+  /** GET /api/v1/gifts/result/:token — get result by session token (public).
+   *  Email is redacted — token may be shared via QR/link to display results.
+   */
   result: asyncHandler(async (req, res) => {
-    const result = await getResult(req.params.token)
+    const result = await getResultPublic(req.params.token)
     response.success(res, result)
   }),
 
@@ -48,20 +52,32 @@ export const giftsController = {
   claim: asyncHandler(async (req, res) => {
     const result = await claimAssessment({
       sessionToken: req.params.token,
-      userId: req.user.sub,
+      userId: req.user._id,  // auth required — _id is always present
     })
     response.success(res, result)
   }),
 
   /** GET /api/v1/gifts/my-assessments — list logged-in user's assessments */
   myAssessments: asyncHandler(async (req, res) => {
-    const assessments = await getMyAssessments(req.user.sub)
+    const assessments = await getMyAssessments(req.user._id)
     response.success(res, assessments)
   }),
 
-  /** GET /api/v1/gifts/church/:code/profile — church gift profile (pastor/admin) */
+  /** GET /api/v1/gifts/church/:code/profile — church gift profile (pastor/admin).
+   *  Access-gated: requester must have assignedChurches, delegatedAccess, or admin/editor role.
+   */
   churchProfile: asyncHandler(async (req, res) => {
-    const profile = await getChurchGiftProfile(req.params.code)
+    const churchCode = req.params.code.toUpperCase()
+    const user = req.user
+
+    const hasAccess = user.assignedChurches?.includes(churchCode)
+      || user.delegatedAccess?.some(d => d.churchCode === churchCode)
+      || user.role === 'admin'
+      || user.role === 'editor'
+
+    if (!hasAccess) throw new ForbiddenError('You do not have access to this church')
+
+    const profile = await getChurchGiftProfile(churchCode)
     response.success(res, profile)
   }),
 

@@ -58,6 +58,11 @@ export async function startAssessment({ firstName, lastName, email, churchCode, 
   const sessionToken = generateSessionToken()
   const { questions } = resolveVersion(version)
 
+  // Set TTL for abandoned drafts — auto-deleted after 30 days if never completed.
+  // Cleared to null when the assessment is completed (see submitResponses / submitPhase2).
+  const DRAFT_TTL_DAYS = 30
+  const draftExpiresAt = new Date(Date.now() + DRAFT_TTL_DAYS * 24 * 60 * 60 * 1000)
+
   const assessment = new GiftAssessment({
     userId,
     churchCode: churchCode ?? null,
@@ -66,6 +71,7 @@ export async function startAssessment({ firstName, lastName, email, churchCode, 
     lastName,
     email,
     version,
+    expiresAt: draftExpiresAt,
   })
   await assessment.save()
 
@@ -130,14 +136,15 @@ export async function submitResponses({ sessionToken, responses }) {
   assessment.tertiaryGift = top[2]?.giftId ?? null
   assessment.ministryRecommendations = recommendations
   assessment.completedAt = new Date()
+  assessment.expiresAt = null  // clear TTL — completed assessments are never auto-deleted
   await assessment.save()
 
   return formatResult(assessment, gifts)
 }
 
 /**
- * Get the result of a completed assessment by session token.
- * Public — no auth required.
+ * Get the result of a completed assessment by session token — authenticated version.
+ * Returns full result including PII (name, email). Only call from auth-gated endpoints.
  */
 export async function getResult(sessionToken) {
   const assessment = await GiftAssessment.findOne({ sessionToken }).lean()
@@ -146,6 +153,17 @@ export async function getResult(sessionToken) {
 
   const { gifts } = resolveVersion(assessment.version)
   return formatResult(assessment, gifts)
+}
+
+/**
+ * Get the result of a completed assessment by session token — public version.
+ * Email is redacted. Session tokens may be shared via QR/link to display results
+ * to third parties, so PII must not be exposed on this endpoint.
+ */
+export async function getResultPublic(sessionToken) {
+  const result = await getResult(sessionToken)
+  const { email: _omit, ...safeResult } = result  // eslint-disable-line no-unused-vars
+  return safeResult
 }
 
 /**
@@ -351,6 +369,7 @@ export async function submitPhase2({ sessionToken, responses }) {
   assessment.ministryRecommendations = recommendations
   assessment.phase = 'complete'
   assessment.completedAt = new Date()
+  assessment.expiresAt = null  // clear TTL — completed assessments are never auto-deleted
   await assessment.save()
 
   return formatResult(assessment, gifts)

@@ -32,7 +32,14 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // ── Config ─────────────────────────────────────────────────────────────────────
 
-const FINN_LRP_DIR = process.env.FINN_LRP_DIR || '/Users/finbot/.openclaw/workspace'
+// Set FINN_LRP_DIR env var to the directory containing LRP markdown files.
+// No hardcoded default — script will exit with a clear error if not set.
+const FINN_LRP_DIR = process.env.FINN_LRP_DIR
+if (!FINN_LRP_DIR) {
+  console.error('Error: FINN_LRP_DIR environment variable is required.')
+  console.error('Usage: FINN_LRP_DIR=/path/to/lrp/dir node scripts/seed-lrp-body.js')
+  process.exit(1)
+}
 const FORCE = process.argv.includes('--force')
 
 // ── Helpers ────────────────────────────────────────────────────────────────────

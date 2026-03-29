@@ -63,6 +63,10 @@ const giftAssessmentSchema = new mongoose.Schema({
   completedAt: { type: Date, default: null },
   claimedAt:   { type: Date, default: null },
 
+  // TTL field — set to 30 days from creation for incomplete assessments;
+  // cleared (set to null) when the assessment is completed so it is never deleted.
+  expiresAt: { type: Date, default: null },
+
   includeInResearch: { type: Boolean, default: true },
 }, { timestamps: true })
 
@@ -72,5 +76,16 @@ giftAssessmentSchema.index({ userId: 1 })
 giftAssessmentSchema.index({ churchCode: 1 })
 giftAssessmentSchema.index({ sessionToken: 1 }, { unique: true })
 giftAssessmentSchema.index({ email: 1 })
+
+// TTL: auto-delete incomplete (abandoned) assessments after 30 days.
+// completedAt is null for drafts — expireAfterSeconds is applied to createdAt
+// but only fires when completedAt is null (documents where completedAt is set
+// are not deleted). We implement this via a sparse partial index:
+// Mongo TTL only supports a single date field, so we use a dedicated expiresAt
+// field populated at creation for incomplete docs and cleared on completion.
+giftAssessmentSchema.index(
+  { expiresAt: 1 },
+  { expireAfterSeconds: 0, sparse: true }  // fires when current time > expiresAt
+)
 
 export const GiftAssessment = mongoose.model('GiftAssessment', giftAssessmentSchema)
