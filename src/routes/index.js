@@ -18,6 +18,7 @@ import surveyEngineRoutes from './surveyEngine.routes.js'
 import placesRoutes       from './places.routes.js'
 import pulseNotesRoutes   from './pulseNotes.routes.js'
 import governanceRoutes   from './governance.routes.js'
+import vitalityV2Routes  from './vitalityV2.routes.js'
 
 const router = Router()
 
@@ -42,5 +43,6 @@ router.use('/v1/survey-engine', surveyEngineRoutes)
 router.use('/v1/places',        placesRoutes)
 router.use('/v1/notes',         pulseNotesRoutes)
 router.use('/v1/governance',    governanceRoutes)
+router.use('/v1/vitality-v2',  vitalityV2Routes)
 
 export default router
