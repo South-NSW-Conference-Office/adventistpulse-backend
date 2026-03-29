@@ -16,6 +16,9 @@ import {
   claimAssessment,
   getMyAssessments,
   getChurchGiftProfile,
+  getScreeningQuestions,
+  submitPhase1,
+  submitPhase2,
 } from '../services/gifts.service.js'
 
 export const giftsController = {
@@ -60,5 +63,24 @@ export const giftsController = {
   churchProfile: asyncHandler(async (req, res) => {
     const profile = await getChurchGiftProfile(req.params.code)
     response.success(res, profile)
+  }),
+
+  /** GET /api/v1/gifts/screening-questions — return Phase 1 anchor questions */
+  screeningQuestions: asyncHandler(async (req, res) => {
+    const version = req.query.version ?? 'adventist'
+    const questions = await getScreeningQuestions(version)
+    response.success(res, { questions })
+  }),
+
+  /** POST /api/v1/gifts/submit-phase1 — submit Phase 1 responses, get deep questions */
+  submitPhase1: asyncHandler(async (req, res) => {
+    const result = await submitPhase1(req.body)
+    response.success(res, result)
+  }),
+
+  /** POST /api/v1/gifts/submit-phase2 — submit Phase 2 responses, get final result */
+  submitPhase2: asyncHandler(async (req, res) => {
+    const result = await submitPhase2(req.body)
+    response.success(res, result)
   }),
 }

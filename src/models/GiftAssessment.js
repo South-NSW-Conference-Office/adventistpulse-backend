@@ -38,6 +38,18 @@ const giftAssessmentSchema = new mongoose.Schema({
     default: 'adventist',
   },
 
+  // ── Adaptive two-phase fields ────────────────────────────────────────────
+  phase: {
+    type: String,
+    enum: ['screening', 'deep', 'complete'],
+    default: 'screening',
+  },
+
+  phase1Responses: [{ questionId: String, giftId: String, score: Number }],
+  phase2Responses: [{ questionId: String, giftId: String, score: Number }],
+  phase2Candidates: [{ type: String }],
+
+  // ── Legacy / full-battery response store ─────────────────────────────────
   responses: { type: [responseSchema], default: [] },
 
   scores: { type: [giftScoreSchema], default: [] },
