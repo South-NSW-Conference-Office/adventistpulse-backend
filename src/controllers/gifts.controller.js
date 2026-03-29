@@ -24,7 +24,7 @@ export const giftsController = {
   start: asyncHandler(async (req, res) => {
     const result = await startAssessment({
       ...req.body,
-      userId: req.user?._id ?? null,
+      userId: req.user?.sub ?? null,
     })
     response.created(res, result)
   }),
@@ -45,14 +45,14 @@ export const giftsController = {
   claim: asyncHandler(async (req, res) => {
     const result = await claimAssessment({
       sessionToken: req.params.token,
-      userId: req.user._id,
+      userId: req.user.sub,
     })
     response.success(res, result)
   }),
 
   /** GET /api/v1/gifts/my-assessments — list logged-in user's assessments */
   myAssessments: asyncHandler(async (req, res) => {
-    const assessments = await getMyAssessments(req.user._id)
+    const assessments = await getMyAssessments(req.user.sub)
     response.success(res, assessments)
   }),
 
