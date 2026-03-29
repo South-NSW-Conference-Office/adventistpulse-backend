@@ -2,13 +2,17 @@
  * Adventist-Specific Overrides for Spiritual Gifts Assessment
  *
  * Seventh-day Adventist theology does not include the active exercise
- * of tongues and interpretation of tongues in the present age.
- * This layer filters those gifts and maps the remaining 21 to
- * SDA-specific ministry categories with optional EGW references.
+ * of tongues. Tongues is retained but reframed as the cross-cultural
+ * missionary gift (Acts 2 xenolalia), not Pentecostal ecstatic speech.
+ * Interpretation of tongues is excluded. The Adventist version assesses
+ * 22 gifts. This layer maps them to SDA ministry categories with optional
+ * EGW references.
  */
 
-// Gifts excluded from the Adventist version of the assessment
-export const excludedGiftIds = ['tongues', 'interpretation_of_tongues']
+// Gifts excluded from the Adventist version of the assessment.
+// Tongues is INCLUDED — grounded in Acts 2 (xenolalia: real human languages
+// for cross-cultural mission) not Pentecostal ecstatic speech theology.
+export const excludedGiftIds = ['interpretation_of_tongues']
 
 /**
  * Maps each gift to SDA ministry categories and an optional

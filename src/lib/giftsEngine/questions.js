@@ -184,8 +184,7 @@ export const questions = [
     phase: 'screening',
     reverse: false,
     order: 20,
-    text: 'I speak or pray in a language I have not learned, and I experience this as a form of worship or intercession given by the Holy Spirit.',
-    // NOTE: Excluded from the Adventist version — see getAdventistQuestions()
+    text: 'I have an unusual ability to communicate across language and cultural barriers — I pick up languages quickly, feel drawn to people from other linguistic communities, and sense a burden to take the gospel to people in their mother tongue.',
   },
   {
     id: 'a_wisdom',
@@ -857,14 +856,15 @@ export const questions = [
   },
 
   // ── Tongues ───────────────────────────────────────────────────────────────
-  // NOTE: Entire tongues gift (anchor + deep) excluded from Adventist version
+  // Grounded in Acts 2 (xenolalia — real human languages for cross-cultural mission)
+  // not in Pentecostal ecstatic speech theology. Included in Adventist version.
   {
     id: 'd_tongues_1',
     giftId: 'tongues',
     phase: 'deep',
     reverse: false,
     order: 1,
-    text: 'I regularly use a Spirit-given prayer language in my personal devotions, distinct from my normal spoken language.',
+    text: 'I absorb new languages with unusual speed and ease — patterns, grammar, and pronunciation come to me more naturally than to most people I know.',
   },
   {
     id: 'd_tongues_2',
@@ -872,7 +872,7 @@ export const questions = [
     phase: 'deep',
     reverse: false,
     order: 2,
-    text: 'I experience speaking in tongues as a deeply personal form of communication with God that goes beyond what my own language can express.',
+    text: 'I feel a specific and recurring burden for people who cannot access the gospel in their mother tongue — unreached language groups, migrants, or minority communities in my own city.',
   },
   {
     id: 'd_tongues_3',
@@ -880,7 +880,7 @@ export const questions = [
     phase: 'deep',
     reverse: false,
     order: 3,
-    text: 'Others have been present when I spoke in tongues in a worship setting, and the message was interpreted or confirmed by the community as genuine.',
+    text: 'People from other cultures seem to trust me quickly — I find cross-cultural environments energising, and I am often drawn to the edges where different communities meet.',
   },
   {
     id: 'd_tongues_4',
@@ -888,7 +888,7 @@ export const questions = [
     phase: 'deep',
     reverse: true,
     order: 4,
-    text: 'I have studied the gift of tongues carefully but have not personally experienced speaking in a language I have not learned.',
+    text: 'I struggle to connect with people whose cultural background or language is very different from my own, and I tend to do my best ministry within my own cultural context.',
   },
 
   // ── Wisdom ────────────────────────────────────────────────────────────────
