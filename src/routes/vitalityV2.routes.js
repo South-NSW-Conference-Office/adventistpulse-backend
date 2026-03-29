@@ -95,9 +95,19 @@ function scoreDimension(responses, questionIds) {
 /**
  * Calculate Growth Health from YearlyStats documents.
  * Returns 0–100 or null if insufficient data.
+ *
+ * Sub-metrics:
+ *   GRW-1  Baptism Rate           — baptisms / avgMembership × 100
+ *   GRW-2  Membership Growth Trend — YoY ending-membership change (renamed from "Attendance Trend")
+ *   GRW-3  Retention Rate          — 1 - (dropped+deaths+transfersOut) / beginning
+ *            (replaces the old Membership-Attendance Ratio which compared membership to
+ *             membership and always scored ~100%; YearlyStats has no attendance field)
+ *   GRW-4  Net Growth Rate         — net gains / beginning membership
+ *
+ * NOTE: YearlyStats field names are membership.beginning / membership.ending
+ *       (NOT beginningMembership / endingMembership — those don't exist on the model).
  */
 async function calcGrowthHealth(churchCode) {
-  // Get most recent 3 years of stats
   const stats = await YearlyStats.find({ entityCode: churchCode })
     .sort({ year: -1 })
     .limit(3)
@@ -108,83 +118,87 @@ async function calcGrowthHealth(churchCode) {
   const latest = stats[0]
   const prior  = stats[1] || null
 
+  const m     = latest.membership || {}
+  const begin = m.beginning ?? null
+  const end   = m.ending   ?? null
+
   // ─── GRW-1: Baptism Rate ──────────────────────────────────────────────────
+  // Use average of beginning + ending membership as the denominator.
   let grw1 = null
-  const avgAttendance = latest.membership?.beginningMembership
-    ? (latest.membership.beginningMembership + (latest.membership.endingMembership || 0)) / 2
-    : null
-
-  if (latest.membership?.baptisms != null && avgAttendance) {
-    const rate = (latest.membership.baptisms / avgAttendance) * 100
-    if (rate >= 7)   grw1 = 5
-    else if (rate >= 5) grw1 = 4
-    else if (rate >= 2) grw1 = 3
-    else if (rate >= 0.5) grw1 = 2
-    else grw1 = 1
+  const avgMembership = (begin != null && end != null) ? (begin + end) / 2 : (begin ?? end)
+  if (m.baptisms != null && avgMembership) {
+    const rate = (m.baptisms / avgMembership) * 100
+    if (rate >= 7)       grw1 = 5
+    else if (rate >= 5)  grw1 = 4
+    else if (rate >= 2)  grw1 = 3
+    else if (rate >= 0.5)grw1 = 2
+    else                 grw1 = 1
   }
 
-  // ─── GRW-2: Attendance Trend ──────────────────────────────────────────────
+  // ─── GRW-2: Membership Growth Trend ──────────────────────────────────────
+  // Year-over-year change in ending membership.
+  // (Previously mislabeled "Attendance Trend" — no attendance data in YearlyStats.)
   let grw2 = null
-  if (prior && latest.membership?.endingMembership && prior.membership?.endingMembership) {
-    const trend = ((latest.membership.endingMembership - prior.membership.endingMembership)
-      / prior.membership.endingMembership) * 100
-    if (trend >= 5)   grw2 = 5
-    else if (trend >= 2) grw2 = 4
-    else if (trend >= -1.9) grw2 = 3
-    else if (trend >= -9.9) grw2 = 2
-    else grw2 = 1
+  const priorEnd = prior?.membership?.ending ?? null
+  if (end != null && priorEnd != null && priorEnd > 0) {
+    const trend = ((end - priorEnd) / priorEnd) * 100
+    if (trend >= 5)        grw2 = 5
+    else if (trend >= 2)   grw2 = 4
+    else if (trend >= -1.9)grw2 = 3
+    else if (trend >= -9.9)grw2 = 2
+    else                   grw2 = 1
   }
 
-  // ─── GRW-3: Membership-Attendance Ratio ───────────────────────────────────
+  // ─── GRW-3: Retention Rate ────────────────────────────────────────────────
+  // Replaces "Membership-Attendance Ratio" which was comparing membership to membership
+  // (avgAttendance was constructed from beginningMembership — always ~100%, meaningless).
+  // Retention = 1 - loss rate; loss = dropped + deaths + transfersOut.
   let grw3 = null
-  const bm = latest.membership?.beginningMembership
-  const em = latest.membership?.endingMembership
-  if (bm && em && avgAttendance) {
-    const ratio = (avgAttendance / ((bm + em) / 2)) * 100
-    if (ratio >= 65) grw3 = 5
-    else if (ratio >= 50) grw3 = 4
-    else if (ratio >= 35) grw3 = 3
-    else if (ratio >= 20) grw3 = 2
-    else grw3 = 1
+  if (begin != null && begin > 0) {
+    const losses      = (m.dropped || 0) + (m.deaths || 0) + (m.transfersOut || 0)
+    const retentionPct = ((begin - losses) / begin) * 100
+    if (retentionPct >= 97)     grw3 = 5
+    else if (retentionPct >= 94)grw3 = 4
+    else if (retentionPct >= 90)grw3 = 3
+    else if (retentionPct >= 85)grw3 = 2
+    else                        grw3 = 1
   }
 
   // ─── GRW-4: Net Growth Rate ───────────────────────────────────────────────
   let grw4 = null
-  const { baptisms, transfersIn, dropped, deaths, transfersOut, beginning } = {
-    baptisms:    latest.membership?.baptisms    || 0,
-    transfersIn: latest.membership?.transfersIn || 0,
-    dropped:     latest.membership?.dropped     || 0,
-    deaths:      latest.membership?.deaths      || 0,
-    transfersOut:latest.membership?.transfersOut|| 0,
-    beginning:   latest.membership?.beginningMembership || null,
-  }
-  if (beginning) {
-    const ngr = ((baptisms + transfersIn - dropped - deaths - transfersOut) / beginning) * 100
-    if (ngr >= 3)    grw4 = 5
-    else if (ngr >= 1) grw4 = 4
-    else if (ngr >= -0.9) grw4 = 3
-    else if (ngr >= -4.9) grw4 = 2
-    else grw4 = 1
+  if (begin != null && begin > 0) {
+    const gains  = (m.baptisms || 0) + (m.transfersIn || 0)
+    const losses = (m.dropped  || 0) + (m.deaths      || 0) + (m.transfersOut || 0)
+    const ngr    = ((gains - losses) / begin) * 100
+    if (ngr >= 3)        grw4 = 5
+    else if (ngr >= 1)   grw4 = 4
+    else if (ngr >= -0.9)grw4 = 3
+    else if (ngr >= -4.9)grw4 = 2
+    else                 grw4 = 1
   }
 
   const available = [grw1, grw2, grw3, grw4].filter(v => v !== null)
   if (!available.length) return { score: null, snapshot: null, lastDataYear: latest.year }
 
   const rawAvg = available.reduce((a, b) => a + b, 0) / available.length
-  const score = Math.round(((rawAvg - 1) / 4) * 100)
+  const score  = Math.round(((rawAvg - 1) / 4) * 100)
+
+  const losses        = (m.dropped || 0) + (m.deaths || 0) + (m.transfersOut || 0)
+  const retentionRate = begin ? Math.round(((begin - losses) / begin) * 100) : null
 
   const snapshot = {
-    year:                latest.year,
-    baptisms:            latest.membership?.baptisms,
-    beginningMembership: latest.membership?.beginningMembership,
-    endingMembership:    latest.membership?.endingMembership,
-    transfersIn:         latest.membership?.transfersIn,
-    transfersOut:        latest.membership?.transfersOut,
-    deaths:              latest.membership?.deaths,
-    dropped:             latest.membership?.dropped,
-    netGrowth:           latest.membership?.netGrowth,
-    priorYear:           prior?.year,
-    priorYearMembership: prior?.membership?.endingMembership,
+    year:               latest.year,
+    baptisms:           m.baptisms,
+    beginMembership:    begin,
+    endMembership:      end,
+    transfersIn:        m.transfersIn,
+    transfersOut:       m.transfersOut,
+    deaths:             m.deaths,
+    dropped:            m.dropped,
+    netGrowth:          m.netGrowth,
+    retentionRate,
+    priorYear:          prior?.year         ?? null,
+    priorYearMembership:prior?.membership?.ending ?? null,
   }
 
   return { score, snapshot, lastDataYear: latest.year }
@@ -271,23 +285,39 @@ router.post(
 
     if (!hasAccess) throw new ForbiddenError('You do not have access to this church')
 
-    // Close any existing active session for this church
-    await VitalityV2Session.updateMany(
-      { churchCode: code, status: 'active' },
-      { $set: { status: 'closed', closedAt: new Date() } }
-    )
+    const now = new Date()
 
-    // Generate unique 8-char session code
-    const sessionCode = crypto.randomBytes(4).toString('hex').toUpperCase()
+    // Close any live active sessions for this church (not expired ones — handle those separately)
+    await VitalityV2Session.updateMany(
+      { churchCode: code, status: 'active', expiresAt: { $gt: now } },
+      { $set: { status: 'closed', closedAt: now } }
+    )
+    // Mark stale active-but-past-expiry sessions as expired
+    await VitalityV2Session.updateMany(
+      { churchCode: code, status: 'active', expiresAt: { $lte: now } },
+      { $set: { status: 'expired' } }
+    )
 
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
 
-    const session = await VitalityV2Session.create({
-      churchCode:  code,
-      createdBy:   user._id,
-      sessionCode,
-      expiresAt,
-    })
+    // Generate unique 8-char session code with retry on collision
+    let session = null
+    for (let attempt = 0; attempt < 5; attempt++) {
+      const sessionCode = crypto.randomBytes(4).toString('hex').toUpperCase()
+      try {
+        session = await VitalityV2Session.create({
+          churchCode:  code,
+          createdBy:   user._id,
+          sessionCode,
+          expiresAt,
+        })
+        break
+      } catch (err) {
+        if (err.code === 11000) continue // duplicate key — retry
+        throw err
+      }
+    }
+    if (!session) throw new AppError('Failed to generate unique session code after retries', { statusCode: 500, code: 'SESSION_CODE_COLLISION' })
 
     response.created(res, {
       sessionCode:    session.sessionCode,
@@ -377,15 +407,7 @@ router.post(
 
     if (!isMember) throw new ForbiddenError('You are not a member of this church')
 
-    // Check not already responded
-    const already = session.responses.some(
-      r => r.userId.toString() === user._id.toString()
-    )
-    if (already) {
-      throw new AppError('You have already submitted a response for this session', { statusCode: 409, code: 'ALREADY_RESPONDED' })
-    }
-
-    // Validate answers — all self-report question IDs must have values 1–5
+    // Validate answers before attempting the atomic insert
     const answersMap = new Map()
     for (const qId of ALL_QUESTION_IDS) {
       const val = answers[qId]
@@ -399,15 +421,37 @@ router.post(
       answersMap.set(qId, num)
     }
 
-    session.responses.push({
-      userId:  user._id,
-      answers: answersMap,
-    })
-    await session.save()
+    // Atomic duplicate-check + insert — prevents double-submission under concurrent requests.
+    // The $not $elemMatch guard ensures the push only happens if userId is not already present.
+    const updated = await VitalityV2Session.findOneAndUpdate(
+      {
+        _id:              session._id,
+        status:           'active',
+        expiresAt:        { $gt: new Date() },
+        'responses.userId': { $ne: user._id },
+      },
+      {
+        $push: { responses: { userId: user._id, answers: answersMap } },
+        $inc:  { responseCount: 1 },
+      },
+      { new: true, select: 'responseCount' }
+    )
+
+    if (!updated) {
+      // Distinguish already-responded from session closed/expired
+      const check = await VitalityV2Session.findById(session._id)
+        .select('status expiresAt responses.userId')
+        .lean()
+      const alreadyIn = check?.responses?.some(r => r.userId?.toString() === user._id.toString())
+      if (alreadyIn) {
+        throw new AppError('You have already submitted a response for this session', { statusCode: 409, code: 'ALREADY_RESPONDED' })
+      }
+      throw new AppError('Session is not accepting responses', { statusCode: 410, code: 'SESSION_CLOSED' })
+    }
 
     response.created(res, {
       message:       'Response submitted successfully',
-      responseCount: session.responses.length,
+      responseCount: updated.responseCount,
     })
   })
 )
@@ -536,7 +580,7 @@ router.get(
       band:          session.band,
       minimumFactor: session.minimumFactor,
       scores:        session.scores,
-      responseCount: session.responses?.length || 0,
+      responseCount: session.responseCount || 0,
       dataSnapshot:  session.dataSnapshot,
       calculatedAt:  session.calculatedAt,
       createdAt:     session.createdAt,
@@ -564,7 +608,7 @@ router.get(
     })
       .sort({ calculatedAt: -1 })
       .limit(5)
-      .select('-responses')
+      .select('-responses') // exclude bulk response data — use denormalized responseCount instead
       .lean()
 
     response.success(res, sessions.map(s => ({
@@ -573,7 +617,7 @@ router.get(
       band:          s.band,
       minimumFactor: s.minimumFactor,
       scores:        s.scores,
-      responseCount: s.responses?.length || 0,
+      responseCount: s.responseCount || 0, // denormalized field — not affected by .select('-responses')
       calculatedAt:  s.calculatedAt,
       createdAt:     s.createdAt,
     })))

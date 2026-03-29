@@ -29,18 +29,18 @@ const scoresSchema = new mongoose.Schema({
 
 // ─── Sub-schema: DB data snapshot at time of calculation ──────────────────────
 const dataSnapshotSchema = new mongoose.Schema({
-  year:                Number,
-  baptisms:            Number,
-  beginningMembership: Number,
-  endingMembership:    Number,
-  transfersIn:         Number,
-  transfersOut:        Number,
-  deaths:              Number,
-  dropped:             Number,
-  netGrowth:           Number,
-  avgAttendance:       Number,
-  priorYearMembership: Number,
-  priorYear:           Number,
+  year:               Number,
+  baptisms:           Number,
+  beginMembership:    Number,  // YearlyStats.membership.beginning
+  endMembership:      Number,  // YearlyStats.membership.ending
+  transfersIn:        Number,
+  transfersOut:       Number,
+  deaths:             Number,
+  dropped:            Number,
+  netGrowth:          Number,
+  retentionRate:      Number,  // computed: 1 - (dropped+deaths+transfersOut)/beginning
+  priorYearMembership:Number,
+  priorYear:          Number,
 }, { _id: false })
 
 // ─── Main schema ──────────────────────────────────────────────────────────────
@@ -56,6 +56,10 @@ const vitalityV2SessionSchema = new mongoose.Schema({
   },
 
   expiresAt: { type: Date, required: true },
+  closedAt:  { type: Date, default: null },
+
+  // Denormalized response count — kept in sync to avoid loading the full responses array
+  responseCount: { type: Number, default: 0 },
 
   // All member responses
   responses: { type: [memberResponseSchema], default: [] },
